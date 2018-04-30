@@ -6,4 +6,4 @@ The project is a part of an engineering thesis written to demonstrate in practic
 ## Authors
 * Mikołaj Żyłkowski (_[NicholasZyl](https://github.com/NicholasZyl)_) - Engineering Thesis author
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/NicholasZyl/chess/LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/NicholasZyl/chess/blob/master/LICENSE.md) file for details.
