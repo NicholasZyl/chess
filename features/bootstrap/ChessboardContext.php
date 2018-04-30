@@ -10,25 +10,25 @@ use Behat\Behat\Context\Context;
 class ChessboardContext implements Context
 {
     /**
-     * @Given there is a chessboard with White king placed on D4
+     * @Given there is a chessboard with :piece placed on :square
      */
-    public function thereIsAChessboardWithWhiteKingPlacedOnD()
+    public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Square $square)
     {
         throw new PendingException();
     }
 
     /**
-     * @When I move piece from D4 to E5
+     * @When I move piece from :source to :destination
      */
-    public function iMovePieceFromDToE()
+    public function iMovePieceFromSourceToDestination(Square $source, Square $destination)
     {
         throw new PendingException();
     }
 
     /**
-     * @Then White king should be placed on E5
+     * @Then :piece should be placed on :square
      */
-    public function whiteKingShouldBePlacedOnE()
+    public function pieceShouldBePlacedOnSquare()
     {
         throw new PendingException();
     }
