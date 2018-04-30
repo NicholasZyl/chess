@@ -3,6 +3,7 @@ The project is a part of an engineering thesis written to demonstrate in practic
 ## Getting Started
 ## Running the tests
 ## Contributing
+Please read [CONTRIBUTING.md](https://github.com/NicholasZyl/chess/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
 ## Authors
 * Mikołaj Żyłkowski (_[NicholasZyl](https://github.com/NicholasZyl)_) - Engineering Thesis author
 ## License
