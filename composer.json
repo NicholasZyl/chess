@@ -1,0 +1,19 @@
+{
+    "name": "nicholaszyl/chess",
+    "description": "An exemplary application developed to demonstrate the DDD and BDD approaches in practice",
+    "type": "project",
+    "require-dev": {
+        "behat/behat": "^3.4",
+        "phpspec/phpspec": "^4.3"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikołaj Żyłkowski",
+            "email": "mzylkowski@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2"
+    }
+}
