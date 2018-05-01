@@ -33,8 +33,9 @@ final class Square
         if ($this->placedPiece === null) {
             throw new SquareIsVacant($this->coordinates);
         }
+        list($piece, $this->placedPiece) = [$this->placedPiece, null];
 
-        return $this->placedPiece;
+        return $piece;
     }
 
     public function place(Piece $piece): void

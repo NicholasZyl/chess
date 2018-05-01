@@ -49,4 +49,16 @@ class SquareSpec extends ObjectBehavior
     {
         $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
     }
+
+    public function it_is_vacant_after_piece_is_picked()
+    {
+        $piece = Piece::fromRankAndColor(
+            Piece\Rank::fromString('king'),
+            Color::white()
+        );
+        $this->place($piece);
+        $this->pick();
+
+        $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
+    }
 }
