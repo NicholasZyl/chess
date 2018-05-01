@@ -11,4 +11,9 @@ final class Chessboard
     {
         // TODO: write logic here
     }
+
+    public function movePiece(Coordinates $source, Coordinates $destination)
+    {
+        // TODO: write logic here
+    }
 }

@@ -23,4 +23,11 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->placePieceAtCoordinates($piece, $coordinates);
     }
+
+    public function it_allows_moving_piece_from_one_coordinate_to_another()
+    {
+        $source = Coordinates::fromString('B2');
+        $destination = Coordinates::fromString('C2');
+        $this->movePiece($source, $destination);
+    }
 }
