@@ -33,7 +33,7 @@ class ChessboardContext implements Context
      */
     public function iMovePieceFromSourceToDestination(Coordinates $source, Coordinates $destination)
     {
-        throw new PendingException();
+        $this->chessboard->movePiece($source, $destination);
     }
 
     /**
