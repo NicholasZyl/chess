@@ -8,36 +8,36 @@ final class Coordinates
     /**
      * @var string
      */
-    private $rank;
+    private $file;
 
     /**
      * @var int
      */
-    private $file;
+    private $rank;
 
     /**
      * Coordinates constructor.
      *
-     * @param string $rank
-     * @param int $file
+     * @param string $file
+     * @param int $rank
      */
-    private function __construct(string $rank, int $file)
+    private function __construct(string $file, int $rank)
     {
-        $this->rank = strtolower($rank);
-        $this->file = $file;
+        $this->file = strtolower($file);
+        $this->rank = $rank;
     }
 
     /**
      * Create coordinates from passed file and rank.
      *
-     * @param string $rank
-     * @param int $file
+     * @param string $file
+     * @param int $rank
      *
      * @return Coordinates
      */
-    public static function fromFileAndRank(string $rank, int $file)
+    public static function fromFileAndRank(string $file, int $rank)
     {
-        return new Coordinates($rank, $file);
+        return new Coordinates($file, $rank);
     }
 
     /**
@@ -59,6 +59,30 @@ final class Coordinates
      */
     public function __toString(): string
     {
-        return $this->rank . $this->file;
+        return $this->file . $this->rank;
+    }
+
+    /**
+     * Calculate distance between ranks of two coordinates.
+     *
+     * @param Coordinates $anotherCoordinates
+     *
+     * @return int
+     */
+    public function rankDistance(Coordinates $anotherCoordinates): int
+    {
+        return abs($anotherCoordinates->rank - $this->rank);
+    }
+
+    /**
+     * Calculate distance between files of two coordinates.
+     *
+     * @param Coordinates $anotherCoordinates
+     *
+     * @return int
+     */
+    public function fileDistance(Coordinates $anotherCoordinates): int
+    {
+        return abs(ord($anotherCoordinates->file) - ord($this->file));
     }
 }
