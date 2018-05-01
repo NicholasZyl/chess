@@ -13,6 +13,16 @@ final class Chessboard
      */
     private $squares = [];
 
+    public function __construct()
+    {
+        foreach (range('a', 'h') as $file) {
+            foreach (range(1, 8) as $rank) {
+                $coordinates = Coordinates::fromFileAndRank($file, $rank);
+                $this->squares[(string)$coordinates] = Square::forCoordinates($coordinates);
+            }
+        }
+    }
+
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
         // TODO: write logic here
@@ -32,6 +42,6 @@ final class Chessboard
 
     private function getSquareAt(Coordinates $coordinates): Square
     {
-        return $this->squares[(string) $coordinates];
+        return $this->squares[(string)$coordinates];
     }
 }

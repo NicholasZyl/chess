@@ -21,6 +21,11 @@ final class Coordinates
         $this->file = $file;
     }
 
+    public static function fromFileAndRank(string $rank, int $file)
+    {
+        return new Coordinates($rank, $file);
+    }
+
     public static function fromString(string $coordinates)
     {
         return new Coordinates($coordinates[0], intval($coordinates[1]));
