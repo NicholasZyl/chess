@@ -39,4 +39,22 @@ class PieceSpec extends ObjectBehavior
 
         $this->isSameAs($anotherPiece)->shouldBe(true);
     }
+
+    public function it_is_different_than_another_piece_if_has_another_color()
+    {
+        $this->beConstructedThrough(
+            'fromRankAndColor',
+            [
+                Rank::fromString('king'),
+                Color::fromString('white')
+            ]
+        );
+
+        $anotherPiece = Piece::fromRankAndColor(
+            Rank::fromString('king'),
+            Color::fromString('black')
+        );
+
+        $this->isSameAs($anotherPiece)->shouldBe(false);
+    }
 }
