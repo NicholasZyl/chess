@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Rank;
+use NicholasZyl\Chess\Domain\Board\Square;
 
 /**
  * Defines application features from the specific context.
@@ -45,5 +48,13 @@ class ChessboardContext implements Context
         }
 
         return Piece::fromRankAndColor(Rank::fromString($pieceDescription[0]), Color::fromString($pieceDescription[1]));
+    }
+
+    /**
+     * @Transform :square
+     */
+    public function castToSquare(string $coordinates)
+    {
+        return Square::forCoordinates($coordinates);
     }
 }
