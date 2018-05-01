@@ -5,16 +5,23 @@ namespace NicholasZyl\Chess\Domain;
 
 final class Color
 {
-    private function __construct()
+    /**
+     * @var string
+     */
+    private $colorName;
+
+    private function __construct(string $colorName)
     {
+        $this->colorName = $colorName;
     }
 
     public static function fromString(string $colorName)
     {
-        $color = new Color();
+        return new Color($colorName);
+    }
 
-        // TODO: write logic here
-
-        return $color;
+    public function isSameAs(Color $anotherColor)
+    {
+        return $this->colorName === $anotherColor->colorName;
     }
 }
