@@ -9,6 +9,7 @@ final class SquareIsVacant extends \RuntimeException
 {
     /**
      * SquareIsVacant constructor.
+     *
      * @param Coordinates $coordinates
      */
     public function __construct(Coordinates $coordinates)

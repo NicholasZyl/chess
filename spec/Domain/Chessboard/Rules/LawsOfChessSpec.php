@@ -5,15 +5,16 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Rules;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Rules;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\Chess;
 use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\IncompleteRules;
+use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\MissingRule;
+use NicholasZyl\Chess\Domain\Chessboard\Rules\LawsOfChess;
 use NicholasZyl\Chess\Domain\Chessboard\Rules\RankMovementRules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use PhpSpec\ObjectBehavior;
 
-class ChessSpec extends ObjectBehavior
+class LawsOfChessSpec extends ObjectBehavior
 {
     function let(RankMovementRules $kingMovementRules)
     {
@@ -31,7 +32,7 @@ class ChessSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(Chess::class);
+        $this->shouldHaveType(LawsOfChess::class);
     }
 
     function it_is_a_rules_set()
@@ -68,5 +69,19 @@ class ChessSpec extends ObjectBehavior
         $kingMovementRules->validate(Coordinates::fromString('a1'), Coordinates::fromString('a2'))->shouldBeCalled();
 
         $this->validateMove($from, $to);
+    }
+
+    function it_fails_if_missing_rule_for_rank_is_not_available()
+    {
+        $from = Square::forCoordinates(Coordinates::fromString('a1'));
+        $from->place(
+            Piece::fromRankAndColor(
+                Piece\Rank::queen(),
+                Piece\Color::white()
+            )
+        );
+        $to = Square::forCoordinates(Coordinates::fromString('a2'));
+
+        $this->shouldThrow(new MissingRule(Rank::queen()))->during('validateMove', [$from, $to,]);
     }
 }

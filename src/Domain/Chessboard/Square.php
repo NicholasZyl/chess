@@ -85,6 +85,12 @@ final class Square
         return $piece;
     }
 
+    /**
+     * Peek what piece is placed on the square.
+     *
+     * @throws SquareIsVacant
+     * @return Piece
+     */
     public function peek(): Piece
     {
         if ($this->placedPiece === null) {

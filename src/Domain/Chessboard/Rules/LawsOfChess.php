@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 
-final class Chess implements Rules
+final class LawsOfChess implements Rules
 {
     /**
      * @var RankMovementRules[]
@@ -48,6 +48,10 @@ final class Chess implements Rules
     public function validateMove(Square $from, Square $to): void
     {
         $piece = $from->peek();
+
+        if (!array_key_exists((string) $piece->rank(), $this->piecesMovementsRules)) {
+            throw new Rules\Exception\MissingRule($piece->rank());
+        }
         $this->piecesMovementsRules[(string) $piece->rank()]->validate($from->coordinates(), $to->coordinates());
     }
 }
