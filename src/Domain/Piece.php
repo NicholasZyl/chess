@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 
 class Piece

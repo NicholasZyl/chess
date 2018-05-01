@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Board;
+namespace NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Board\Exception\SquareIsVacant;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsVacant;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class Square

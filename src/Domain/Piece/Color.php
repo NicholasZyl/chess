@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain;
+namespace NicholasZyl\Chess\Domain\Piece;
 
 final class Color
 {

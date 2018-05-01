@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Board\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Board\Rules;
-use NicholasZyl\Chess\Domain\Board\Square;
 use NicholasZyl\Chess\Domain\Chessboard;
-use NicholasZyl\Chess\Domain\Color;
+use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Rules;
+use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

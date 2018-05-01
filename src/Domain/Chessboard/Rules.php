@@ -1,6 +1,6 @@
 <?php
 
-namespace NicholasZyl\Chess\Domain\Board;
+namespace NicholasZyl\Chess\Domain\Chessboard;
 
 interface Rules
 {

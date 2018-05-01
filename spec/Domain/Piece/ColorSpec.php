@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain;
+namespace spec\NicholasZyl\Chess\Domain\Piece;
 
-use NicholasZyl\Chess\Domain\Color;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class ColorSpec extends ObjectBehavior

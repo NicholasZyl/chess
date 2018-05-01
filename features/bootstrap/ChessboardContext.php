@@ -2,12 +2,12 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
-use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Board\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Board\Square;
 use NicholasZyl\Chess\Domain\Chessboard;
-use NicholasZyl\Chess\Domain\Color;
+use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 
 /**
@@ -33,7 +33,7 @@ class ChessboardContext implements Context
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        $this->chessboard = new Chessboard(new class implements \NicholasZyl\Chess\Domain\Board\Rules {
+        $this->chessboard = new Chessboard(new class implements \NicholasZyl\Chess\Domain\Chessboard\Rules {
 
             public function validateMove(Square $from, Square $to): void
             {

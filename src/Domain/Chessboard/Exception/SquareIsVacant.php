@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Board\Exception;
+namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
-use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 
 final class SquareIsVacant extends \RuntimeException
 {
