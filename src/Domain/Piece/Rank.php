@@ -9,7 +9,7 @@ final class Rank
     {
     }
 
-    public static function fromString($argument1)
+    public static function fromString(string $rankName)
     {
         $rank = new Rank();
 

@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
+use Behat\Behat\Tester\Exception\PendingException;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
@@ -14,6 +14,11 @@ use NicholasZyl\Chess\Domain\Piece\Rank;
  */
 class ChessboardContext implements Context
 {
+    /**
+     * @var Chessboard
+     */
+    private $chessboard;
+
     /**
      * @Given there is a chessboard with :piece placed on :coordinates
      */
@@ -54,6 +59,8 @@ class ChessboardContext implements Context
 
     /**
      * @Transform :coordinates
+     * @Transform :source
+     * @Transform :destination
      */
     public function castToCoordinates(string $coordinates)
     {

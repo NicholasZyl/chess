@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
-
 namespace NicholasZyl\Chess\Domain\Board;
 
 final class Square
@@ -11,7 +9,7 @@ final class Square
     {
     }
 
-    public static function forCoordinates($argument1)
+    public static function forCoordinates(Coordinates $coordinates)
     {
         $square = new Square();
 

@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
-
 namespace NicholasZyl\Chess\Domain\Board;
 
 final class Coordinates
@@ -11,7 +9,7 @@ final class Coordinates
     {
     }
 
-    public static function fromString($argument1)
+    public static function fromString(string $coordinates)
     {
         $coordinates = new Coordinates();
 

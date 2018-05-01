@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
 
-
-
 namespace NicholasZyl\Chess\Domain;
 
 final class Color
@@ -11,7 +9,7 @@ final class Color
     {
     }
 
-    public static function fromString($argument1)
+    public static function fromString(string $colorName)
     {
         $color = new Color();
 
