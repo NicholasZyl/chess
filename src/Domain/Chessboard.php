@@ -9,9 +9,9 @@ use NicholasZyl\Chess\Domain\Chessboard\Square;
 final class Chessboard
 {
     /**
-     * @var Rules
+     * @var LawsOfChess
      */
-    private $rules;
+    private $laws;
 
     /**
      * @var Square[]
@@ -22,11 +22,11 @@ final class Chessboard
      * Chessboard constructor.
      * Initialise the full chessboard with all squares on it. Initially empty.
      *
-     * @param Rules $rules
+     * @param LawsOfChess $rules
      */
-    public function __construct(Rules $rules)
+    public function __construct(LawsOfChess $rules)
     {
-        $this->rules = $rules;
+        $this->laws = $rules;
 
         foreach (range('a', 'h') as $file) {
             foreach (range(1, 8) as $rank) {
@@ -74,7 +74,7 @@ final class Chessboard
      */
     private function makeMove(Square $from, Square $to): void
     {
-        $this->rules->validateMove($from, $to);
+        $this->laws->validateMove($from, $to);
         $piece = $from->pick();
         $to->place($piece);
     }

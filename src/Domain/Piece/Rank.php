@@ -26,6 +26,21 @@ final class Rank
     private $rankName;
 
     /**
+     * Get all ranks that are available.
+     *
+     * @return Rank[]
+     */
+    public static function availableRanks(): array
+    {
+        $ranks = [];
+        foreach (self::AVAILABLE_RANKS as $rankName) {
+            $ranks[] = self::fromString($rankName);
+        }
+
+        return $ranks;
+    }
+
+    /**
      * Rank constructor.
      *
      * @param string $rankName

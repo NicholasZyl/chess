@@ -7,15 +7,15 @@ use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class ChessboardSpec extends ObjectBehavior
 {
-    function let(Rules $rules)
+    function let(LawsOfChess $rules)
     {
         $this->beConstructedWith($rules);
     }
@@ -56,7 +56,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->hasPieceAtCoordinates($piece, $coordinates)->shouldBe(true);
     }
 
-    function it_does_not_allow_move_that_is_illegal_according_to_given_rules(Rules $rules)
+    function it_does_not_allow_move_that_is_illegal_according_to_given_rules(LawsOfChess $rules)
     {
         $source = Coordinates::fromString('B2');
         $destination = Coordinates::fromString('C2');
