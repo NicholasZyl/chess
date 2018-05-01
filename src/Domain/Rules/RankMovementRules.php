@@ -1,6 +1,6 @@
 <?php
 
-namespace NicholasZyl\Chess\Domain\Chessboard\Rules;
+namespace NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;

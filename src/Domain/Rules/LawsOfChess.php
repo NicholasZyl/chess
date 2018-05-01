@@ -1,10 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard\Rules;
+namespace NicholasZyl\Chess\Domain\Rules;
 
-use NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\Piece\Rank;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class LawsOfChess implements Rules
 {
@@ -16,7 +17,7 @@ final class LawsOfChess implements Rules
     /**
      * Chess constructor.
      *
-     * @param array $allPossibleRanks
+     * @param Rank[] $allPossibleRanks
      * @param RankMovementRules[] $piecesMovementsRules
      */
     public function __construct(array $allPossibleRanks, array $piecesMovementsRules)
@@ -26,7 +27,7 @@ final class LawsOfChess implements Rules
         }
         $missingPiecesRules = array_diff($allPossibleRanks, array_keys($this->piecesMovementsRules));
         if (!empty($missingPiecesRules)) {
-            throw new Rules\Exception\IncompleteRules($missingPiecesRules);
+            throw new Exception\IncompleteRules($missingPiecesRules);
         }
     }
 
@@ -50,7 +51,7 @@ final class LawsOfChess implements Rules
         $piece = $from->peek();
 
         if (!array_key_exists((string) $piece->rank(), $this->piecesMovementsRules)) {
-            throw new Rules\Exception\MissingRule($piece->rank());
+            throw new Exception\MissingRule($piece->rank());
         }
         $this->piecesMovementsRules[(string) $piece->rank()]->validate($from->coordinates(), $to->coordinates());
     }

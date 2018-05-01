@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 
 final class Chessboard

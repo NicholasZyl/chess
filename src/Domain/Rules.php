@@ -1,9 +1,10 @@
 <?php
 
-namespace NicholasZyl\Chess\Domain\Chessboard;
+namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\MissingRule;
+use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\Rules\Exception\MissingRule;
 
 interface Rules
 {

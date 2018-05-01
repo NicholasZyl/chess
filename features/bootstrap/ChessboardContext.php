@@ -33,7 +33,7 @@ class ChessboardContext implements Context
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        $this->chessboard = new Chessboard(new class implements \NicholasZyl\Chess\Domain\Chessboard\Rules {
+        $this->chessboard = new Chessboard(new class implements \NicholasZyl\Chess\Domain\Rules {
 
             public function validateMove(Square $from, Square $to): void
             {

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard\Rules\Exception;
+namespace NicholasZyl\Chess\Domain\Rules\Exception;
 
 use NicholasZyl\Chess\Domain\Piece\Rank;
 

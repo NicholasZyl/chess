@@ -1,24 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard\Rules;
+namespace spec\NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Rules;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\IncompleteRules;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\MissingRule;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\LawsOfChess;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\RankMovementRules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Rank;
+use NicholasZyl\Chess\Domain\Rules;
+use NicholasZyl\Chess\Domain\Rules\Exception\IncompleteRules;
+use NicholasZyl\Chess\Domain\Rules\Exception\MissingRule;
+use NicholasZyl\Chess\Domain\Rules\LawsOfChess;
+use NicholasZyl\Chess\Domain\Rules\RankMovementRules;
 use PhpSpec\ObjectBehavior;
 
 class LawsOfChessSpec extends ObjectBehavior
 {
     function let(RankMovementRules $kingMovementRules)
     {
-        $kingMovementRules->isFor()->shouldBeCalled()->willReturn(Piece\Rank::king());
+        $kingMovementRules->isFor()->willReturn(Piece\Rank::king());
 
         $this->beConstructedWith(
             [

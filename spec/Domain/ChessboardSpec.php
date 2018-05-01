@@ -6,10 +6,10 @@ namespace spec\NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

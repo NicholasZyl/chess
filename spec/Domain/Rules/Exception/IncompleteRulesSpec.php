@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard\Rules\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Rules\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\IncompleteRules;
 use NicholasZyl\Chess\Domain\Piece\Rank;
+use NicholasZyl\Chess\Domain\Rules\Exception\IncompleteRules;
 use PhpSpec\ObjectBehavior;
 
 class IncompleteRulesSpec extends ObjectBehavior

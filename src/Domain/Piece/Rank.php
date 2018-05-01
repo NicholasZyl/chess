@@ -11,7 +11,7 @@ final class Rank
     private const RANK_ROOK = 'rook';
     private const RANK_QUEEN = 'queen';
     private const RANK_KING = 'king';
-    public const AVAILABLE_RANKS = [
+    private const AVAILABLE_RANKS = [
         self::RANK_PAWN,
         self::RANK_KNIGHT,
         self::RANK_BISHOP,
