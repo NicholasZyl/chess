@@ -5,7 +5,6 @@ use Behat\Behat\Context\Context;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
@@ -33,13 +32,7 @@ class ChessboardContext implements Context
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        $this->chessboard = new Chessboard(new class implements \NicholasZyl\Chess\Domain\Rules {
-
-            public function validateMove(Square $from, Square $to): void
-            {
-                // Naive implementation
-            }
-        });
+        $this->chessboard = new Chessboard(\NicholasZyl\Chess\Domain\LawsOfChess::fromFideHandbook());
         $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
     }
 
