@@ -13,4 +13,10 @@ class CoordinatesSpec extends ObjectBehavior
         $this->beConstructedThrough('fromString', ['A1']);
         $this->shouldHaveType(Coordinates::class);
     }
+
+    public function it_can_be_converted_to_string()
+    {
+        $this->beConstructedThrough('fromString', ['A1']);
+        $this->__toString()->shouldBe('A1');
+    }
 }
