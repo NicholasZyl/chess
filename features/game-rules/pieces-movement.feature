@@ -46,3 +46,14 @@ Feature: Pieces movement
     When I move piece from d4 to d5
     Then the move is illegal
     And "White bishop" should still be placed on d4
+
+  Scenario: Knight's legal move
+    Given there is a chessboard with "White knight" placed on d4
+    When I move piece from d4 to e6
+    Then "White knight" should be placed on e6
+
+  Scenario: Knight's illegal move
+    Given there is a chessboard with "White knight" placed on d4
+    When I move piece from d4 to f6
+    Then the move is illegal
+    And "White knight" should still be placed on d4
