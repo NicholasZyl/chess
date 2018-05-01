@@ -33,6 +33,9 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($piece, $source);
 
         $this->movePiece($source, $destination);
+
+        $this->hasPieceAtCoordinates($piece, $source)->shouldBe(false);
+        $this->hasPieceAtCoordinates($piece, $destination)->shouldBe(true);
     }
 
     public function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
