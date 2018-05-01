@@ -23,6 +23,6 @@ class CoordinatesSpec extends ObjectBehavior
     function it_can_be_converted_to_string()
     {
         $this->beConstructedThrough('fromString', ['A1']);
-        $this->__toString()->shouldBe('A1');
+        $this->__toString()->shouldBe('a1');
     }
 }

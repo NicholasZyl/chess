@@ -4,19 +4,19 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Board\Exception;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Board\Exception\SquareIsVacant;
+use NicholasZyl\Chess\Domain\Board\Exception\IllegalMove;
 use PhpSpec\ObjectBehavior;
 
-class SquareIsVacantSpec extends ObjectBehavior
+class IllegalMoveSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith(Coordinates::fromString('A1'));
+        $this->beConstructedWith(Coordinates::fromString('A1'), Coordinates::fromString('H8'));
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(SquareIsVacant::class);
+        $this->shouldHaveType(IllegalMove::class);
     }
 
     function it_is_runtime_exception()
@@ -24,8 +24,9 @@ class SquareIsVacantSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(\RuntimeException::class);
     }
 
-    function it_describes_coordinates_of_vacant_square()
+    function it_specifies_which_move_is_illegal()
     {
         $this->getMessage()->shouldContain('a1');
+        $this->getMessage()->shouldContain('h8');
     }
 }

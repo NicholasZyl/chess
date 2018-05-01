@@ -72,4 +72,20 @@ class SquareSpec extends ObjectBehavior
 
         $this->hasPlacedPiece($piece)->shouldBe(true);
     }
+
+    function it_allows_to_check_its_coordinates()
+    {
+        $this->coordinates()->shouldBe($this->coordinates);
+    }
+
+    function it_allows_to_peek_what_piece_is_placed_on_it()
+    {
+        $piece = Piece::fromRankAndColor(
+            Piece\Rank::fromString('king'),
+            Color::white()
+        );
+        $this->place($piece);
+
+        $this->peek()->shouldBeLike($piece);
+    }
 }

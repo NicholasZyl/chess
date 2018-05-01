@@ -4,10 +4,16 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Rules;
 use NicholasZyl\Chess\Domain\Board\Square;
 
 final class Chessboard
 {
+    /**
+     * @var Rules
+     */
+    private $rules;
+
     /**
      * @var Square[]
      */
@@ -16,9 +22,13 @@ final class Chessboard
     /**
      * Chessboard constructor.
      * Initialise the full chessboard with all squares on it. Initially empty.
+     *
+     * @param Rules $rules
      */
-    public function __construct()
+    public function __construct(Rules $rules)
     {
+        $this->rules = $rules;
+
         foreach (range('a', 'h') as $file) {
             foreach (range(1, 8) as $rank) {
                 $coordinates = Coordinates::fromFileAndRank($file, $rank);
@@ -50,8 +60,24 @@ final class Chessboard
      */
     public function movePiece(Coordinates $source, Coordinates $destination): void
     {
-        $piece = $this->getSquareAt($source)->pick();
-        $this->getSquareAt($destination)->place($piece);
+        $from = $this->getSquareAt($source);
+        $to = $this->getSquareAt($destination);
+        $this->makeMove($from, $to);
+    }
+
+    /**
+     * Make a move from one square to another.
+     *
+     * @param Square $from
+     * @param Square $to
+     *
+     * @return void
+     */
+    private function makeMove(Square $from, Square $to): void
+    {
+        $this->rules->validateMove($from, $to);
+        $piece = $from->pick();
+        $to->place($piece);
     }
 
     /**

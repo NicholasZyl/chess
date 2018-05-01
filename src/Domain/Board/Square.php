@@ -40,20 +40,13 @@ final class Square
     }
 
     /**
-     * Pick piece from the square.
+     * Get square's coordinates.
      *
-     * @throws SquareIsVacant
-     * @return Piece
+     * @return Coordinates
      */
-    public function pick(): Piece
+    public function coordinates(): Coordinates
     {
-        if ($this->placedPiece === null) {
-            throw new SquareIsVacant($this->coordinates);
-        }
-        $piece = $this->placedPiece;
-        $this->placedPiece = null;
-
-        return $piece;
+        return $this->coordinates;
     }
 
     /**
@@ -76,5 +69,27 @@ final class Square
     public function hasPlacedPiece(Piece $piece): bool
     {
         return $this->placedPiece !== null && $this->placedPiece->isSameAs($piece);
+    }
+
+    /**
+     * Pick piece from the square.
+     *
+     * @throws SquareIsVacant
+     * @return Piece
+     */
+    public function pick(): Piece
+    {
+        $piece = $this->peek();
+        $this->placedPiece = null;
+
+        return $piece;
+    }
+
+    public function peek(): Piece
+    {
+        if ($this->placedPiece === null) {
+            throw new SquareIsVacant($this->coordinates);
+        }
+        return $this->placedPiece;
     }
 }

@@ -4,13 +4,22 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Board\Rules;
+use NicholasZyl\Chess\Domain\Board\Square;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class ChessboardSpec extends ObjectBehavior
 {
+    function let(Rules $rules)
+    {
+        $this->beConstructedWith($rules);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(Chessboard::class);
@@ -45,5 +54,22 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($piece, $coordinates);
 
         $this->hasPieceAtCoordinates($piece, $coordinates)->shouldBe(true);
+    }
+
+    function it_does_not_allow_move_that_is_illegal_according_to_given_rules(Rules $rules)
+    {
+        $source = Coordinates::fromString('B2');
+        $destination = Coordinates::fromString('C2');
+
+        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $this->placePieceAtCoordinates($piece, $source);
+
+        $from = Square::forCoordinates($source);
+        $from->place($piece);
+
+        $illegalMove = new IllegalMove($source, $destination);
+        $rules->validateMove(Argument::exact($from), Argument::exact(Square::forCoordinates($destination)))->willThrow($illegalMove);
+
+        $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
     }
 }

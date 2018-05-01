@@ -23,7 +23,7 @@ final class Coordinates
      */
     private function __construct(string $rank, int $file)
     {
-        $this->rank = $rank;
+        $this->rank = strtolower($rank);
         $this->file = $file;
     }
 
@@ -59,6 +59,6 @@ final class Coordinates
      */
     public function __toString(): string
     {
-        return strtoupper($this->rank) . $this->file;
+        return $this->rank . $this->file;
     }
 }

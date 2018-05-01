@@ -2,8 +2,9 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Tester\Exception\PendingException;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Board\Square;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
@@ -20,6 +21,11 @@ class ChessboardContext implements Context
     private $chessboard;
 
     /**
+     * @var \RuntimeException
+     */
+    private $caughtException;
+
+    /**
      * @Given there is a chessboard with :piece placed on :coordinates
      *
      * @param Piece $piece
@@ -27,7 +33,13 @@ class ChessboardContext implements Context
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        $this->chessboard = new Chessboard();
+        $this->chessboard = new Chessboard(new class implements \NicholasZyl\Chess\Domain\Board\Rules {
+
+            public function validateMove(Square $from, Square $to): void
+            {
+                // Naive implementation
+            }
+        });
         $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
     }
 
@@ -39,7 +51,11 @@ class ChessboardContext implements Context
      */
     public function iMovePieceFromSourceToDestination(Coordinates $source, Coordinates $destination)
     {
-        $this->chessboard->movePiece($source, $destination);
+        try {
+            $this->chessboard->movePiece($source, $destination);
+        } catch (\RuntimeException $exception) {
+            $this->caughtException = $exception;
+        }
     }
 
     /**
@@ -59,7 +75,7 @@ class ChessboardContext implements Context
      */
     public function theMoveIsIllegal()
     {
-        throw new PendingException();
+        expect($this->caughtException)->shouldBeAnInstanceOf(IllegalMove::class);
     }
 
     /**
