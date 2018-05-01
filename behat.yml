@@ -1,0 +1,7 @@
+default:
+  suites:
+    game_rules:
+      contexts:
+        - ChessboardContext
+  formatters:
+    pretty: true
