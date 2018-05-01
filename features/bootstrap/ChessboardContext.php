@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Rank;
-use NicholasZyl\Chess\Domain\Board\Square;
 
 /**
  * Defines application features from the specific context.
@@ -14,17 +15,18 @@ use NicholasZyl\Chess\Domain\Board\Square;
 class ChessboardContext implements Context
 {
     /**
-     * @Given there is a chessboard with :piece placed on :square
+     * @Given there is a chessboard with :piece placed on :coordinates
      */
-    public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Square $square)
+    public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        throw new PendingException();
+        $this->chessboard = new Chessboard();
+        $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
     }
 
     /**
      * @When I move piece from :source to :destination
      */
-    public function iMovePieceFromSourceToDestination(Square $source, Square $destination)
+    public function iMovePieceFromSourceToDestination(Coordinates $source, Coordinates $destination)
     {
         throw new PendingException();
     }
@@ -51,10 +53,10 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Transform :square
+     * @Transform :coordinates
      */
-    public function castToSquare(string $coordinates)
+    public function castToCoordinates(string $coordinates)
     {
-        return Square::forCoordinates($coordinates);
+        return Coordinates::fromString($coordinates);
     }
 }
