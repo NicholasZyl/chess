@@ -89,7 +89,7 @@ class LawsOfChess
         if (!array_key_exists((string) $piece->rank(), $this->movementRules)) {
             throw new MissingRule($piece->rank());
         }
-        $this->movementRules[(string) $piece->rank()]->validate($from->coordinates(), $to->coordinates());
+        $this->movementRules[(string) $piece->rank()]->validate($piece->color(), $from->coordinates(), $to->coordinates());
     }
 
     /**

@@ -55,4 +55,9 @@ class PieceSpec extends ObjectBehavior
     {
         $this->rank()->shouldBeLike(Rank::king());
     }
+
+    function it_has_color()
+    {
+        $this->color()->shouldBeLike(Color::white());
+    }
 }

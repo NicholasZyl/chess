@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Distance;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class DistanceSpec extends ObjectBehavior
@@ -50,5 +51,63 @@ class DistanceSpec extends ObjectBehavior
         $this->shouldBeVertical();
         $this->shouldNotBeHorizontal();
         $this->shouldNotBeDiagonal();
+    }
+
+    function it_knows_when_distance_is_horizontal()
+    {
+        $from = Coordinates::fromFileAndRank('d', 4);
+        $to = Coordinates::fromFileAndRank('1', 4);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->shouldNotBeVertical();
+        $this->shouldBeHorizontal();
+        $this->shouldNotBeDiagonal();
+    }
+
+    function it_knows_when_distance_is_diagonal()
+    {
+        $from = Coordinates::fromFileAndRank('a', 1);
+        $to = Coordinates::fromFileAndRank('f', 6);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->shouldNotBeVertical();
+        $this->shouldNotBeHorizontal();
+        $this->shouldBeDiagonal();
+    }
+
+    function it_knows_when_vertical_move_was_forward_for_whites()
+    {
+        $from = Coordinates::fromFileAndRank('a', 1);
+        $to = Coordinates::fromFileAndRank('a', 2);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->isForward(Color::white())->shouldBe(true);
+    }
+
+    function it_knows_when_vertical_move_was_backward_for_whites()
+    {
+        $from = Coordinates::fromFileAndRank('c', 5);
+        $to = Coordinates::fromFileAndRank('c', 4);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->isForward(Color::white())->shouldBe(false);
+    }
+
+    function it_knows_when_vertical_move_was_forward_for_blacks()
+    {
+        $from = Coordinates::fromFileAndRank('b', 3);
+        $to = Coordinates::fromFileAndRank('b', 1);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->isForward(Color::black())->shouldBe(true);
+    }
+
+    function it_knows_when_vertical_move_was_backward_for_blacks()
+    {
+        $from = Coordinates::fromFileAndRank('d', 6);
+        $to = Coordinates::fromFileAndRank('d', 7);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->isForward(Color::black())->shouldBe(false);
     }
 }

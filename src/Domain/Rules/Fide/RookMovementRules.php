@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\MovementRules;
 
@@ -21,7 +22,7 @@ final class RookMovementRules implements MovementRules
     /**
      * {@inheritdoc}
      */
-    public function validate(Coordinates $from, Coordinates $to): void
+    public function validate(Color $color, Coordinates $from, Coordinates $to): void
     {
         $distance = $from->distance($to);
         if (!$distance->isVertical() && !$distance->isHorizontal()) {

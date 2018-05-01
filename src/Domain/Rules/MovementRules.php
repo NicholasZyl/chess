@@ -3,7 +3,7 @@
 namespace NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 
 interface MovementRules
@@ -17,13 +17,13 @@ interface MovementRules
     public function forRank(): Rank;
 
     /**
-     * Check if proposed move from one coordinate to another is legal.
+     * Check if proposed move from one coordinate to another is legal for given color.
      *
+     * @param Color $color
      * @param Coordinates $from
      * @param Coordinates $to
      *
-     * @throws IllegalMove
      * @return void
      */
-    public function validate(Coordinates $from, Coordinates $to): void;
+    public function validate(Color $color, Coordinates $from, Coordinates $to): void;
 }

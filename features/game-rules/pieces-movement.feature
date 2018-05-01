@@ -69,6 +69,11 @@ Feature: Pieces movement
     Then the move is illegal
     And "White pawn" should still be placed on d4
 
+  Scenario: Black pawn's legal move
+    Given there is a chessboard with "Black pawn" placed on d4
+    When I move piece from d4 to d3
+    Then "Black pawn" should be placed on d3
+
   Scenario: Pawn's legal first move
     Given there is a chessboard with "White pawn" placed on b2
     When I move piece from b2 to b4

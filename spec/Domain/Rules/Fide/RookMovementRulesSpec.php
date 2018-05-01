@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\Fide\RookMovementRules;
 use NicholasZyl\Chess\Domain\Rules\MovementRules;
@@ -32,7 +33,7 @@ class RookMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('c7');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_vertically_backward()
@@ -40,7 +41,7 @@ class RookMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('c2');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_horizontally_queenside()
@@ -48,7 +49,7 @@ class RookMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('a3');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_horizontally_kingside()
@@ -56,7 +57,7 @@ class RookMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('d3');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_disallows_moving_diagonally()
@@ -64,7 +65,7 @@ class RookMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('d4');
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [$from, $to,]);
+        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::white(), $from, $to,]);
     }
 
     function it_disallows_moving_in_other_directions()
@@ -72,6 +73,6 @@ class RookMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('e4');
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [$from, $to,]);
+        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::black(), $from, $to,]);
     }
 }

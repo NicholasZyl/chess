@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\Fide\QueenMovementRules;
 use NicholasZyl\Chess\Domain\Rules\MovementRules;
@@ -32,7 +33,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('c8');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_squares_backward()
@@ -40,7 +41,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c6');
         $to = Coordinates::fromString('c1');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_squares_to_queenside()
@@ -48,7 +49,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c4');
         $to = Coordinates::fromString('c2');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_squares_to_kingside()
@@ -56,7 +57,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c4');
         $to = Coordinates::fromString('c7');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_diagonally_forward_kingside()
@@ -64,7 +65,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('d4');
         $to = Coordinates::fromString('f6');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_diagonally_forward_queenside()
@@ -72,7 +73,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('d4');
         $to = Coordinates::fromString('a7');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_diagonally_backward_kingside()
@@ -80,7 +81,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('d4');
         $to = Coordinates::fromString('e3');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_diagonally_backward_queenside()
@@ -88,7 +89,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('d4');
         $to = Coordinates::fromString('b2');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_disallows_moving_other_directions()
@@ -96,6 +97,6 @@ class QueenMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('d4');
         $to = Coordinates::fromString('c2');
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [$from, $to,]);
+        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::black(), $from, $to,]);
     }
 }

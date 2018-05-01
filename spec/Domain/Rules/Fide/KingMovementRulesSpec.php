@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\Fide\KingMovementRules;
 use NicholasZyl\Chess\Domain\Rules\MovementRules;
@@ -32,7 +33,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('c4');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_disallows_moving_more_than_one_rank()
@@ -40,7 +41,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('c5');
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [$from, $to,]);
+        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::white(), $from, $to,]);
     }
 
     function it_allows_moving_one_square_backward()
@@ -48,7 +49,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('c2');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_one_square_to_the_queenside()
@@ -56,7 +57,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('b3');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_one_square_to_the_kingside()
@@ -64,7 +65,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('d3');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_disallows_moving_more_than_one_file()
@@ -72,7 +73,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('e3');
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [$from, $to,]);
+        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::white(), $from, $to,]);
     }
 
     function it_allows_moving_one_square_diagonally_forward_queenside()
@@ -80,7 +81,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('b4');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_one_square_diagonally_forward_kingside()
@@ -88,7 +89,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('d4');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_allows_moving_one_square_diagonally_backward_queenside()
@@ -96,7 +97,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('b2');
 
-        $this->validate($from, $to);
+        $this->validate(Color::black(), $from, $to);
     }
 
     function it_allows_moving_one_square_diagonally_backward_kingside()
@@ -104,7 +105,7 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('d2');
 
-        $this->validate($from, $to);
+        $this->validate(Color::white(), $from, $to);
     }
 
     function it_disallows_moving_more_than_one_square_diagonally()
@@ -112,6 +113,6 @@ class KingMovementRulesSpec extends ObjectBehavior
         $from = Coordinates::fromString('c3');
         $to = Coordinates::fromString('a1');
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [$from, $to,]);
+        $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::black(), $from, $to,]);
     }
 }

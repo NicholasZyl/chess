@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Piece\Color;
+
 final class Distance
 {
     /**
@@ -38,8 +40,8 @@ final class Distance
     public static function calculate(Coordinates $from, Coordinates $to): Distance
     {
         return new Distance(
-            abs($to->rank() - $from->rank()),
-            abs(ord($to->file()) - ord($from->file()))
+            $to->rank() - $from->rank(),
+            ord($to->file()) - ord($from->file())
         );
     }
 
@@ -52,7 +54,7 @@ final class Distance
      */
     public function isHigherThan(int $distance)
     {
-        return $this->rankDistance > $distance || $this->fileDistance > $distance;
+        return abs($this->rankDistance) > $distance || abs($this->fileDistance) > $distance;
     }
 
     /**
@@ -82,6 +84,11 @@ final class Distance
      */
     public function isDiagonal(): bool
     {
-        return $this->fileDistance === $this->rankDistance;
+        return abs($this->fileDistance) === abs($this->rankDistance);
+    }
+
+    public function isForward(Color $color): bool
+    {
+        return $color->isSameAs(Color::white()) ? $this->rankDistance > 0 : $this->rankDistance < 0;
     }
 }

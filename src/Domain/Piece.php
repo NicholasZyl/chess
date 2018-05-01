@@ -64,4 +64,14 @@ class Piece
     {
         return $this->rank;
     }
+
+    /**
+     * Get piece's color.
+     *
+     * @return Color
+     */
+    public function color(): Color
+    {
+        return $this->color;
+    }
 }

@@ -66,7 +66,7 @@ class LawsOfChessSpec extends ObjectBehavior
         );
         $to = Square::forCoordinates(Coordinates::fromString('a2'));
 
-        $kingMovementRules->validate(Coordinates::fromString('a1'), Coordinates::fromString('a2'))->shouldBeCalled();
+        $kingMovementRules->validate(Piece\Color::white(), Coordinates::fromString('a1'), Coordinates::fromString('a2'))->shouldBeCalled();
 
         $this->validateMove($from, $to);
     }
