@@ -30,6 +30,6 @@ class Piece
 
     public function isSameAs(Piece $anotherPiece)
     {
-        return $this->color->isSameAs($anotherPiece->color);
+        return $this->color->isSameAs($anotherPiece->color) && $this->rank->isSameAs($anotherPiece->rank);
     }
 }

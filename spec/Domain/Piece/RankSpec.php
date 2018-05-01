@@ -5,7 +5,6 @@ namespace spec\NicholasZyl\Chess\Domain\Piece;
 
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class RankSpec extends ObjectBehavior
 {
@@ -13,5 +12,21 @@ class RankSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('fromString', ['king']);
         $this->shouldBeAnInstanceOf(Rank::class);
+    }
+
+    public function it_is_the_same_as_another_rank()
+    {
+        $this->beConstructedThrough('fromString', ['king']);
+        $anotherRank = Rank::fromString('king');
+
+        $this->isSameAs($anotherRank)->shouldBe(true);
+    }
+
+    public function it_is_different_if_has_different_rank()
+    {
+        $this->beConstructedThrough('fromString', ['king']);
+        $anotherRank = Rank::fromString('queen');
+
+        $this->isSameAs($anotherRank)->shouldBe(false);
     }
 }

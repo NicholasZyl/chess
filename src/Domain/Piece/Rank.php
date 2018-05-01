@@ -5,16 +5,23 @@ namespace NicholasZyl\Chess\Domain\Piece;
 
 final class Rank
 {
-    private function __construct()
+    /**
+     * @var string
+     */
+    private $rankName;
+
+    private function __construct(string $rankName)
     {
+        $this->rankName = $rankName;
     }
 
-    public static function fromString(string $rankName)
+    public static function fromString(string $rankName): Rank
     {
-        $rank = new Rank();
+        return new Rank($rankName);
+    }
 
-        // TODO: write logic here
-
-        return $rank;
+    public function isSameAs(Rank $anotherRank): bool
+    {
+        return $this->rankName === $anotherRank->rankName;
     }
 }
