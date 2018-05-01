@@ -37,7 +37,7 @@ final class Distance
      *
      * @return Distance
      */
-    public static function calculate(Coordinates $from, Coordinates $to): Distance
+    public static function between(Coordinates $from, Coordinates $to): Distance
     {
         return new Distance(
             $to->rank() - $from->rank(),

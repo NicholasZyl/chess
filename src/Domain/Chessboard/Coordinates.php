@@ -103,6 +103,6 @@ final class Coordinates
      */
     public function distance(Coordinates $anotherCoordinates): Distance
     {
-        return Distance::calculate($this, $anotherCoordinates);
+        return Distance::between($this, $anotherCoordinates);
     }
 }

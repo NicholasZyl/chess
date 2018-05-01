@@ -19,7 +19,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('a', 1);
         $to = Coordinates::fromFileAndRank('a', 1);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isHigherThan(0)->shouldBe(false);
     }
@@ -28,7 +28,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('a', 1);
         $to = Coordinates::fromFileAndRank('a', 3);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isHigherThan(1)->shouldBe(true);
     }
@@ -37,7 +37,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('c', 1);
         $to = Coordinates::fromFileAndRank('a', 1);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isHigherThan(1)->shouldBe(true);
     }
@@ -46,7 +46,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('a', 1);
         $to = Coordinates::fromFileAndRank('a', 3);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->shouldBeVertical();
         $this->shouldNotBeHorizontal();
@@ -57,7 +57,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('d', 4);
         $to = Coordinates::fromFileAndRank('1', 4);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->shouldNotBeVertical();
         $this->shouldBeHorizontal();
@@ -68,7 +68,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('a', 1);
         $to = Coordinates::fromFileAndRank('f', 6);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->shouldNotBeVertical();
         $this->shouldNotBeHorizontal();
@@ -79,7 +79,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('a', 1);
         $to = Coordinates::fromFileAndRank('a', 2);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isForward(Color::white())->shouldBe(true);
     }
@@ -88,7 +88,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('c', 5);
         $to = Coordinates::fromFileAndRank('c', 4);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isForward(Color::white())->shouldBe(false);
     }
@@ -97,7 +97,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('b', 3);
         $to = Coordinates::fromFileAndRank('b', 1);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isForward(Color::black())->shouldBe(true);
     }
@@ -106,7 +106,7 @@ class DistanceSpec extends ObjectBehavior
     {
         $from = Coordinates::fromFileAndRank('d', 6);
         $to = Coordinates::fromFileAndRank('d', 7);
-        $this->beConstructedThrough('calculate', [$from, $to,]);
+        $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->isForward(Color::black())->shouldBe(false);
     }

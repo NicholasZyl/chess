@@ -67,7 +67,7 @@ class CoordinatesSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['a', 1,]);
         $anotherCoordinate = Coordinates::fromFileAndRank('a', 1);
 
-        $this->distance($anotherCoordinate)->shouldBeLike(Distance::calculate($this->getWrappedObject(), $anotherCoordinate));
+        $this->distance($anotherCoordinate)->shouldBeLike(Distance::between($this->getWrappedObject(), $anotherCoordinate));
     }
 
     function it_knows_file_and_rank()
