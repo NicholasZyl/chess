@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 
-class Piece
+final class Piece
 {
     /**
      * @var Rank
