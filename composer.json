@@ -2,10 +2,6 @@
     "name": "nicholaszyl/chess",
     "description": "An exemplary application developed to demonstrate the DDD and BDD approaches in practice",
     "type": "project",
-    "require-dev": {
-        "behat/behat": "^3.4",
-        "phpspec/phpspec": "^4.3"
-    },
     "license": "MIT",
     "authors": [
         {
@@ -15,5 +11,14 @@
     ],
     "require": {
         "php": "^7.2"
+    },
+    "require-dev": {
+        "behat/behat": "^3.4",
+        "phpspec/phpspec": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "NicholasZyl\\Chess\\": "src/"
+        }
     }
 }
