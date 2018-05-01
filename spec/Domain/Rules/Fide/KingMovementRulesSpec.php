@@ -24,7 +24,7 @@ class KingMovementRulesSpec extends ObjectBehavior
 
     function it_is_for_king()
     {
-        $this->isFor()->shouldBeLike(Rank::king());
+        $this->forRank()->shouldBeLike(Rank::king());
     }
 
     function it_allows_moving_one_square_forward()

@@ -22,6 +22,6 @@ class PawnMovementRulesSpec extends ObjectBehavior
 
     function it_is_for_pawn()
     {
-        $this->isFor()->shouldBeLike(Rank::pawn());
+        $this->forRank()->shouldBeLike(Rank::pawn());
     }
 }

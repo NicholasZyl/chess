@@ -24,7 +24,7 @@ class QueenMovementRulesSpec extends ObjectBehavior
 
     function it_is_for_queen()
     {
-        $this->isFor()->shouldBeLike(Rank::queen());
+        $this->forRank()->shouldBeLike(Rank::queen());
     }
 
     function it_allows_moving_squares_forward()

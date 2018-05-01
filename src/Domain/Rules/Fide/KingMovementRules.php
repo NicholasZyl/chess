@@ -13,7 +13,7 @@ final class KingMovementRules implements MovementRules
     /**
      * {@inheritdoc}
      */
-    public function isFor(): Rank
+    public function forRank(): Rank
     {
         return Rank::king();
     }

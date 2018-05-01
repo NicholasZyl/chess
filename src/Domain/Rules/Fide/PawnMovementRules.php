@@ -12,7 +12,7 @@ final class PawnMovementRules implements MovementRules
     /**
      * {@inheritdoc}
      */
-    public function isFor(): Rank
+    public function forRank(): Rank
     {
         return Rank::pawn();
     }

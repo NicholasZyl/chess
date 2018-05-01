@@ -24,7 +24,7 @@ class BishopMovementRulesSpec extends ObjectBehavior
 
     function it_is_for_bishop()
     {
-        $this->isFor()->shouldBeLike(Rank::bishop());
+        $this->forRank()->shouldBeLike(Rank::bishop());
     }
 
     function it_allows_moving_diagonally_forward_kingside()

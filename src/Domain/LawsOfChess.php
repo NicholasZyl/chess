@@ -23,7 +23,7 @@ class LawsOfChess
     private $movementRules;
 
     /**
-     * Chess constructor.
+     * LawsOfChess constructor.
      *
      * @param Rank[] $allPossibleRanks
      * @param MovementRules[] $piecesMovementsRules
@@ -69,7 +69,7 @@ class LawsOfChess
      */
     private function addRankMovementRules(MovementRules $pieceMovementRules): void
     {
-        $this->movementRules[(string) $pieceMovementRules->isFor()] = $pieceMovementRules;
+        $this->movementRules[(string) $pieceMovementRules->forRank()] = $pieceMovementRules;
     }
     /**
      * Validate if proposed move is valid according to the game's rules.

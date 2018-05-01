@@ -23,7 +23,7 @@ class LawsOfChessSpec extends ObjectBehavior
 {
     function let(MovementRules $kingMovementRules)
     {
-        $kingMovementRules->isFor()->willReturn(Piece\Rank::king());
+        $kingMovementRules->forRank()->willReturn(Piece\Rank::king());
 
         $this->beConstructedWith(
             [

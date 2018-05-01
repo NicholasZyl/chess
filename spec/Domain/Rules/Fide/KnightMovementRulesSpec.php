@@ -24,7 +24,7 @@ class KnightMovementRulesSpec extends ObjectBehavior
 
     function it_is_for_knight()
     {
-        $this->isFor()->shouldBeLike(Rank::knight());
+        $this->forRank()->shouldBeLike(Rank::knight());
     }
 
     function it_allows_moving_to_the_nearest_coordinate_not_on_same_rank_file_or_diagonal_forwards_queenside()

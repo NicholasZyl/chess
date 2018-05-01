@@ -57,3 +57,19 @@ Feature: Pieces movement
     When I move piece from d4 to f6
     Then the move is illegal
     And "White knight" should still be placed on d4
+
+  Scenario: Pawn's legal move
+    Given there is a chessboard with "White pawn" placed on d4
+    When I move piece from d4 to d5
+    Then "White pawn" should be placed on d5
+
+  Scenario: Pawn's illegal move
+    Given there is a chessboard with "White pawn" placed on d4
+    When I move piece from d4 to d6
+    Then the move is illegal
+    And "White pawn" should still be placed on d4
+
+  Scenario: Pawn's legal first move
+    Given there is a chessboard with "White pawn" placed on b2
+    When I move piece from b2 to b4
+    Then "White pawn" should be placed on b4

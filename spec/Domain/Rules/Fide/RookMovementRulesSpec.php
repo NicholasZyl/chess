@@ -24,7 +24,7 @@ class RookMovementRulesSpec extends ObjectBehavior
 
     function it_is_for_rook()
     {
-        $this->isFor()->shouldBeLike(Rank::rook());
+        $this->forRank()->shouldBeLike(Rank::rook());
     }
 
     function it_allows_moving_vertically_forward()

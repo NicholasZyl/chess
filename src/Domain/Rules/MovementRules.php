@@ -14,7 +14,7 @@ interface MovementRules
      *
      * @return Rank
      */
-    public function isFor(): Rank;
+    public function forRank(): Rank;
 
     /**
      * Check if proposed move from one coordinate to another is legal.
