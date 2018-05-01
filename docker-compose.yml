@@ -16,6 +16,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
+      - ./docker/dev/.bashrc:/root/.bashrc
       - ./:/usr/src/chess
 
 networks:
