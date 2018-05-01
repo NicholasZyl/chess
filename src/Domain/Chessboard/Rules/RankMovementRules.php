@@ -6,7 +6,7 @@ use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 
-interface PieceMovementRules
+interface RankMovementRules
 {
 
     /**

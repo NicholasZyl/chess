@@ -6,20 +6,25 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Rules;
 use NicholasZyl\Chess\Domain\Chessboard\Rules\Chess;
-use NicholasZyl\Chess\Domain\Chessboard\Rules\PieceMovementRules;
+use NicholasZyl\Chess\Domain\Chessboard\Rules\Exception\IncompleteRules;
+use NicholasZyl\Chess\Domain\Chessboard\Rules\RankMovementRules;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Rank;
 use PhpSpec\ObjectBehavior;
 
 class ChessSpec extends ObjectBehavior
 {
-    function let(PieceMovementRules $pieceMovementRules)
+    function let(RankMovementRules $kingMovementRules)
     {
-        $pieceMovementRules->isFor()->shouldBeCalled()->willReturn(Piece\Rank::king());
+        $kingMovementRules->isFor()->shouldBeCalled()->willReturn(Piece\Rank::king());
 
         $this->beConstructedWith(
             [
-                $pieceMovementRules,
+                Piece\Rank::king(),
+            ],
+            [
+                $kingMovementRules,
             ]
         );
     }
@@ -34,7 +39,22 @@ class ChessSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rules::class);
     }
 
-    function it_validates_if_given_piece_move_is_legal(PieceMovementRules $pieceMovementRules)
+    function it_cannot_be_created_with_missing_ranks_movement_rules(RankMovementRules $kingMovementRules)
+    {
+        $this->beConstructedWith(
+            [
+                Piece\Rank::king(),
+                Piece\Rank::queen(),
+            ],
+            [
+                $kingMovementRules,
+            ]
+        );
+
+        $this->shouldThrow(new IncompleteRules([Rank::queen(),]))->duringInstantiation();
+    }
+
+    function it_validates_if_given_piece_move_is_legal(RankMovementRules $kingMovementRules)
     {
         $from = Square::forCoordinates(Coordinates::fromString('a1'));
         $from->place(
@@ -45,7 +65,7 @@ class ChessSpec extends ObjectBehavior
         );
         $to = Square::forCoordinates(Coordinates::fromString('a2'));
 
-        $pieceMovementRules->validate(Coordinates::fromString('a1'), Coordinates::fromString('a2'))->shouldBeCalled();
+        $kingMovementRules->validate(Coordinates::fromString('a1'), Coordinates::fromString('a2'))->shouldBeCalled();
 
         $this->validateMove($from, $to);
     }

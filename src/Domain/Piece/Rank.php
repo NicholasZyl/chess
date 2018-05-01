@@ -11,7 +11,7 @@ final class Rank
     private const RANK_ROOK = 'rook';
     private const RANK_QUEEN = 'queen';
     private const RANK_KING = 'king';
-    private const VALID_RANKS = [
+    public const AVAILABLE_RANKS = [
         self::RANK_PAWN,
         self::RANK_KNIGHT,
         self::RANK_BISHOP,
@@ -34,7 +34,7 @@ final class Rank
      */
     private function __construct(string $rankName)
     {
-        if (!in_array($rankName, self::VALID_RANKS, true)) {
+        if (!in_array($rankName, self::AVAILABLE_RANKS, true)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid piece rank.', $rankName));
         }
 

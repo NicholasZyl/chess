@@ -9,18 +9,35 @@ use NicholasZyl\Chess\Domain\Chessboard\Square;
 final class Chess implements Rules
 {
     /**
-     * @var PieceMovementRules[]
+     * @var RankMovementRules[]
      */
     private $piecesMovementsRules;
 
-    public function __construct(array $piecesMovementsRules)
+    /**
+     * Chess constructor.
+     *
+     * @param array $allPossibleRanks
+     * @param RankMovementRules[] $piecesMovementsRules
+     */
+    public function __construct(array $allPossibleRanks, array $piecesMovementsRules)
     {
         foreach ($piecesMovementsRules as $pieceMovementsRules) {
-            $this->addPieceMovementRules($pieceMovementsRules);
+            $this->addRankMovementRules($pieceMovementsRules);
+        }
+        $missingPiecesRules = array_diff($allPossibleRanks, array_keys($this->piecesMovementsRules));
+        if (!empty($missingPiecesRules)) {
+            throw new Rules\Exception\IncompleteRules($missingPiecesRules);
         }
     }
 
-    private function addPieceMovementRules(PieceMovementRules $pieceMovementRules): void
+    /**
+     * Add movement rules for rank.
+     *
+     * @param RankMovementRules $pieceMovementRules
+     *
+     * @return void
+     */
+    private function addRankMovementRules(RankMovementRules $pieceMovementRules): void
     {
         $this->piecesMovementsRules[(string) $pieceMovementRules->isFor()] = $pieceMovementRules;
     }
