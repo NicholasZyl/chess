@@ -23,17 +23,15 @@ final class Square
         $this->coordinates = $coordinates;
     }
 
-    public static function forCoordinates(Coordinates $coordinates)
+    public static function forCoordinates(Coordinates $coordinates): Square
     {
         return new Square($coordinates);
     }
 
     public function pick(): Piece
     {
-        if ($this->placedPiece === null) {
-            throw new SquareIsVacant($this->coordinates);
-        }
-        list($piece, $this->placedPiece) = [$this->placedPiece, null];
+        $piece = $this->getPlacedPiece();
+        $this->placedPiece = null;
 
         return $piece;
     }
@@ -41,5 +39,21 @@ final class Square
     public function place(Piece $piece): void
     {
         $this->placedPiece = $piece;
+    }
+
+    public function hasPlacedPiece(Piece $piece): bool
+    {
+        $placedPiece = $this->getPlacedPiece();
+
+        return $placedPiece->isSameAs($piece);
+    }
+
+    private function getPlacedPiece(): Piece
+    {
+        if ($this->placedPiece === null) {
+            throw new SquareIsVacant($this->coordinates);
+        }
+
+        return $this->placedPiece;
     }
 }

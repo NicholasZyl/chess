@@ -61,4 +61,15 @@ class SquareSpec extends ObjectBehavior
 
         $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
     }
+
+    public function it_allows_to_check_what_piece_is_placed_on_it()
+    {
+        $piece = Piece::fromRankAndColor(
+            Piece\Rank::fromString('king'),
+            Color::white()
+        );
+        $this->place($piece);
+
+        $this->hasPlacedPiece($piece)->shouldBe(true);
+    }
 }
