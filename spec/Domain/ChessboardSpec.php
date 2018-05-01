@@ -27,7 +27,7 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_allows_placing_piece_at_given_coordinates()
     {
-        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
         $coordinates = Coordinates::fromString('B2');
 
         $this->placePieceAtCoordinates($piece, $coordinates);
@@ -38,7 +38,7 @@ class ChessboardSpec extends ObjectBehavior
         $source = Coordinates::fromString('B2');
         $destination = Coordinates::fromString('C2');
 
-        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
         $this->placePieceAtCoordinates($piece, $source);
 
         $this->movePiece($source, $destination);
@@ -49,7 +49,7 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
     {
-        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
         $coordinates = Coordinates::fromString('B2');
         $this->placePieceAtCoordinates($piece, $coordinates);
 
@@ -61,7 +61,7 @@ class ChessboardSpec extends ObjectBehavior
         $source = Coordinates::fromString('B2');
         $destination = Coordinates::fromString('C2');
 
-        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
         $this->placePieceAtCoordinates($piece, $source);
 
         $from = Square::forCoordinates($source);

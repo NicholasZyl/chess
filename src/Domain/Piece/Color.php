@@ -21,6 +21,8 @@ final class Color
      * Color constructor.
      *
      * @param string $colorName
+     *
+     * @throws \InvalidArgumentException
      */
     private function __construct(string $colorName)
     {

@@ -15,7 +15,7 @@ class ChessSpec extends ObjectBehavior
 {
     function let(PieceMovementRules $pieceMovementRules)
     {
-        $pieceMovementRules->isFor()->shouldBeCalled()->willReturn(Piece\Rank::fromString('king'));
+        $pieceMovementRules->isFor()->shouldBeCalled()->willReturn(Piece\Rank::king());
 
         $this->beConstructedWith(
             [
@@ -39,7 +39,7 @@ class ChessSpec extends ObjectBehavior
         $from = Square::forCoordinates(Coordinates::fromString('a1'));
         $from->place(
             Piece::fromRankAndColor(
-                Piece\Rank::fromString('king'),
+                Piece\Rank::king(),
                 Piece\Color::white()
             )
         );

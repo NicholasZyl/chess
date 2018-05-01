@@ -20,14 +20,14 @@ class RankSpec extends ObjectBehavior
 
     function it_is_the_same_as_another_rank()
     {
-        $anotherRank = Rank::fromString('king');
+        $anotherRank = Rank::king();
 
         $this->isSameAs($anotherRank)->shouldBe(true);
     }
 
     function it_is_different_if_has_different_rank()
     {
-        $anotherRank = Rank::fromString('queen');
+        $anotherRank = Rank::queen();
 
         $this->isSameAs($anotherRank)->shouldBe(false);
     }
@@ -35,5 +35,12 @@ class RankSpec extends ObjectBehavior
     function it_has_string_representation()
     {
         $this->__toString()->shouldBe('king');
+    }
+
+    function it_cannot_be_created_for_unknown_rank()
+    {
+        $this->beConstructedThrough('fromString', ['Unknown']);
+
+        $this->shouldThrow(new \InvalidArgumentException('"unknown" is not a valid piece rank.'))->duringInstantiation();
     }
 }

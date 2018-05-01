@@ -29,7 +29,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_place_piece_on_it()
     {
         $piece = Piece::fromRankAndColor(
-            Piece\Rank::fromString('king'),
+            Piece\Rank::king(),
             Color::white()
         );
         $this->place($piece);
@@ -38,7 +38,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_pick_piece_placed_on_it()
     {
         $piece = Piece::fromRankAndColor(
-            Piece\Rank::fromString('king'),
+            Piece\Rank::king(),
             Color::white()
         );
         $this->place($piece);
@@ -53,7 +53,7 @@ class SquareSpec extends ObjectBehavior
     function it_is_vacant_after_piece_is_picked()
     {
         $piece = Piece::fromRankAndColor(
-            Piece\Rank::fromString('king'),
+            Piece\Rank::king(),
             Color::white()
         );
         $this->place($piece);
@@ -65,7 +65,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_check_what_piece_is_placed_on_it()
     {
         $piece = Piece::fromRankAndColor(
-            Piece\Rank::fromString('king'),
+            Piece\Rank::king(),
             Color::white()
         );
         $this->place($piece);
@@ -81,7 +81,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_peek_what_piece_is_placed_on_it()
     {
         $piece = Piece::fromRankAndColor(
-            Piece\Rank::fromString('king'),
+            Piece\Rank::king(),
             Color::white()
         );
         $this->place($piece);

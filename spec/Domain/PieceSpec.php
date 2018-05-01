@@ -15,7 +15,7 @@ class PieceSpec extends ObjectBehavior
         $this->beConstructedThrough(
             'fromRankAndColor',
             [
-                Rank::fromString('king'),
+                Rank::king(),
                 Color::white()
             ]
         );
@@ -24,7 +24,7 @@ class PieceSpec extends ObjectBehavior
     function it_knows_if_is_same_as_another_piece()
     {
         $anotherPiece = Piece::fromRankAndColor(
-            Rank::fromString('king'),
+            Rank::king(),
             Color::white()
         );
 
@@ -34,7 +34,7 @@ class PieceSpec extends ObjectBehavior
     function it_is_different_than_another_piece_if_has_another_color()
     {
         $anotherPiece = Piece::fromRankAndColor(
-            Rank::fromString('king'),
+            Rank::king(),
             Color::black()
         );
 
@@ -44,7 +44,7 @@ class PieceSpec extends ObjectBehavior
     function it_is_different_than_another_piece_if_has_another_rank()
     {
         $anotherPiece = Piece::fromRankAndColor(
-            Rank::fromString('queen'),
+            Rank::queen(),
             Color::white()
         );
 
@@ -53,6 +53,6 @@ class PieceSpec extends ObjectBehavior
 
     function it_has_rank()
     {
-        $this->rank()->shouldBeLike(Rank::fromString('king'));
+        $this->rank()->shouldBeLike(Rank::king());
     }
 }

@@ -5,6 +5,21 @@ namespace NicholasZyl\Chess\Domain\Piece;
 
 final class Rank
 {
+    private const RANK_PAWN = 'pawn';
+    private const RANK_KNIGHT = 'knight';
+    private const RANK_BISHOP = 'bishop';
+    private const RANK_ROOK = 'rook';
+    private const RANK_QUEEN = 'queen';
+    private const RANK_KING = 'king';
+    private const VALID_RANKS = [
+        self::RANK_PAWN,
+        self::RANK_KNIGHT,
+        self::RANK_BISHOP,
+        self::RANK_ROOK,
+        self::RANK_QUEEN,
+        self::RANK_KING,
+    ];
+
     /**
      * @var string
      */
@@ -14,9 +29,15 @@ final class Rank
      * Rank constructor.
      *
      * @param string $rankName
+     *
+     * @throws \InvalidArgumentException
      */
     private function __construct(string $rankName)
     {
+        if (!in_array($rankName, self::VALID_RANKS, true)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid piece rank.', $rankName));
+        }
+
         $this->rankName = $rankName;
     }
 
@@ -29,7 +50,67 @@ final class Rank
      */
     public static function fromString(string $rankName): Rank
     {
-        return new Rank($rankName);
+        return new Rank(strtolower($rankName));
+    }
+
+    /**
+     * Create rank for king.
+     *
+     * @return Rank
+     */
+    public static function king()
+    {
+        return new Rank(self::RANK_KING);
+    }
+
+    /**
+     * Create rank for queen.
+     *
+     * @return Rank
+     */
+    public static function queen()
+    {
+        return new Rank(self::RANK_QUEEN);
+    }
+
+    /**
+     * Create rank for rook.
+     *
+     * @return Rank
+     */
+    public static function rook()
+    {
+        return new Rank(self::RANK_ROOK);
+    }
+
+    /**
+     * Create rank for bishop.
+     *
+     * @return Rank
+     */
+    public static function bishop()
+    {
+        return new Rank(self::RANK_BISHOP);
+    }
+
+    /**
+     * Create rank for knight.
+     *
+     * @return Rank
+     */
+    public static function knight()
+    {
+        return new Rank(self::RANK_KNIGHT);
+    }
+
+    /**
+     * Create rank for pawn.
+     *
+     * @return Rank
+     */
+    public static function pawn()
+    {
+        return new Rank(self::RANK_PAWN);
     }
 
     /**
