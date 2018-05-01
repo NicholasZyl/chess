@@ -10,16 +10,35 @@ final class Rank
      */
     private $rankName;
 
+    /**
+     * Rank constructor.
+     *
+     * @param string $rankName
+     */
     private function __construct(string $rankName)
     {
         $this->rankName = $rankName;
     }
 
+    /**
+     * Create rank from a string.
+     *
+     * @param string $rankName
+     *
+     * @return Rank
+     */
     public static function fromString(string $rankName): Rank
     {
         return new Rank($rankName);
     }
 
+    /**
+     * Check if rank is same as another.
+     *
+     * @param Rank $anotherRank
+     *
+     * @return bool
+     */
     public function isSameAs(Rank $anotherRank): bool
     {
         return $this->rankName === $anotherRank->rankName;

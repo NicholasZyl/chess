@@ -17,6 +17,11 @@ final class Color
      */
     private $colorName;
 
+    /**
+     * Color constructor.
+     *
+     * @param string $colorName
+     */
     private function __construct(string $colorName)
     {
         if (!in_array($colorName, self::VALID_COLORS)) {
@@ -25,21 +30,45 @@ final class Color
         $this->colorName = $colorName;
     }
 
-    public static function black(): Color
-    {
-        return new Color(self::BLACK);
-    }
-
+    /**
+     * Create White color.
+     *
+     * @return Color
+     */
     public static function white(): Color
     {
         return new Color(self::WHITE);
     }
 
+    /**
+     * Create Black color.
+     *
+     * @return Color
+     */
+    public static function black(): Color
+    {
+        return new Color(self::BLACK);
+    }
+
+    /**
+     * Create color from string.
+     *
+     * @param string $colorName
+     *
+     * @return Color
+     */
     public static function fromString(string $colorName): Color
     {
         return new Color(ucfirst(strtolower($colorName)));
     }
 
+    /**
+     * Compare if color is the same as another one.
+     *
+     * @param Color $anotherColor
+     *
+     * @return bool
+     */
     public function isSameAs(Color $anotherColor): bool
     {
         return $this->colorName === $anotherColor->colorName;
