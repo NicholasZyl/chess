@@ -21,12 +21,12 @@ class SquareSpec extends ObjectBehavior
         $this->beConstructedThrough('forCoordinates', [$this->coordinates]);
     }
 
-    public function it_is_created_for_chessboard_coordinates()
+    function it_is_created_for_chessboard_coordinates()
     {
         $this->shouldHaveType(Square::class);
     }
 
-    public function it_allows_to_place_piece_on_it()
+    function it_allows_to_place_piece_on_it()
     {
         $piece = Piece::fromRankAndColor(
             Piece\Rank::fromString('king'),
@@ -35,7 +35,7 @@ class SquareSpec extends ObjectBehavior
         $this->place($piece);
     }
 
-    public function it_allows_to_pick_piece_placed_on_it()
+    function it_allows_to_pick_piece_placed_on_it()
     {
         $piece = Piece::fromRankAndColor(
             Piece\Rank::fromString('king'),
@@ -45,12 +45,12 @@ class SquareSpec extends ObjectBehavior
         $this->pick()->shouldBe($piece);
     }
 
-    public function it_does_not_allow_to_pick_a_piece_if_none_is_placed()
+    function it_does_not_allow_to_pick_a_piece_if_none_is_placed()
     {
         $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
     }
 
-    public function it_is_vacant_after_piece_is_picked()
+    function it_is_vacant_after_piece_is_picked()
     {
         $piece = Piece::fromRankAndColor(
             Piece\Rank::fromString('king'),
@@ -62,7 +62,7 @@ class SquareSpec extends ObjectBehavior
         $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
     }
 
-    public function it_allows_to_check_what_piece_is_placed_on_it()
+    function it_allows_to_check_what_piece_is_placed_on_it()
     {
         $piece = Piece::fromRankAndColor(
             Piece\Rank::fromString('king'),

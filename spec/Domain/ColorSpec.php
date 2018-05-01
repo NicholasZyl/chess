@@ -8,25 +8,25 @@ use PhpSpec\ObjectBehavior;
 
 class ColorSpec extends ObjectBehavior
 {
-    public function it_can_be_created_from_string()
+    function it_can_be_created_from_string()
     {
         $this->beConstructedThrough('fromString', ['white']);
         $this->shouldBeAnInstanceOf(Color::class);
     }
 
-    public function it_can_be_white()
+    function it_can_be_white()
     {
         $this->beConstructedThrough('white');
         $this->shouldBeAnInstanceOf(Color::class);
     }
 
-    public function it_can_be_black()
+    function it_can_be_black()
     {
         $this->beConstructedThrough('black');
         $this->shouldBeAnInstanceOf(Color::class);
     }
 
-    public function it_cannot_have_different_color()
+    function it_cannot_have_different_color()
     {
         $this->beConstructedThrough('fromString', ['blue']);
 
@@ -34,7 +34,7 @@ class ColorSpec extends ObjectBehavior
             ->duringInstantiation();
     }
 
-    public function it_is_the_same_as_second_color()
+    function it_is_the_same_as_second_color()
     {
         $this->beConstructedThrough('white');
         $anotherColor = Color::white();
@@ -42,7 +42,7 @@ class ColorSpec extends ObjectBehavior
         $this->isSameAs($anotherColor)->shouldBe(true);
     }
 
-    public function it_is_different_when_comparing_with_another_color()
+    function it_is_different_when_comparing_with_another_color()
     {
         $this->beConstructedThrough('white');
         $anotherColor = Color::black();

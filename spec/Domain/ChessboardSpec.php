@@ -16,7 +16,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->shouldHaveType(Chessboard::class);
     }
 
-    public function it_allows_placing_piece_at_given_coordinates()
+    function it_allows_placing_piece_at_given_coordinates()
     {
         $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
         $coordinates = Coordinates::fromString('B2');
@@ -24,7 +24,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($piece, $coordinates);
     }
 
-    public function it_allows_moving_piece_from_one_coordinate_to_another()
+    function it_allows_moving_piece_from_one_coordinate_to_another()
     {
         $source = Coordinates::fromString('B2');
         $destination = Coordinates::fromString('C2');
@@ -38,7 +38,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->hasPieceAtCoordinates($piece, $destination)->shouldBe(true);
     }
 
-    public function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
+    function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
     {
         $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
         $coordinates = Coordinates::fromString('B2');

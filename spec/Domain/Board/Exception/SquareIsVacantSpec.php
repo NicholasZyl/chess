@@ -19,12 +19,12 @@ class SquareIsVacantSpec extends ObjectBehavior
         $this->shouldHaveType(SquareIsVacant::class);
     }
 
-    public function it_is_runtime_exception()
+    function it_is_runtime_exception()
     {
         $this->shouldBeAnInstanceOf(\RuntimeException::class);
     }
 
-    public function it_describes_coordinates_of_vacant_square()
+    function it_describes_coordinates_of_vacant_square()
     {
         $this->getMessage()->shouldContain('A1');
     }

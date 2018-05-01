@@ -20,6 +20,9 @@ class ChessboardContext implements Context
 
     /**
      * @Given there is a chessboard with :piece placed on :coordinates
+     *
+     * @param Piece $piece
+     * @param Coordinates $coordinates
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
@@ -29,6 +32,9 @@ class ChessboardContext implements Context
 
     /**
      * @When I move piece from :source to :destination
+     *
+     * @param Coordinates $source
+     * @param Coordinates $destination
      */
     public function iMovePieceFromSourceToDestination(Coordinates $source, Coordinates $destination)
     {
@@ -37,6 +43,9 @@ class ChessboardContext implements Context
 
     /**
      * @Then :piece should be placed on :coordinates
+     *
+     * @param Piece $piece
+     * @param Coordinates $coordinates
      */
     public function pieceShouldBePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
@@ -45,6 +54,9 @@ class ChessboardContext implements Context
 
     /**
      * @Transform :piece
+     *
+     * @param string $pieceDescription
+     * @return Piece
      */
     public function castToPiece(string $pieceDescription)
     {
@@ -60,6 +72,9 @@ class ChessboardContext implements Context
      * @Transform :coordinates
      * @Transform :source
      * @Transform :destination
+     *
+     * @param string $coordinates
+     * @return Coordinates
      */
     public function castToCoordinates(string $coordinates)
     {

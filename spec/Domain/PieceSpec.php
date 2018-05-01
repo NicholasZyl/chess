@@ -10,7 +10,7 @@ use PhpSpec\ObjectBehavior;
 
 class PieceSpec extends ObjectBehavior
 {
-    public function it_generates_piece_from_rank_and_color()
+    function it_generates_piece_from_rank_and_color()
     {
         $this->beConstructedThrough(
             'fromRankAndColor',
@@ -22,7 +22,7 @@ class PieceSpec extends ObjectBehavior
         $this->shouldHaveType(Piece::class);
     }
 
-    public function it_knows_if_is_same_as_another_piece()
+    function it_knows_if_is_same_as_another_piece()
     {
         $this->beConstructedThrough(
             'fromRankAndColor',
@@ -40,7 +40,7 @@ class PieceSpec extends ObjectBehavior
         $this->isSameAs($anotherPiece)->shouldBe(true);
     }
 
-    public function it_is_different_than_another_piece_if_has_another_color()
+    function it_is_different_than_another_piece_if_has_another_color()
     {
         $this->beConstructedThrough(
             'fromRankAndColor',
@@ -58,7 +58,7 @@ class PieceSpec extends ObjectBehavior
         $this->isSameAs($anotherPiece)->shouldBe(false);
     }
 
-    public function it_is_different_than_another_piece_if_has_another_rank()
+    function it_is_different_than_another_piece_if_has_another_rank()
     {
         $this->beConstructedThrough(
             'fromRankAndColor',
