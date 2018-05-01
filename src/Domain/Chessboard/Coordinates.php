@@ -23,6 +23,12 @@ final class Coordinates
      */
     private function __construct(string $file, int $rank)
     {
+        if (!in_array($file, range('a', 'h'), true)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a proper file.', $file));
+        }
+        if (!in_array($rank, range(1, 8), true)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a proper rank.', $rank));
+        }
         $this->file = strtolower($file);
         $this->rank = $rank;
     }
@@ -35,7 +41,7 @@ final class Coordinates
      *
      * @return Coordinates
      */
-    public static function fromFileAndRank(string $file, int $rank)
+    public static function fromFileAndRank(string $file, int $rank): Coordinates
     {
         return new Coordinates($file, $rank);
     }
@@ -45,10 +51,16 @@ final class Coordinates
      *
      * @param string $coordinates
      *
+     * @throws \InvalidArgumentException
+     *
      * @return Coordinates
      */
-    public static function fromString(string $coordinates)
+    public static function fromString(string $coordinates): Coordinates
     {
+        if (!preg_match('/^[a-z]\d$/i', $coordinates)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a proper format for coordinates.', $coordinates));
+        }
+
         return new Coordinates($coordinates[0], intval($coordinates[1]));
     }
 

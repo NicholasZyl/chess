@@ -21,6 +21,41 @@ class CoordinatesSpec extends ObjectBehavior
         $this->shouldHaveType(Coordinates::class);
     }
 
+    function it_cannot_be_created_for_malformed_string()
+    {
+        $this->beConstructedThrough('fromString', ['wrong2']);
+        $this->shouldThrow(new \InvalidArgumentException('"wrong2" is not a proper format for coordinates.'))
+            ->duringInstantiation();
+    }
+
+    function it_cannot_be_created_for_too_small_file()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['Z', 1,]);
+        $this->shouldThrow(new \InvalidArgumentException('"Z" is not a proper file.'))
+            ->duringInstantiation();
+    }
+
+    function it_cannot_be_created_for_too_big_file()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['i', 1,]);
+        $this->shouldThrow(new \InvalidArgumentException('"i" is not a proper file.'))
+            ->duringInstantiation();
+    }
+
+    function it_cannot_be_created_for_too_small_rank()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 0,]);
+        $this->shouldThrow(new \InvalidArgumentException('"0" is not a proper rank.'))
+            ->duringInstantiation();
+    }
+
+    function it_cannot_be_created_for_too_big_rank()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 9,]);
+        $this->shouldThrow(new \InvalidArgumentException('"9" is not a proper rank.'))
+            ->duringInstantiation();
+    }
+
     function it_can_be_converted_to_string()
     {
         $this->beConstructedThrough('fromString', ['a1']);
