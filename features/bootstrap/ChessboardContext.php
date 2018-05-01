@@ -53,7 +53,7 @@ class ChessboardContext implements Context
             throw new \InvalidArgumentException(sprintf('Piece description "%s" is missing either rank or color'));
         }
 
-        return Piece::fromRankAndColor(Rank::fromString($pieceDescription[0]), Color::fromString($pieceDescription[1]));
+        return Piece::fromRankAndColor(Rank::fromString($pieceDescription[1]), Color::fromString($pieceDescription[0]));
     }
 
     /**
