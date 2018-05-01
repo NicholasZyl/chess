@@ -16,4 +16,9 @@ final class Chessboard
     {
         // TODO: write logic here
     }
+
+    public function hasPieceAtCoordinates($argument1, $argument2)
+    {
+        // TODO: write logic here
+    }
 }

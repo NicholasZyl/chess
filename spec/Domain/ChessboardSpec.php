@@ -30,4 +30,13 @@ class ChessboardSpec extends ObjectBehavior
         $destination = Coordinates::fromString('C2');
         $this->movePiece($source, $destination);
     }
+
+    public function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
+    {
+        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $coordinates = Coordinates::fromString('B2');
+        $this->placePieceAtCoordinates($piece, $coordinates);
+
+        $this->hasPieceAtCoordinates($piece, $coordinates)->shouldBe(true);
+    }
 }
