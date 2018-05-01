@@ -3,12 +3,20 @@ version: "3"
 services:
   app:
     build: ./
-    volumes:
-      - ./:/usr/src/chess
     networks:
       - default
     stdin_open: true
     tty: true
+
+  dev:
+    build: ./
+    command: composer install --no-interaction
+    networks:
+      - default
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/usr/src/chess
 
 networks:
   default:

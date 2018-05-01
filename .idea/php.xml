@@ -2,8 +2,8 @@
 <project version="4">
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter home="docker-compose://[$PROJECT_DIR$/docker-compose.yml]:app/php" id="afa297ef-abdd-48b7-b6ae-3e1d46630eff" name="app" debugger_id="php.debugger.XDebug">
-        <remote_data DOCKER_ACCOUNT_NAME="Docker" DOCKER_COMPOSE_SERVICE_NAME="app" DOCKER_REMOTE_PROJECT_PATH="/opt/project" INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true">
+      <interpreter home="docker-compose://[$PROJECT_DIR$/docker-compose.yml]:dev/php" id="afa297ef-abdd-48b7-b6ae-3e1d46630eff" name="dev" debugger_id="php.debugger.XDebug">
+        <remote_data DOCKER_ACCOUNT_NAME="Docker" DOCKER_COMPOSE_SERVICE_NAME="dev" DOCKER_REMOTE_PROJECT_PATH="/opt/project" INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true">
           <dockerComposeConfigurationPaths>
             <item value="$PROJECT_DIR$/docker-compose.yml" />
           </dockerComposeConfigurationPaths>
@@ -14,7 +14,7 @@
   </component>
   <component name="PhpInterpretersPhpInfoCache">
     <phpInfoCache>
-      <interpreter name="app">
+      <interpreter name="dev">
         <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="7.2.5">
           <additional_php_ini>/usr/local/etc/php/conf.d/docker-php-ext-sodium.ini</additional_php_ini>
           <configuration_file />
