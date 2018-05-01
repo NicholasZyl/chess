@@ -26,6 +26,14 @@ class ColorSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Color::class);
     }
 
+    public function it_cannot_have_different_color()
+    {
+        $this->beConstructedThrough('fromString', ['blue']);
+
+        $this->shouldThrow(new \InvalidArgumentException('"Blue" is not a valid color in the game of chess.'))
+            ->duringInstantiation();
+    }
+
     public function it_is_the_same_as_second_color()
     {
         $this->beConstructedThrough('white');
