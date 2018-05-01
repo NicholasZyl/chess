@@ -23,7 +23,7 @@ final class KingMovementRules implements MovementRules
      */
     public function validate(Coordinates $from, Coordinates $to): void
     {
-        if ($from->rankDistance($to) > 1 || $from->fileDistance($to) > 1) {
+        if ($from->distance($to)->isHigherThan(1)) {
             throw new IllegalMove($from, $to);
         }
     }

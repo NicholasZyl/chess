@@ -63,26 +63,34 @@ final class Coordinates
     }
 
     /**
-     * Calculate distance between ranks of two coordinates.
+     * Get coordinates file part.
      *
-     * @param Coordinates $anotherCoordinates
-     *
-     * @return int
+     * @return string
      */
-    public function rankDistance(Coordinates $anotherCoordinates): int
+    public function file(): string
     {
-        return abs($anotherCoordinates->rank - $this->rank);
+        return $this->file;
     }
 
     /**
-     * Calculate distance between files of two coordinates.
-     *
-     * @param Coordinates $anotherCoordinates
+     * Get coordinates rank part.
      *
      * @return int
      */
-    public function fileDistance(Coordinates $anotherCoordinates): int
+    public function rank(): int
     {
-        return abs(ord($anotherCoordinates->file) - ord($this->file));
+        return $this->rank;
+    }
+
+    /**
+     * Calculate distance to another coordinates.
+     *
+     * @param Coordinates $anotherCoordinates
+     *
+     * @return Distance
+     */
+    public function distance(Coordinates $anotherCoordinates): Distance
+    {
+        return Distance::calculate($this, $anotherCoordinates);
     }
 }
