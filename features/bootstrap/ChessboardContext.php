@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Tester\Exception\PendingException;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
@@ -37,11 +36,11 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Then :piece should be placed on :square
+     * @Then :piece should be placed on :coordinates
      */
-    public function pieceShouldBePlacedOnSquare()
+    public function pieceShouldBePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        throw new PendingException();
+        expect($this->chessboard->hasPieceAtCoordinates($piece, $coordinates))->shouldBe(true);
     }
 
     /**
