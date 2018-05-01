@@ -40,4 +40,15 @@ class DistanceSpec extends ObjectBehavior
 
         $this->isHigherThan(1)->shouldBe(true);
     }
+
+    function it_knows_when_distance_is_vertical()
+    {
+        $from = Coordinates::fromFileAndRank('a', 1);
+        $to = Coordinates::fromFileAndRank('a', 3);
+        $this->beConstructedThrough('calculate', [$from, $to,]);
+
+        $this->shouldBeVertical();
+        $this->shouldNotBeHorizontal();
+        $this->shouldNotBeDiagonal();
+    }
 }
