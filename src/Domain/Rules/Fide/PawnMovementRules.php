@@ -11,6 +11,11 @@ use NicholasZyl\Chess\Domain\Rules\MovementRules;
 
 final class PawnMovementRules implements MovementRules
 {
+    private const STANDARD_ALLOWED_DISTANCE = 1;
+    private const FIRST_MOVE_ALLOWED_DISTANCE = 2;
+    private const INITIAL_RANK_FOR_WHITES = 2;
+    private const INITIAL_RANK_FOR_BLACKS = 7;
+
     /**
      * {@inheritdoc}
      */
@@ -24,8 +29,11 @@ final class PawnMovementRules implements MovementRules
      */
     public function validate(Color $color, Coordinates $from, Coordinates $to): void
     {
+        $initialRank = $color->isSameAs(Color::white()) ? self::INITIAL_RANK_FOR_WHITES : self::INITIAL_RANK_FOR_BLACKS;
+        $allowedDistance = $from->rank() === $initialRank ? self::FIRST_MOVE_ALLOWED_DISTANCE : self::STANDARD_ALLOWED_DISTANCE;
+
         $distance = $from->distance($to);
-        if (!$distance->isVertical() || $distance->isHigherThan(1) || !$distance->isForward($color)) {
+        if (!$distance->isVertical() || $distance->isHigherThan($allowedDistance) || !$distance->isForward($color)) {
             throw new IllegalMove($from, $to);
         }
     }

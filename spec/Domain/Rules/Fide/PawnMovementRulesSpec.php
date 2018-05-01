@@ -91,4 +91,20 @@ class PawnMovementRulesSpec extends ObjectBehavior
 
         $this->shouldThrow(new IllegalMove($from, $to))->during('validate', [Color::black(), $from, $to,]);
     }
+
+    function it_allows_moving_two_squares_if_first_move_for_whites()
+    {
+        $from = Coordinates::fromString('c2');
+        $to = Coordinates::fromString('c4');
+
+        $this->validate(Color::white(), $from, $to);
+    }
+
+    function it_allows_moving_two_squares_if_first_move_for_blacks()
+    {
+        $from = Coordinates::fromString('f7');
+        $to = Coordinates::fromString('f5');
+
+        $this->validate(Color::black(), $from, $to);
+    }
 }
