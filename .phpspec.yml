@@ -1,0 +1,5 @@
+suites:
+    default:
+        namespace: NicholasZyl\Chess
+        psr4_prefix: NicholasZyl\Chess
+formatter.name: pretty
