@@ -3,11 +3,10 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Rank;
-use NicholasZyl\Chess\Domain\Color;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PieceSpec extends ObjectBehavior
 {
@@ -21,5 +20,23 @@ class PieceSpec extends ObjectBehavior
             ]
         );
         $this->shouldHaveType(Piece::class);
+    }
+
+    public function it_knows_if_is_same_as_another_piece()
+    {
+        $this->beConstructedThrough(
+            'fromRankAndColor',
+            [
+                Rank::fromString('king'),
+                Color::fromString('white')
+            ]
+        );
+
+        $anotherPiece = Piece::fromRankAndColor(
+            Rank::fromString('king'),
+            Color::fromString('white')
+        );
+
+        $this->isSameAs($anotherPiece)->shouldBe(true);
     }
 }

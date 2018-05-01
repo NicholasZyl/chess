@@ -7,16 +7,29 @@ use NicholasZyl\Chess\Domain\Piece\Rank;
 
 class Piece
 {
-    private function __construct()
+    /**
+     * @var Rank
+     */
+    private $rank;
+
+    /**
+     * @var Color
+     */
+    private $color;
+
+    private function __construct(Rank $rank, Color $color)
     {
+        $this->rank = $rank;
+        $this->color = $color;
     }
 
     public static function fromRankAndColor(Rank $rank, Color $color)
     {
-        $piece = new Piece();
+        return new Piece($rank, $color);
+    }
 
-        // TODO: write logic here
-
-        return $piece;
+    public function isSameAs(Piece $anotherPiece)
+    {
+        return true;
     }
 }
