@@ -52,8 +52,7 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Then :piece should be placed on :coordinates
-     * @Then :piece should still be placed on :coordinates
+     * @Then :piece should (still) be placed on :coordinates
      *
      * @param Piece $piece
      * @param Coordinates $coordinates
