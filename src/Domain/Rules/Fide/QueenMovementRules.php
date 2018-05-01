@@ -4,16 +4,13 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\MovementRules;
 
 final class QueenMovementRules implements MovementRules
 {
     /**
-     * For which rank given rule is.
-     *
-     * @return Rank
+     * {@inheritdoc}
      */
     public function isFor(): Rank
     {
@@ -21,13 +18,7 @@ final class QueenMovementRules implements MovementRules
     }
 
     /**
-     * Check if proposed move from one coordinate to another is legal.
-     *
-     * @param Coordinates $from
-     * @param Coordinates $to
-     *
-     * @throws IllegalMove
-     * @return void
+     * {@inheritdoc}
      */
     public function validate(Coordinates $from, Coordinates $to): void
     {
