@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Rank;
+use NicholasZyl\Chess\Domain\Color;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

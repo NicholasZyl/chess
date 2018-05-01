@@ -1,20 +1,22 @@
 <?php
 declare(strict_types=1);
 
+
+
 namespace NicholasZyl\Chess\Domain;
 
-class Piece
+final class Color
 {
     private function __construct()
     {
     }
 
-    public static function fromRankAndColor($argument1, $argument2)
+    public static function fromString($argument1)
     {
-        $piece = new Piece();
+        $color = new Color();
 
         // TODO: write logic here
 
-        return $piece;
+        return $color;
     }
 }
