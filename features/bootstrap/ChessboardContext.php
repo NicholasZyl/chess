@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
+use NicholasZyl\Chess\Domain\Piece;
 
 /**
  * Defines application features from the specific context.
