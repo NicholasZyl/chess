@@ -30,7 +30,8 @@ final class Chessboard
 
     public function movePiece(Coordinates $source, Coordinates $destination): void
     {
-        // TODO: write logic here
+        $piece = $this->getSquareAt($source)->pick();
+        $this->getSquareAt($destination)->place($piece);
     }
 
     public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool

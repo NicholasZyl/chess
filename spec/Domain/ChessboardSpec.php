@@ -28,6 +28,10 @@ class ChessboardSpec extends ObjectBehavior
     {
         $source = Coordinates::fromString('B2');
         $destination = Coordinates::fromString('C2');
+
+        $piece = Piece::fromRankAndColor(Piece\Rank::fromString('king'), Color::fromString('white'));
+        $this->placePieceAtCoordinates($piece, $source);
+
         $this->movePiece($source, $destination);
     }
 
