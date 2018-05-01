@@ -25,7 +25,7 @@ final class Chessboard
 
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
-        // TODO: write logic here
+        $this->getSquareAt($coordinates)->place($piece);
     }
 
     public function movePiece(Coordinates $source, Coordinates $destination): void
@@ -37,7 +37,7 @@ final class Chessboard
     {
         $square = $this->getSquareAt($coordinates);
 
-        return $piece->isSameAs($square->pickPiece());
+        return $piece->isSameAs($square->pick());
     }
 
     private function getSquareAt(Coordinates $coordinates): Square

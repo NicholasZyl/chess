@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Board;
 
-use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class Square
 {
+    /**
+     * @var Piece|null
+     */
+    private $placedPiece;
+
     private function __construct()
     {
     }
@@ -21,8 +25,13 @@ final class Square
         return $square;
     }
 
-    public function pickPiece(): Piece
+    public function pick(): Piece
     {
-        return Piece::fromRankAndColor(Piece\Rank::fromString('queen'), Color::black());
+        return $this->placedPiece;
+    }
+
+    public function place(Piece $piece): void
+    {
+        $this->placedPiece = $piece;
     }
 }
