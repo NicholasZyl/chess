@@ -32,4 +32,17 @@ class ChessboardContext implements Context
     {
         throw new PendingException();
     }
+
+    /**
+     * @Transform :piece
+     */
+    public function castToPiece(string $pieceDescription)
+    {
+        $pieceDescription = explode(' ', $pieceDescription);
+        if (count($pieceDescription) !== 2) {
+            throw new \InvalidArgumentException(sprintf('Piece description "%s" is missing either rank or color'));
+        }
+
+        return Piece::fromRankAndColor(Rank::fromString($pieceDescription[0]), Color::fromString($pieceDescription[1]));
+    }
 }
