@@ -14,18 +14,30 @@ class ColorSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Color::class);
     }
 
+    public function it_can_be_white()
+    {
+        $this->beConstructedThrough('white');
+        $this->shouldBeAnInstanceOf(Color::class);
+    }
+
+    public function it_can_be_black()
+    {
+        $this->beConstructedThrough('black');
+        $this->shouldBeAnInstanceOf(Color::class);
+    }
+
     public function it_is_the_same_as_second_color()
     {
-        $this->beConstructedThrough('fromString', ['white']);
-        $anotherColor = Color::fromString('white');
+        $this->beConstructedThrough('white');
+        $anotherColor = Color::white();
 
         $this->isSameAs($anotherColor)->shouldBe(true);
     }
 
     public function it_is_different_when_comparing_with_another_color()
     {
-        $this->beConstructedThrough('fromString', ['white']);
-        $anotherColor = Color::fromString('black');
+        $this->beConstructedThrough('white');
+        $anotherColor = Color::black();
 
         $this->isSameAs($anotherColor)->shouldBe(false);
     }
