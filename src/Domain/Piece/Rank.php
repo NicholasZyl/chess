@@ -43,4 +43,14 @@ final class Rank
     {
         return $this->rankName === $anotherRank->rankName;
     }
+
+    /**
+     * Represent rank as string.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->rankName;
+    }
 }

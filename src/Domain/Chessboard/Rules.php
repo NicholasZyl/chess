@@ -2,6 +2,8 @@
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+
 interface Rules
 {
 
@@ -11,6 +13,7 @@ interface Rules
      * @param Square $from
      * @param Square $to
      *
+     * @throws IllegalMove
      * @return void
      */
     public function validateMove(Square $from, Square $to): void;

@@ -54,4 +54,14 @@ class Piece
     {
         return $this->color->isSameAs($anotherPiece->color) && $this->rank->isSameAs($anotherPiece->rank);
     }
+
+    /**
+     * Get piece's rank.
+     *
+     * @return Rank
+     */
+    public function rank(): Rank
+    {
+        return $this->rank;
+    }
 }
