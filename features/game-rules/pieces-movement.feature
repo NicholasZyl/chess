@@ -24,3 +24,14 @@ Feature: Pieces movement
     When I move piece from d4 to g2
     Then the move is illegal
     And "White queen" should still be placed on d4
+
+  Scenario: Rook's legal move
+    Given there is a chessboard with "White rook" placed on d4
+    When I move piece from d4 to d8
+    Then "White rook" should be placed on d8
+
+  Scenario: Rook's illegal move
+    Given there is a chessboard with "White rook" placed on d4
+    When I move piece from d4 to e5
+    Then the move is illegal
+    And "White rook" should still be placed on d4
