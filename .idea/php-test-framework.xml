@@ -6,6 +6,14 @@
         <settings>
           <configurations>
             <configuration_by_sdk interpreter_id="afa297ef-abdd-48b7-b6ae-3e1d46630eff" executable_path="/usr/src/chess/vendor/bin/behat" use_configuration_file="true" />
+            <local_configuration executable_path="$PROJECT_DIR$/vendor/behat/behat/bin/behat" />
+          </configurations>
+        </settings>
+      </tool>
+      <tool tool_name="PHPSpec">
+        <settings>
+          <configurations>
+            <local_configuration executable_path="$PROJECT_DIR$/vendor/phpspec/phpspec/bin/phpspec" />
           </configurations>
         </settings>
       </tool>
