@@ -29,7 +29,7 @@ final class Coordinates
         if (!in_array($rank, range(1, 8), true)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a proper rank.', $rank));
         }
-        $this->file = strtolower($file);
+        $this->file = $file;
         $this->rank = $rank;
     }
 
@@ -61,7 +61,7 @@ final class Coordinates
             throw new \InvalidArgumentException(sprintf('"%s" is not a proper format for coordinates.', $coordinates));
         }
 
-        return new Coordinates($coordinates[0], intval($coordinates[1]));
+        return new Coordinates(strtolower($coordinates[0]), intval($coordinates[1]));
     }
 
     /**

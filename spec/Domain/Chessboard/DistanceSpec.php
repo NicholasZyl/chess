@@ -56,7 +56,7 @@ class DistanceSpec extends ObjectBehavior
     function it_knows_when_distance_is_horizontal()
     {
         $from = Coordinates::fromFileAndRank('d', 4);
-        $to = Coordinates::fromFileAndRank('1', 4);
+        $to = Coordinates::fromFileAndRank('a', 4);
         $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->shouldNotBeVertical();
