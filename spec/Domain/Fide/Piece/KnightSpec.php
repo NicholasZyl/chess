@@ -27,6 +27,13 @@ class KnightSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Piece::class);
     }
 
+    function it_is_same_as_another_knight_if_same_color()
+    {
+        $pawn = Knight::forColor(Piece\Color::white());
+
+        $this->isSameAs($pawn)->shouldBe(true);
+    }
+
     function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_forward_queenside()
     {
         $from = Coordinates::fromFileAndRank('c', 3);
