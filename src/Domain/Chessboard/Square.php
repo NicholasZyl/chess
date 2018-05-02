@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class Square

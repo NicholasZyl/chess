@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 
 final class SquareIsOccupied extends NotPermittedMove
 {

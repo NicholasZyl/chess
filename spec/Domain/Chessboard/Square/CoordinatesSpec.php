@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard;
+namespace spec\NicholasZyl\Chess\Domain\Chessboard\Square;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Distance;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use PhpSpec\ObjectBehavior;
 
 class CoordinatesSpec extends ObjectBehavior

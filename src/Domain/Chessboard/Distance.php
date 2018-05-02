@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Distance

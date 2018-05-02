@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 
 final class Chessboard
 {

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use NicholasZyl\Chess\Domain\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;

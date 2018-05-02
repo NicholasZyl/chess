@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use PhpSpec\ObjectBehavior;
 
 class SquareIsUnoccupiedSpec extends ObjectBehavior

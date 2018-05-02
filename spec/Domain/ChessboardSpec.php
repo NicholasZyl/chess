@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;

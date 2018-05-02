@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\MovementRules;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\Exception\IncompleteRules;
 use NicholasZyl\Chess\Domain\Rules\Exception\MissingRule;
@@ -16,7 +17,6 @@ use NicholasZyl\Chess\Domain\Rules\Fide\KnightMovementRules;
 use NicholasZyl\Chess\Domain\Rules\Fide\PawnMovementRules;
 use NicholasZyl\Chess\Domain\Rules\Fide\QueenMovementRules;
 use NicholasZyl\Chess\Domain\Rules\Fide\RookMovementRules;
-use NicholasZyl\Chess\Domain\Rules\MovementRules;
 use PhpSpec\ObjectBehavior;
 
 class LawsOfChessSpec extends ObjectBehavior

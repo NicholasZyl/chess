@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
+use NicholasZyl\Chess\Domain\Piece\MovementRules;
 use NicholasZyl\Chess\Domain\Piece\Rank;
 use NicholasZyl\Chess\Domain\Rules\Exception\IncompleteRules;
 use NicholasZyl\Chess\Domain\Rules\Exception\MissingRule;
@@ -14,7 +15,6 @@ use NicholasZyl\Chess\Domain\Rules\Fide\KnightMovementRules;
 use NicholasZyl\Chess\Domain\Rules\Fide\PawnMovementRules;
 use NicholasZyl\Chess\Domain\Rules\Fide\QueenMovementRules;
 use NicholasZyl\Chess\Domain\Rules\Fide\RookMovementRules;
-use NicholasZyl\Chess\Domain\Rules\MovementRules;
 
 class LawsOfChess
 {

@@ -1,10 +1,8 @@
 <?php
 
-namespace NicholasZyl\Chess\Domain\Rules;
+namespace NicholasZyl\Chess\Domain\Piece;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Piece\Rank;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 
 interface MovementRules
 {

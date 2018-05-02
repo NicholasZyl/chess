@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard;
+namespace NicholasZyl\Chess\Domain\Chessboard\Square;
+
+use NicholasZyl\Chess\Domain\Chessboard\Distance;
 
 final class Coordinates
 {

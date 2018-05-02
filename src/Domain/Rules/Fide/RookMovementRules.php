@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Rules\Fide;
 
-use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Piece\MovementRules;
 use NicholasZyl\Chess\Domain\Piece\Rank;
-use NicholasZyl\Chess\Domain\Rules\MovementRules;
 
 final class RookMovementRules implements MovementRules
 {
