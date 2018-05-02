@@ -85,3 +85,12 @@ Feature: Pieces movement
     When I move piece from b3 to d5
     Then the move is invalid
     And "White bishop" should still be placed on b3
+
+  Scenario: Piece cannot jump over other pieces
+    Given there is a chessboard
+    And "Black pawn" is placed on f7
+    And "White bishop" is placed on d5
+    When I move piece from d5 to g8
+    Then the move is invalid
+    And "White bishop" should still be placed on b3
+    And "Black pawn" should still be placed on f7

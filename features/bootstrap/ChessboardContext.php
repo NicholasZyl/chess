@@ -24,6 +24,25 @@ class ChessboardContext implements Context
     private $caughtException;
 
     /**
+     * @Given there is a chessboard
+     */
+    public function thereIsAChessboard()
+    {
+        $this->chessboard = new Chessboard(\NicholasZyl\Chess\Domain\LawsOfChess::fromFideHandbook());
+    }
+
+    /**
+     * @Given :piece is placed on :coordinates
+     *
+     * @param Piece $piece
+     * @param Coordinates $coordinates
+     */
+    public function pieceIsPlacedOnSquare(Piece $piece, Coordinates $coordinates)
+    {
+        $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
+    }
+
+    /**
      * @Given there is a chessboard with :piece placed on :coordinates
      *
      * @param Piece $piece
@@ -31,8 +50,8 @@ class ChessboardContext implements Context
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
     {
-        $this->chessboard = new Chessboard(\NicholasZyl\Chess\Domain\LawsOfChess::fromFideHandbook());
-        $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
+        $this->thereIsAChessboard();
+        $this->pieceIsPlacedOnSquare($piece, $coordinates);
     }
 
     /**
@@ -48,17 +67,6 @@ class ChessboardContext implements Context
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
         }
-    }
-
-    /**
-     * @Given :piece is placed on :coordinates
-     *
-     * @param Piece $piece
-     * @param Coordinates $coordinates
-     */
-    public function pieceIsPlacedOnSquare(Piece $piece, Coordinates $coordinates)
-    {
-        $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
     }
 
     /**
