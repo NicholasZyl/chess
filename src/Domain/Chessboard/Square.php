@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsNotVacant;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsVacant;
 use NicholasZyl\Chess\Domain\Piece;
 
@@ -32,6 +33,7 @@ final class Square
      * Create square for coordinates.
      *
      * @param Coordinates $coordinates
+     *
      * @return Square
      */
     public static function forCoordinates(Coordinates $coordinates): Square
@@ -53,9 +55,15 @@ final class Square
      * Place piece on the square.
      *
      * @param Piece $piece
+     *
+     * @throws SquareIsNotVacant
      */
     public function place(Piece $piece): void
     {
+        if ($this->placedPiece !== null) {
+            throw new SquareIsNotVacant($this->coordinates);
+        }
+
         $this->placedPiece = $piece;
     }
 
@@ -75,6 +83,7 @@ final class Square
      * Pick piece from the square.
      *
      * @throws SquareIsVacant
+     *
      * @return Piece
      */
     public function pick(): Piece
@@ -89,6 +98,7 @@ final class Square
      * Peek what piece is placed on the square.
      *
      * @throws SquareIsVacant
+     *
      * @return Piece
      */
     public function peek(): Piece
@@ -96,6 +106,7 @@ final class Square
         if ($this->placedPiece === null) {
             throw new SquareIsVacant($this->coordinates);
         }
+
         return $this->placedPiece;
     }
 }

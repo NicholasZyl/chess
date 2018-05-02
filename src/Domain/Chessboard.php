@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\InvalidMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 
 final class Chessboard
@@ -55,6 +56,8 @@ final class Chessboard
      * @param Coordinates $source
      * @param Coordinates $destination
      *
+     * @throws InvalidMove
+     *
      * @return void
      */
     public function movePiece(Coordinates $source, Coordinates $destination): void
@@ -70,13 +73,20 @@ final class Chessboard
      * @param Square $from
      * @param Square $to
      *
+     * @throws InvalidMove
+     *
      * @return void
      */
     private function makeMove(Square $from, Square $to): void
     {
         $this->laws->validateMove($from, $to);
         $piece = $from->pick();
-        $to->place($piece);
+        try {
+            $to->place($piece);
+        } catch (InvalidMove $invalidMove) {
+            $from->place($piece);
+            throw $invalidMove;
+        }
     }
 
     /**

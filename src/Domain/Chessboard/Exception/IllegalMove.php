@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 
-final class IllegalMove extends \RuntimeException
+final class IllegalMove extends InvalidMove
 {
     /**
      * IllegalMove constructor.

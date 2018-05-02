@@ -78,3 +78,10 @@ Feature: Pieces movement
     Given there is a chessboard with "White pawn" placed on b2
     When I move piece from b2 to b4
     Then "White pawn" should be placed on b4
+
+  Scenario: Moving to not vacant square is not possible
+    Given there is a chessboard with "White pawn" placed on d5
+    And "White bishop" is placed on b3
+    When I move piece from b3 to d5
+    Then the move is invalid
+    And "White bishop" should still be placed on b3

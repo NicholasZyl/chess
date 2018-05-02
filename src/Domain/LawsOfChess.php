@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
@@ -95,7 +96,7 @@ class LawsOfChess
     /**
      * List all movement rules.
      *
-     * @return array
+     * @return MovementRules[]
      */
     public function listMovementRules()
     {

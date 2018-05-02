@@ -72,4 +72,21 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
     }
+
+    function it_does_not_move_piece_to_square_with_another_piece_with_same_color_placed_on_it()
+    {
+        $source = Coordinates::fromString('B2');
+        $destination = Coordinates::fromString('C2');
+
+        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
+        $this->placePieceAtCoordinates($piece, $source);
+
+        $anotherPiece = Piece::fromRankAndColor(Piece\Rank::rook(), Color::white());
+        $this->placePieceAtCoordinates($anotherPiece, $destination);
+
+        $this->shouldThrow(new Chessboard\Exception\SquareIsNotVacant($destination))->during('movePiece', [$source, $destination,]);
+
+        $this->hasPieceAtCoordinates($piece, $source)->shouldBe(true);
+        $this->hasPieceAtCoordinates($anotherPiece, $destination)->shouldBe(true);
+    }
 }

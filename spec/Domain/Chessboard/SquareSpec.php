@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsNotVacant;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsVacant;
-use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -17,13 +17,8 @@ class SquareSpec extends ObjectBehavior
 
     function let()
     {
-        $this->coordinates = Coordinates::fromString('A1');
+        $this->coordinates = Coordinates::fromString('a1');
         $this->beConstructedThrough('forCoordinates', [$this->coordinates]);
-    }
-
-    function it_is_created_for_chessboard_coordinates()
-    {
-        $this->shouldHaveType(Square::class);
     }
 
     function it_allows_to_place_piece_on_it()
@@ -87,5 +82,21 @@ class SquareSpec extends ObjectBehavior
         $this->place($piece);
 
         $this->peek()->shouldBeLike($piece);
+    }
+
+    function it_disallows_placing_piece_on_square_occupied_with_same_color()
+    {
+        $piece = Piece::fromRankAndColor(
+            Piece\Rank::king(),
+            Color::white()
+        );
+        $this->place($piece);
+
+        $movingPiece = Piece::fromRankAndColor(
+            Piece\Rank::knight(),
+            Color::white()
+        );
+
+        $this->shouldThrow(new SquareIsNotVacant($this->coordinates))->during('place', [$movingPiece,]);
     }
 }

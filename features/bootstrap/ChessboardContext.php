@@ -4,7 +4,6 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\Rank;
@@ -52,6 +51,17 @@ class ChessboardContext implements Context
     }
 
     /**
+     * @Given :piece is placed on :coordinates
+     *
+     * @param Piece $piece
+     * @param Coordinates $coordinates
+     */
+    public function pieceIsPlacedOnSquare(Piece $piece, Coordinates $coordinates)
+    {
+        $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
+    }
+
+    /**
      * @Then :piece should (still) be placed on :coordinates
      *
      * @param Piece $piece
@@ -67,7 +77,15 @@ class ChessboardContext implements Context
      */
     public function theMoveIsIllegal()
     {
-        expect($this->caughtException)->shouldBeAnInstanceOf(IllegalMove::class);
+        expect($this->caughtException)->shouldBeAnInstanceOf(Chessboard\Exception\IllegalMove::class);
+    }
+
+    /**
+     * @Then the move is invalid
+     */
+    public function theMoveIsInvalid()
+    {
+        expect($this->caughtException)->shouldBeAnInstanceOf(Chessboard\Exception\InvalidMove::class);
     }
 
     /**
