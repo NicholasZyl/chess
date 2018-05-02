@@ -52,7 +52,7 @@ final class Piece
      */
     public function isSameAs(Piece $anotherPiece)
     {
-        return $this->color->isSameAs($anotherPiece->color) && $this->rank->isSameAs($anotherPiece->rank);
+        return $this->color->is($anotherPiece->color) && $this->rank->isSameAs($anotherPiece->rank);
     }
 
     /**

@@ -67,12 +67,12 @@ final class Color
     /**
      * Compare if color is the same as another one.
      *
-     * @param Color $anotherColor
+     * @param Color $color
      *
      * @return bool
      */
-    public function isSameAs(Color $anotherColor): bool
+    public function is(Color $color): bool
     {
-        return $this->colorName === $anotherColor->colorName;
+        return $this->colorName === $color->colorName;
     }
 }

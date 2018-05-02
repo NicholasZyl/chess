@@ -39,7 +39,7 @@ class ColorSpec extends ObjectBehavior
         $this->beConstructedThrough('white');
         $anotherColor = Color::white();
 
-        $this->isSameAs($anotherColor)->shouldBe(true);
+        $this->is($anotherColor)->shouldBe(true);
     }
 
     function it_is_different_when_comparing_with_another_color()
@@ -47,6 +47,6 @@ class ColorSpec extends ObjectBehavior
         $this->beConstructedThrough('white');
         $anotherColor = Color::black();
 
-        $this->isSameAs($anotherColor)->shouldBe(false);
+        $this->is($anotherColor)->shouldBe(false);
     }
 }

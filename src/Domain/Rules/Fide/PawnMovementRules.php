@@ -29,7 +29,7 @@ final class PawnMovementRules implements MovementRules
      */
     public function validate(Color $color, Coordinates $from, Coordinates $to): void
     {
-        $initialRank = $color->isSameAs(Color::white()) ? self::INITIAL_RANK_FOR_WHITES : self::INITIAL_RANK_FOR_BLACKS;
+        $initialRank = $color->is(Color::white()) ? self::INITIAL_RANK_FOR_WHITES : self::INITIAL_RANK_FOR_BLACKS;
         $allowedDistance = $from->rank() === $initialRank ? self::FIRST_MOVE_ALLOWED_DISTANCE : self::STANDARD_ALLOWED_DISTANCE;
 
         $distance = $from->distance($to);

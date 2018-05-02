@@ -89,6 +89,6 @@ final class Distance
 
     public function isForward(Color $color): bool
     {
-        return $color->isSameAs(Color::white()) ? $this->rankDistance > 0 : $this->rankDistance < 0;
+        return $color->is(Color::white()) ? $this->rankDistance > 0 : $this->rankDistance < 0;
     }
 }
