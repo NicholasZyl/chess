@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Distance;
+use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
-class DistanceSpec extends ObjectBehavior
+class MoveSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(Distance::class);
+        $this->shouldHaveType(Move::class);
     }
 
     function it_knows_when_both_rank_and_file_distance_is_equal_zero()

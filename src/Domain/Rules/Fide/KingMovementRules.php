@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\MovementRules;
@@ -24,7 +25,7 @@ final class KingMovementRules implements MovementRules
      */
     public function validate(Color $color, Coordinates $from, Coordinates $to): void
     {
-        if ($from->distance($to)->isHigherThan(1)) {
+        if (Move::between($from, $to)->isHigherThan(1)) {
             throw new IllegalMove($from, $to);
         }
     }

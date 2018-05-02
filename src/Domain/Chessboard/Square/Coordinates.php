@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard\Square;
 
-use NicholasZyl\Chess\Domain\Chessboard\Distance;
+use NicholasZyl\Chess\Domain\Chessboard\Move;
 
 final class Coordinates
 {
@@ -101,10 +101,10 @@ final class Coordinates
      *
      * @param Coordinates $anotherCoordinates
      *
-     * @return Distance
+     * @return Move
      */
-    public function distance(Coordinates $anotherCoordinates): Distance
+    public function distance(Coordinates $anotherCoordinates): Move
     {
-        return Distance::between($this, $anotherCoordinates);
+        return Move::between($this, $anotherCoordinates);
     }
 }

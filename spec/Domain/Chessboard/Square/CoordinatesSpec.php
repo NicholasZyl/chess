@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard\Square;
 
-use NicholasZyl\Chess\Domain\Chessboard\Distance;
+use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use PhpSpec\ObjectBehavior;
 
@@ -67,7 +67,7 @@ class CoordinatesSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['a', 1,]);
         $anotherCoordinate = Coordinates::fromFileAndRank('a', 1);
 
-        $this->distance($anotherCoordinate)->shouldBeLike(Distance::between($this->getWrappedObject(), $anotherCoordinate));
+        $this->distance($anotherCoordinate)->shouldBeLike(Move::between($this->getWrappedObject(), $anotherCoordinate));
     }
 
     function it_knows_file_and_rank()

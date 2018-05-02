@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
-final class Distance
+final class Move
 {
     /**
      * @var int
@@ -36,11 +36,11 @@ final class Distance
      * @param Coordinates $from
      * @param Coordinates $to
      *
-     * @return Distance
+     * @return Move
      */
-    public static function between(Coordinates $from, Coordinates $to): Distance
+    public static function between(Coordinates $from, Coordinates $to): Move
     {
-        return new Distance(
+        return new Move(
             $to->rank() - $from->rank(),
             ord($to->file()) - ord($from->file())
         );

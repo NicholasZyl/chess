@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\MovementRules;
@@ -32,7 +33,7 @@ final class PawnMovementRules implements MovementRules
         $initialRank = $color->is(Color::white()) ? self::INITIAL_RANK_FOR_WHITES : self::INITIAL_RANK_FOR_BLACKS;
         $allowedDistance = $from->rank() === $initialRank ? self::FIRST_MOVE_ALLOWED_DISTANCE : self::STANDARD_ALLOWED_DISTANCE;
 
-        $distance = $from->distance($to);
+        $distance = Move::between($from, $to);
         if (!$distance->isVertical() || $distance->isHigherThan($allowedDistance) || !$distance->isForward($color)) {
             throw new IllegalMove($from, $to);
         }

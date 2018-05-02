@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules\Fide;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\MovementRules;
@@ -24,7 +25,7 @@ final class BishopMovementRules implements MovementRules
      */
     public function validate(Color $color, Coordinates $from, Coordinates $to): void
     {
-        $distance = $from->distance($to);
+        $distance = Move::between($from, $to);
         if (!$distance->isDiagonal()) {
             throw new IllegalMove($from, $to);
         }
