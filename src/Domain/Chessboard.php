@@ -10,11 +10,6 @@ use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 final class Chessboard
 {
     /**
-     * @var LawsOfChess
-     */
-    private $laws;
-
-    /**
      * @var Square[]
      */
     private $squares = [];
@@ -22,13 +17,9 @@ final class Chessboard
     /**
      * Chessboard constructor.
      * Initialise the full chessboard with all squares on it. Initially empty.
-     *
-     * @param LawsOfChess $rules
      */
-    public function __construct(LawsOfChess $rules)
+    public function __construct()
     {
-        $this->laws = $rules;
-
         foreach (range('a', 'h') as $file) {
             foreach (range(1, 8) as $rank) {
                 $coordinates = Coordinates::fromFileAndRank($file, $rank);
@@ -64,24 +55,10 @@ final class Chessboard
     {
         $from = $this->getSquareAt($source);
         $to = $this->getSquareAt($destination);
-        $this->makeMove($from, $to);
-    }
-
-    /**
-     * Make a move from one square to another.
-     *
-     * @param Square $from
-     * @param Square $to
-     *
-     * @throws NotPermittedMove
-     *
-     * @return void
-     */
-    private function makeMove(Square $from, Square $to): void
-    {
-        $this->laws->validateMove($from, $to);
         $piece = $from->pick();
+
         try {
+            $piece->intentMove($source, $destination);
             $to->place($piece);
         } catch (NotPermittedMove $invalidMove) {
             $from->place($piece);

@@ -2,6 +2,9 @@ default:
   suites:
     game_rules:
       contexts:
-        - ChessboardContext
+        - ChessboardContext:
+          - '@chess_piece_factory'
+      services:
+        chess_piece_factory: Helper\PieceFactory
   formatters:
     pretty: true

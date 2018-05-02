@@ -6,8 +6,9 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
+use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class SquareSpec extends ObjectBehavior
@@ -23,19 +24,13 @@ class SquareSpec extends ObjectBehavior
 
     function it_allows_to_place_piece_on_it()
     {
-        $piece = Piece::fromRankAndColor(
-            Piece\Rank::king(),
-            Color::white()
-        );
+        $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
     }
 
     function it_allows_to_pick_piece_placed_on_it()
     {
-        $piece = Piece::fromRankAndColor(
-            Piece\Rank::king(),
-            Color::white()
-        );
+        $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
         $this->pick()->shouldBe($piece);
     }
@@ -47,10 +42,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_is_vacant_after_piece_is_picked()
     {
-        $piece = Piece::fromRankAndColor(
-            Piece\Rank::king(),
-            Color::white()
-        );
+        $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
         $this->pick();
 
@@ -59,10 +51,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_allows_to_check_what_piece_is_placed_on_it()
     {
-        $piece = Piece::fromRankAndColor(
-            Piece\Rank::king(),
-            Color::white()
-        );
+        $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
 
         $this->hasPlacedPiece($piece)->shouldBe(true);
@@ -75,10 +64,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_allows_to_peek_what_piece_is_placed_on_it()
     {
-        $piece = Piece::fromRankAndColor(
-            Piece\Rank::king(),
-            Color::white()
-        );
+        $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
 
         $this->peek()->shouldBeLike($piece);
@@ -86,16 +72,10 @@ class SquareSpec extends ObjectBehavior
 
     function it_disallows_placing_piece_on_square_occupied_with_same_color()
     {
-        $piece = Piece::fromRankAndColor(
-            Piece\Rank::king(),
-            Color::white()
-        );
+        $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
 
-        $movingPiece = Piece::fromRankAndColor(
-            Piece\Rank::knight(),
-            Color::white()
-        );
+        $movingPiece = Knight::forColor(Piece\Color::white());
 
         $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('place', [$movingPiece,]);
     }

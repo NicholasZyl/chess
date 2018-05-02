@@ -9,7 +9,10 @@ use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 
 final class Bishop extends Piece
 {
-    public function intentMove(Coordinates $from, Coordinates $to)
+    /**
+     * {@inheritdoc}
+     */
+    public function intentMove(Coordinates $from, Coordinates $to): Move
     {
         $move = Move::between($from, $to);
         if (!$move->isDiagonal()) {

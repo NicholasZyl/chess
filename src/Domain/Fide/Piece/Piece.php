@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Piece\Color;
 
-abstract class Piece extends \NicholasZyl\Chess\Domain\Piece
+abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
 {
     /**
      * @var Color

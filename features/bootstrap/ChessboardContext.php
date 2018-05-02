@@ -6,13 +6,17 @@ use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Piece\Rank;
 
 /**
  * Defines application features from the specific context.
  */
 class ChessboardContext implements Context
 {
+    /**
+     * @var \Helper\PieceFactory
+     */
+    private $pieceFactory;
+
     /**
      * @var Chessboard
      */
@@ -24,11 +28,20 @@ class ChessboardContext implements Context
     private $caughtException;
 
     /**
+     * ChessboardContext constructor.
+     * @param \Helper\PieceFactory $pieceFactory
+     */
+    public function __construct(\Helper\PieceFactory $pieceFactory)
+    {
+        $this->pieceFactory = $pieceFactory;
+    }
+
+    /**
      * @Given there is a chessboard
      */
     public function thereIsAChessboard()
     {
-        $this->chessboard = new Chessboard(\NicholasZyl\Chess\Domain\LawsOfChess::fromFideHandbook());
+        $this->chessboard = new Chessboard();
     }
 
     /**
@@ -109,7 +122,7 @@ class ChessboardContext implements Context
             throw new \InvalidArgumentException(sprintf('Piece description "%s" is missing either rank or color'));
         }
 
-        return Piece::fromRankAndColor(Rank::fromString($pieceDescription[1]), Color::fromString($pieceDescription[0]));
+        return $this->pieceFactory->createPieceNamedForColor($pieceDescription[1], Color::fromString($pieceDescription[0]));
     }
 
     /**

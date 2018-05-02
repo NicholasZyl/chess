@@ -9,9 +9,15 @@ use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 
 final class Pawn extends Piece
 {
+    /**
+     * @var bool
+     */
     private $firstMove = true;
 
-    public function intentMove(Coordinates $from, Coordinates $to)
+    /**
+     * {@inheritdoc}
+     */
+    public function intentMove(Coordinates $from, Coordinates $to): Move
     {
         $move = Move::between($from, $to);
         if (!$move->isForward($this->color()) || $move->isHigherThan($this->firstMove ? 2 : 1) || !$move->isVertical()) {

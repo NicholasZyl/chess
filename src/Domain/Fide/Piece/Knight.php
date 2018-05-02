@@ -9,7 +9,10 @@ use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 
 final class Knight extends Piece
 {
-    public function intentMove(Coordinates $from, Coordinates $to)
+    /**
+     * {@inheritdoc}
+     */
+    public function intentMove(Coordinates $from, Coordinates $to): Move
     {
         $move = Move::between($from, $to);
         if ($move->isVertical() || $move->isHorizontal() || $move->isDiagonal() || $move->isHigherThan(2)) {

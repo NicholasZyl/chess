@@ -5,21 +5,15 @@ namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
-use NicholasZyl\Chess\Domain\LawsOfChess;
+use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
+use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ChessboardSpec extends ObjectBehavior
 {
-    function let(LawsOfChess $rules)
-    {
-        $this->beConstructedWith($rules);
-    }
-
     function it_is_initializable()
     {
         $this->shouldHaveType(Chessboard::class);
@@ -27,18 +21,19 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_allows_placing_piece_at_given_coordinates()
     {
-        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
-        $coordinates = Coordinates::fromString('B2');
+        $piece = Pawn::forColor(Piece\Color::white());
+        $coordinates = Coordinates::fromFileAndRank('b', 2);
 
         $this->placePieceAtCoordinates($piece, $coordinates);
     }
 
     function it_allows_moving_piece_from_one_coordinate_to_another()
     {
-        $source = Coordinates::fromString('B2');
-        $destination = Coordinates::fromString('C2');
+        $piece = Pawn::forColor(Piece\Color::white());
 
-        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
+        $source = Coordinates::fromFileAndRank('b', 2);
+        $destination = Coordinates::fromFileAndRank('b', 3);
+
         $this->placePieceAtCoordinates($piece, $source);
 
         $this->movePiece($source, $destination);
@@ -49,39 +44,39 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
     {
-        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
-        $coordinates = Coordinates::fromString('B2');
+        $piece = Pawn::forColor(Piece\Color::white());
+
+        $coordinates = Coordinates::fromFileAndRank('b', 2);
         $this->placePieceAtCoordinates($piece, $coordinates);
 
         $this->hasPieceAtCoordinates($piece, $coordinates)->shouldBe(true);
     }
 
-    function it_does_not_allow_move_that_is_illegal_according_to_given_rules(LawsOfChess $rules)
+    function it_does_not_allow_move_that_is_illegal(Piece $piece)
     {
-        $source = Coordinates::fromString('B2');
-        $destination = Coordinates::fromString('C2');
+        $from = Coordinates::fromFileAndRank('b', 2);
+        $to = Coordinates::fromFileAndRank('c', 2);
 
-        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
-        $this->placePieceAtCoordinates($piece, $source);
+        $illegalMove = new IllegalMove($from, $to);
+        $piece->intentMove($from, $to)->willThrow($illegalMove);
+        $piece->isSameAs($piece)->willReturn(true);
+        $this->placePieceAtCoordinates($piece, $from);
 
-        $from = Square::forCoordinates($source);
-        $from->place($piece);
+        $this->shouldThrow($illegalMove)->during('movePiece', [$from, $to,]);
 
-        $illegalMove = new IllegalMove($source, $destination);
-        $rules->validateMove(Argument::exact($from), Argument::exact(Square::forCoordinates($destination)))->willThrow($illegalMove);
-
-        $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
+        $this->hasPieceAtCoordinates($piece, $from)->shouldBe(true);
+        $this->hasPieceAtCoordinates($piece, $to)->shouldBe(false);
     }
 
     function it_does_not_move_piece_to_square_with_another_piece_with_same_color_placed_on_it()
     {
-        $source = Coordinates::fromString('B2');
-        $destination = Coordinates::fromString('C2');
+        $piece = Queen::forColor(Piece\Color::white());
+        $anotherPiece = Knight::forColor(Piece\Color::white());
 
-        $piece = Piece::fromRankAndColor(Piece\Rank::king(), Color::white());
+        $source = Coordinates::fromFileAndRank('b', 2);
+        $destination = Coordinates::fromFileAndRank('c', 2);
+
         $this->placePieceAtCoordinates($piece, $source);
-
-        $anotherPiece = Piece::fromRankAndColor(Piece\Rank::rook(), Color::white());
         $this->placePieceAtCoordinates($anotherPiece, $destination);
 
         $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($destination))->during('movePiece', [$source, $destination,]);

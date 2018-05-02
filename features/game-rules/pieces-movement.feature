@@ -72,8 +72,9 @@ Feature: The moves of the pieces
     And white pawn should still be placed on d4
     And black pawn should still be placed on d5
 
-  Scenario: The pawn may not move more than one square forward
-    Given there is a chessboard with white pawn placed on d4
+  Scenario: The pawn may not move more than one square forward if not on first move
+    Given there is a chessboard with white pawn placed on d2
+    When I move piece from d2 to d4
     When I move piece from d4 to d6
     Then the move is illegal
     And white pawn should still be placed on d4

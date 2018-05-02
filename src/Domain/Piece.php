@@ -3,45 +3,18 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Chessboard\Move;
+use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Piece\Rank;
 
-class Piece
+interface Piece
 {
     /**
-     * @var Rank
-     */
-    private $rank;
-
-    /**
-     * @var Color
-     */
-    private $color;
-
-    /**
-     * Piece constructor.
+     * Get piece's color.
      *
-     * @param Rank $rank
-     * @param Color $color
+     * @return Color
      */
-    private function __construct(Rank $rank, Color $color)
-    {
-        $this->rank = $rank;
-        $this->color = $color;
-    }
-
-    /**
-     * Create a piece with given rank and color.
-     *
-     * @param Rank $rank
-     * @param Color $color
-     *
-     * @return Piece
-     */
-    public static function fromRankAndColor(Rank $rank, Color $color)
-    {
-        return new Piece($rank, $color);
-    }
+    public function color(): Color;
 
     /**
      * Compare if piece has the same rank and color as another one.
@@ -50,28 +23,15 @@ class Piece
      *
      * @return bool
      */
-    public function isSameAs(Piece $anotherPiece)
-    {
-        return $this->color->is($anotherPiece->color) && $this->rank->isSameAs($anotherPiece->rank);
-    }
+    public function isSameAs(Piece $anotherPiece): bool;
 
     /**
-     * Get piece's rank.
+     * Intent piece's move from one square to another, validating if it abide the rules.
      *
-     * @return Rank
-     */
-    public function rank(): Rank
-    {
-        return $this->rank;
-    }
-
-    /**
-     * Get piece's color.
+     * @param Coordinates $from
+     * @param Coordinates $to
      *
-     * @return Color
+     * @return Move
      */
-    public function color(): Color
-    {
-        return $this->color;
-    }
+    public function intentMove(Coordinates $from, Coordinates $to): Move;
 }
