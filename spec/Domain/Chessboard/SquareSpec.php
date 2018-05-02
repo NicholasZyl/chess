@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsNotVacant;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsVacant;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -42,7 +42,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_does_not_allow_to_pick_a_piece_if_none_is_placed()
     {
-        $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
+        $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('pick');
     }
 
     function it_is_vacant_after_piece_is_picked()
@@ -54,7 +54,7 @@ class SquareSpec extends ObjectBehavior
         $this->place($piece);
         $this->pick();
 
-        $this->shouldThrow(new SquareIsVacant($this->coordinates))->during('pick');
+        $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('pick');
     }
 
     function it_allows_to_check_what_piece_is_placed_on_it()
@@ -97,6 +97,6 @@ class SquareSpec extends ObjectBehavior
             Color::white()
         );
 
-        $this->shouldThrow(new SquareIsNotVacant($this->coordinates))->during('place', [$movingPiece,]);
+        $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('place', [$movingPiece,]);
     }
 }

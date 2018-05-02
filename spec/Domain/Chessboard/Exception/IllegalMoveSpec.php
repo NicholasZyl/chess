@@ -5,7 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\InvalidMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use PhpSpec\ObjectBehavior;
 
 class IllegalMoveSpec extends ObjectBehavior
@@ -22,7 +22,7 @@ class IllegalMoveSpec extends ObjectBehavior
 
     function it_is_invalid_move()
     {
-        $this->shouldBeAnInstanceOf(InvalidMove::class);
+        $this->shouldBeAnInstanceOf(NotPermittedMove::class);
     }
 
     function it_specifies_which_move_is_illegal()

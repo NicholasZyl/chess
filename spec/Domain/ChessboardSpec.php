@@ -84,7 +84,7 @@ class ChessboardSpec extends ObjectBehavior
         $anotherPiece = Piece::fromRankAndColor(Piece\Rank::rook(), Color::white());
         $this->placePieceAtCoordinates($anotherPiece, $destination);
 
-        $this->shouldThrow(new Chessboard\Exception\SquareIsNotVacant($destination))->during('movePiece', [$source, $destination,]);
+        $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($destination))->during('movePiece', [$source, $destination,]);
 
         $this->hasPieceAtCoordinates($piece, $source)->shouldBe(true);
         $this->hasPieceAtCoordinates($anotherPiece, $destination)->shouldBe(true);

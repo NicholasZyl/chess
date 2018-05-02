@@ -32,7 +32,7 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Given :piece is placed on :coordinates
+     * @Given /(?P<piece>[a-z]+ [a-z]+) is placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param Coordinates $coordinates
@@ -43,7 +43,7 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Given there is a chessboard with :piece placed on :coordinates
+     * @Given /there is a chessboard with (?P<piece>[a-z]+ [a-z]+) placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param Coordinates $coordinates
@@ -70,7 +70,7 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Then :piece should (still) be placed on :coordinates
+     * @Then /(?P<piece>[a-z]+ [a-z]+) should (still )?be placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param Coordinates $coordinates
@@ -89,11 +89,11 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Then the move is invalid
+     * @Then the move is not permitted
      */
-    public function theMoveIsInvalid()
+    public function theMoveIsNotPermitted()
     {
-        expect($this->caughtException)->shouldBeAnInstanceOf(Chessboard\Exception\InvalidMove::class);
+        expect($this->caughtException)->shouldBeAnInstanceOf(Chessboard\Exception\NotPermittedMove::class);
     }
 
     /**

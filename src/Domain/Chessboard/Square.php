@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsNotVacant;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsVacant;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class Square
@@ -56,12 +56,12 @@ final class Square
      *
      * @param Piece $piece
      *
-     * @throws SquareIsNotVacant
+     * @throws SquareIsOccupied
      */
     public function place(Piece $piece): void
     {
         if ($this->placedPiece !== null) {
-            throw new SquareIsNotVacant($this->coordinates);
+            throw new SquareIsOccupied($this->coordinates);
         }
 
         $this->placedPiece = $piece;
@@ -82,7 +82,7 @@ final class Square
     /**
      * Pick piece from the square.
      *
-     * @throws SquareIsVacant
+     * @throws SquareIsUnoccupied
      *
      * @return Piece
      */
@@ -97,14 +97,14 @@ final class Square
     /**
      * Peek what piece is placed on the square.
      *
-     * @throws SquareIsVacant
+     * @throws SquareIsUnoccupied
      *
      * @return Piece
      */
     public function peek(): Piece
     {
         if ($this->placedPiece === null) {
-            throw new SquareIsVacant($this->coordinates);
+            throw new SquareIsUnoccupied($this->coordinates);
         }
 
         return $this->placedPiece;

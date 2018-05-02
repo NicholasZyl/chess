@@ -5,15 +5,15 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
 
-final class SquareIsNotVacant extends InvalidMove
+final class SquareIsUnoccupied extends NotPermittedMove
 {
     /**
-     * SquareIsNotVacant constructor.
+     * SquareIsVacant constructor.
      *
      * @param Coordinates $coordinates
      */
     public function __construct(Coordinates $coordinates)
     {
-        parent::__construct(sprintf('Square at %s is not vacant.', $coordinates));
+        parent::__construct(sprintf('Square at %s is unoccupied.', $coordinates));
     }
 }

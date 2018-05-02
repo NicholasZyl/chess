@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard\Coordinates;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\InvalidMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 
 final class Chessboard
@@ -56,7 +56,7 @@ final class Chessboard
      * @param Coordinates $source
      * @param Coordinates $destination
      *
-     * @throws InvalidMove
+     * @throws NotPermittedMove
      *
      * @return void
      */
@@ -73,7 +73,7 @@ final class Chessboard
      * @param Square $from
      * @param Square $to
      *
-     * @throws InvalidMove
+     * @throws NotPermittedMove
      *
      * @return void
      */
@@ -83,7 +83,7 @@ final class Chessboard
         $piece = $from->pick();
         try {
             $to->place($piece);
-        } catch (InvalidMove $invalidMove) {
+        } catch (NotPermittedMove $invalidMove) {
             $from->place($piece);
             throw $invalidMove;
         }

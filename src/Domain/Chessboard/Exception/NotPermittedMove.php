@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
-abstract class InvalidMove extends \RuntimeException
+abstract class NotPermittedMove extends \RuntimeException
 {
     /**
      * InvalidMove constructor.
