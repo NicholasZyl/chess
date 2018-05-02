@@ -26,7 +26,7 @@ class BishopSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Piece::class);
     }
 
-    function it_is_same_as_another_knight_if_same_color()
+    function it_is_same_as_another_bishop_if_same_color()
     {
         $pawn = Bishop::forColor(Piece\Color::white());
 
@@ -73,7 +73,7 @@ class BishopSpec extends ObjectBehavior
         $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }
 
-    function it_disallows_moving_horizontally()
+    function it_cannot_move_along_same_file()
     {
         $from = Coordinates::fromFileAndRank('c', 3);
         $to = Coordinates::fromFileAndRank('c', 4);
@@ -81,7 +81,7 @@ class BishopSpec extends ObjectBehavior
         $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }
 
-    function it_disallows_moving_in_other_directions()
+    function it_cannot_move_to_other_square()
     {
         $from = Coordinates::fromFileAndRank('c', 3);
         $to = Coordinates::fromFileAndRank('e', 4);
