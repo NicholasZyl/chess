@@ -104,7 +104,7 @@ final class Move
     }
 
     /**
-     * Checks if move is made forward for given color.
+     * Checks if move is made towards the opposite side for given color.
      *
      * @param Color $color
      *
@@ -119,6 +119,10 @@ final class Move
 
     public function steps(): array
     {
-        // TODO: write logic here
+        $steps = [];
+        $steps[] = $this->from;
+        $steps[] = $this->to;
+
+        return $steps;
     }
 }

@@ -79,4 +79,17 @@ class SquareSpec extends ObjectBehavior
 
         $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('place', [$movingPiece,]);
     }
+
+    function it_can_be_verified_as_unoccupied()
+    {
+        $this->verifyThatUnoccupied();
+    }
+
+    function it_can_not_be_verified_as_unoccupied_when_piece_is_placed()
+    {
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->place($piece);
+
+        $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('verifyThatUnoccupied');
+    }
 }

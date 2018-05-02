@@ -5,7 +5,8 @@ namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
@@ -22,7 +23,7 @@ class ChessboardSpec extends ObjectBehavior
     function it_allows_placing_piece_at_given_coordinates()
     {
         $piece = Pawn::forColor(Piece\Color::white());
-        $coordinates = Coordinates::fromFileAndRank('b', 2);
+        $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
         $this->placePieceAtCoordinates($piece, $coordinates);
     }
@@ -31,8 +32,8 @@ class ChessboardSpec extends ObjectBehavior
     {
         $piece = Pawn::forColor(Piece\Color::white());
 
-        $source = Coordinates::fromFileAndRank('b', 2);
-        $destination = Coordinates::fromFileAndRank('b', 3);
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
 
         $this->placePieceAtCoordinates($piece, $source);
 
@@ -46,7 +47,7 @@ class ChessboardSpec extends ObjectBehavior
     {
         $piece = Pawn::forColor(Piece\Color::white());
 
-        $coordinates = Coordinates::fromFileAndRank('b', 2);
+        $coordinates = CoordinatePair::fromFileAndRank('b', 2);
         $this->placePieceAtCoordinates($piece, $coordinates);
 
         $this->hasPieceAtCoordinates($piece, $coordinates)->shouldBe(true);
@@ -54,8 +55,8 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_does_not_allow_move_that_is_illegal(Piece $piece)
     {
-        $from = Coordinates::fromFileAndRank('b', 2);
-        $to = Coordinates::fromFileAndRank('c', 2);
+        $from = CoordinatePair::fromFileAndRank('b', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 2);
 
         $illegalMove = new IllegalMove($from, $to);
         $piece->intentMove($from, $to)->willThrow($illegalMove);
@@ -73,8 +74,8 @@ class ChessboardSpec extends ObjectBehavior
         $piece = Queen::forColor(Piece\Color::white());
         $anotherPiece = Knight::forColor(Piece\Color::white());
 
-        $source = Coordinates::fromFileAndRank('b', 2);
-        $destination = Coordinates::fromFileAndRank('c', 2);
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('c', 2);
 
         $this->placePieceAtCoordinates($piece, $source);
         $this->placePieceAtCoordinates($anotherPiece, $destination);
@@ -83,5 +84,23 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->hasPieceAtCoordinates($piece, $source)->shouldBe(true);
         $this->hasPieceAtCoordinates($anotherPiece, $destination)->shouldBe(true);
+    }
+
+    function it_does_not_allow_to_move_piece_over_other_pieces()
+    {
+        $bishop = Bishop::forColor(Piece\Color::white());
+        $bishopInitialPosition = CoordinatePair::fromFileAndRank('c', 1);
+
+        $pawn = Pawn::forColor(Piece\Color::white());
+        $pawnPosition = CoordinatePair::fromFileAndRank('d', 2);
+
+        $destination = CoordinatePair::fromFileAndRank('e', 3);
+
+        $this->placePieceAtCoordinates($bishop, $bishopInitialPosition);
+        $this->placePieceAtCoordinates($pawn, $pawnPosition);
+
+        $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($pawnPosition))->during('movePiece', [$bishopInitialPosition, $destination]);
+
+        $this->hasPieceAtCoordinates($bishop, $bishopInitialPosition)->shouldBe(true);
     }
 }

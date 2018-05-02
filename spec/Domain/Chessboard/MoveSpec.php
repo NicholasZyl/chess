@@ -128,4 +128,13 @@ class MoveSpec extends ObjectBehavior
 
         $this->isForward(Color::black())->shouldBe(false);
     }
+
+    function it_knows_steps_needed_to_make_move()
+    {
+        $from = CoordinatePair::fromFileAndRank('d', 6);
+        $to = CoordinatePair::fromFileAndRank('d', 7);
+        $this->beConstructedThrough('between', [$from, $to,]);
+
+        $this->steps()->shouldBeLike([$from, $to,]);
+    }
 }

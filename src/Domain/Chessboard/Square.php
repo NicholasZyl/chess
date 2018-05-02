@@ -61,9 +61,7 @@ final class Square
      */
     public function place(Piece $piece): void
     {
-        if ($this->placedPiece !== null) {
-            throw new SquareIsOccupied($this->coordinates);
-        }
+        $this->verifyThatUnoccupied();
 
         $this->placedPiece = $piece;
     }
@@ -109,5 +107,19 @@ final class Square
         }
 
         return $this->placedPiece;
+    }
+
+    /**
+     * Verify that square is unoccupied by any piece.
+     *
+     * @throws SquareIsOccupied
+     *
+     * @return void
+     */
+    public function verifyThatUnoccupied(): void
+    {
+        if ($this->placedPiece !== null) {
+            throw new SquareIsOccupied($this->coordinates);
+        }
     }
 }
