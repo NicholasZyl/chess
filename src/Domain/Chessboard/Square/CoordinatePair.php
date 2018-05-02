@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard\Square;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move;
-
-final class Coordinates
+final class CoordinatePair
 {
     /**
      * @var string
@@ -41,11 +39,11 @@ final class Coordinates
      * @param string $file
      * @param int $rank
      *
-     * @return Coordinates
+     * @return CoordinatePair
      */
-    public static function fromFileAndRank(string $file, int $rank): Coordinates
+    public static function fromFileAndRank(string $file, int $rank): CoordinatePair
     {
-        return new Coordinates($file, $rank);
+        return new CoordinatePair($file, $rank);
     }
 
     /**
@@ -55,15 +53,15 @@ final class Coordinates
      *
      * @throws \InvalidArgumentException
      *
-     * @return Coordinates
+     * @return CoordinatePair
      */
-    public static function fromString(string $coordinates): Coordinates
+    public static function fromString(string $coordinates): CoordinatePair
     {
         if (!preg_match('/^[a-z]\d$/i', $coordinates)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a proper format for coordinates.', $coordinates));
         }
 
-        return new Coordinates(strtolower($coordinates[0]), intval($coordinates[1]));
+        return new CoordinatePair(strtolower($coordinates[0]), intval($coordinates[1]));
     }
 
     /**
@@ -97,14 +95,34 @@ final class Coordinates
     }
 
     /**
-     * Calculate distance to another coordinates.
+     * Compare if is the same as other pair.
      *
-     * @param Coordinates $anotherCoordinates
+     * @param CoordinatePair $other
      *
-     * @return Move
+     * @return bool
      */
-    public function distance(Coordinates $anotherCoordinates): Move
+    public function equals(CoordinatePair $other): bool
     {
-        return Move::between($this, $anotherCoordinates);
+        return $this->file === $other->file && $this->rank === $other->rank;
+    }
+
+    public function isOnSameFile(CoordinatePair $other): bool
+    {
+        return $this->file === $other->file;
+    }
+
+    public function isOnSameRank(CoordinatePair $other): bool
+    {
+        return $this->rank === $other->rank;
+    }
+
+    public function isOnSameDiagonal(CoordinatePair $other): bool
+    {
+        return abs($this->rank - $other->rank) === abs(ord($this->file) - ord($other->file));
+    }
+
+    public function hasHigherRankThan(CoordinatePair $other): bool
+    {
+        return $this->rank > $other->rank;
     }
 }

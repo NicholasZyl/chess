@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -35,48 +35,48 @@ class RookSpec extends ObjectBehavior
 
     function it_can_move_to_any_square_along_rank_forward()
     {
-        $from = Coordinates::fromFileAndRank('c', 3);
-        $to = Coordinates::fromFileAndRank('f', 3);
+        $from = CoordinatePair::fromFileAndRank('c', 3);
+        $to = CoordinatePair::fromFileAndRank('f', 3);
 
         $this->intentMove($from, $to);
     }
 
     function it_can_move_to_any_square_along_rank_backward()
     {
-        $from = Coordinates::fromFileAndRank('d', 3);
-        $to = Coordinates::fromFileAndRank('c', 3);
+        $from = CoordinatePair::fromFileAndRank('d', 3);
+        $to = CoordinatePair::fromFileAndRank('c', 3);
 
         $this->intentMove($from, $to);
     }
 
     function it_can_move_to_any_square_along_file_queenside()
     {
-        $from = Coordinates::fromFileAndRank('f', 3);
-        $to = Coordinates::fromFileAndRank('f', 2);
+        $from = CoordinatePair::fromFileAndRank('f', 3);
+        $to = CoordinatePair::fromFileAndRank('f', 2);
 
         $this->intentMove($from, $to);
     }
 
     function it_can_move_to_any_square_along_file_kingside()
     {
-        $from = Coordinates::fromFileAndRank('d', 3);
-        $to = Coordinates::fromFileAndRank('d', 6);
+        $from = CoordinatePair::fromFileAndRank('d', 3);
+        $to = CoordinatePair::fromFileAndRank('d', 6);
 
         $this->intentMove($from, $to);
     }
 
     function it_cannot_move_along_diagonal()
     {
-        $from = Coordinates::fromFileAndRank('c', 3);
-        $to = Coordinates::fromFileAndRank('d', 4);
+        $from = CoordinatePair::fromFileAndRank('c', 3);
+        $to = CoordinatePair::fromFileAndRank('d', 4);
 
         $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }
 
     function it_cannot_move_to_other_square()
     {
-        $from = Coordinates::fromFileAndRank('c', 3);
-        $to = Coordinates::fromFileAndRank('g', 4);
+        $from = CoordinatePair::fromFileAndRank('c', 3);
+        $to = CoordinatePair::fromFileAndRank('g', 4);
 
         $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }

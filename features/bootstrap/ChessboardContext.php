@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use NicholasZyl\Chess\Domain\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -48,9 +48,9 @@ class ChessboardContext implements Context
      * @Given /(?P<piece>[a-z]+ [a-z]+) is placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
-     * @param Coordinates $coordinates
+     * @param CoordinatePair $coordinates
      */
-    public function pieceIsPlacedOnSquare(Piece $piece, Coordinates $coordinates)
+    public function pieceIsPlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
         $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
     }
@@ -59,9 +59,9 @@ class ChessboardContext implements Context
      * @Given /there is a chessboard with (?P<piece>[a-z]+ [a-z]+) placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
-     * @param Coordinates $coordinates
+     * @param CoordinatePair $coordinates
      */
-    public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, Coordinates $coordinates)
+    public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
         $this->thereIsAChessboard();
         $this->pieceIsPlacedOnSquare($piece, $coordinates);
@@ -70,10 +70,10 @@ class ChessboardContext implements Context
     /**
      * @When I move piece from :source to :destination
      *
-     * @param Coordinates $source
-     * @param Coordinates $destination
+     * @param CoordinatePair $source
+     * @param CoordinatePair $destination
      */
-    public function iMovePieceFromSourceToDestination(Coordinates $source, Coordinates $destination)
+    public function iMovePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
     {
         try {
             $this->chessboard->movePiece($source, $destination);
@@ -86,9 +86,9 @@ class ChessboardContext implements Context
      * @Then /(?P<piece>[a-z]+ [a-z]+) should (still )?be placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
-     * @param Coordinates $coordinates
+     * @param CoordinatePair $coordinates
      */
-    public function pieceShouldBePlacedOnSquare(Piece $piece, Coordinates $coordinates)
+    public function pieceShouldBePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
         expect($this->chessboard->hasPieceAtCoordinates($piece, $coordinates))->shouldBe(true);
     }
@@ -131,10 +131,10 @@ class ChessboardContext implements Context
      * @Transform :destination
      *
      * @param string $coordinates
-     * @return Coordinates
+     * @return CoordinatePair
      */
     public function castToCoordinates(string $coordinates)
     {
-        return Coordinates::fromString($coordinates);
+        return CoordinatePair::fromString($coordinates);
     }
 }

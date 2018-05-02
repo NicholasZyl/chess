@@ -5,14 +5,14 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class SquareIsOccupiedSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith(Coordinates::fromString('a1'));
+        $this->beConstructedWith(CoordinatePair::fromString('a1'));
     }
 
     function it_is_initializable()

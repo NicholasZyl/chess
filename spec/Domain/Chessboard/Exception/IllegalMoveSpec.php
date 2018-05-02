@@ -5,14 +5,14 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class IllegalMoveSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith(Coordinates::fromString('A1'), Coordinates::fromString('H8'));
+        $this->beConstructedWith(CoordinatePair::fromString('A1'), CoordinatePair::fromString('H8'));
     }
 
     function it_is_initializable()

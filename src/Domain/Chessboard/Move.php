@@ -3,16 +3,25 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Move
 {
     /**
+     * @var CoordinatePair
+     */
+    private $from;
+
+    /**
+     * @var CoordinatePair
+     */
+    private $to;
+
+    /**
      * @var int
      */
     private $rankDistance;
-
     /**
      * @var int
      */
@@ -21,75 +30,95 @@ final class Move
     /**
      * Distance constructor.
      *
-     * @param int $rankDistance
-     * @param int $fileDistance
+     * @param CoordinatePair $from
+     * @param CoordinatePair $to
+     *
+     * @throws \InvalidArgumentException
      */
-    private function __construct(int $rankDistance = 0, int $fileDistance = 0)
+    private function __construct(CoordinatePair $from, CoordinatePair $to)
     {
-        $this->rankDistance = $rankDistance;
-        $this->fileDistance = $fileDistance;
+        if ($from->equals($to)) {
+            throw new \InvalidArgumentException('It is not possible to move to the same square.');
+        }
+        $this->from = $from;
+        $this->to = $to;
+        $this->rankDistance = $to->rank() - $from->rank();
+        $this->fileDistance = ord($to->file()) - ord($from->file());
     }
 
     /**
      * Calculates distance between two coordinates.
      *
-     * @param Coordinates $from
-     * @param Coordinates $to
+     * @param CoordinatePair $from
+     * @param CoordinatePair $to
+     *
+     * @throws \InvalidArgumentException
      *
      * @return Move
      */
-    public static function between(Coordinates $from, Coordinates $to): Move
+    public static function between(CoordinatePair $from, CoordinatePair $to): Move
     {
-        return new Move(
-            $to->rank() - $from->rank(),
-            ord($to->file()) - ord($from->file())
-        );
+        return new Move($from, $to);
     }
 
     /**
-     * Checks if distance between coordinates is higher than passed value in any direction.
+     * Checks if distance between starting and ending point is bigger than passed number of squares.
      *
-     * @param int $distance
+     * @param int $numberOfSquares
      *
      * @return bool
      */
-    public function isHigherThan(int $distance)
+    public function isAwayMoreSquaresThan(int $numberOfSquares)
     {
-        return abs($this->rankDistance) > $distance || abs($this->fileDistance) > $distance;
+        return abs($this->rankDistance) > $numberOfSquares || abs($this->fileDistance) > $numberOfSquares;
     }
 
     /**
-     * Checks if distance is only vertical.
+     * Checks if move is made along file.
      *
      * @return bool
      */
-    public function isVertical(): bool
+    public function isAlongFile(): bool
     {
-        return $this->fileDistance === 0;
+        return $this->from->isOnSameFile($this->to);
     }
 
     /**
-     * Checks if distance is only horizontal.
+     * Checks if move is made along rank.
      *
      * @return bool
      */
-    public function isHorizontal(): bool
+    public function isAlongRank(): bool
     {
-        return $this->rankDistance === 0;
+        return $this->from->isOnSameRank($this->to);
     }
 
     /**
-     * Checks if distance is only diagonal.
+     * Checks if move is made along diagonal.
      *
      * @return bool
      */
-    public function isDiagonal(): bool
+    public function isAlongDiagonal(): bool
     {
-        return abs($this->fileDistance) === abs($this->rankDistance);
+        return $this->from->isOnSameDiagonal($this->to);
     }
 
+    /**
+     * Checks if move is made forward for given color.
+     *
+     * @param Color $color
+     *
+     * @return bool
+     */
     public function isForward(Color $color): bool
     {
-        return $color->is(Color::white()) ? $this->rankDistance > 0 : $this->rankDistance < 0;
+        $hasDestinationSquareHigherRank = $this->to->hasHigherRankThan($this->from);
+
+        return $color->is(Color::white()) ? $hasDestinationSquareHigherRank : !$hasDestinationSquareHigherRank;
+    }
+
+    public function steps(): array
+    {
+        // TODO: write logic here
     }
 }

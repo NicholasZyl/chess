@@ -5,13 +5,13 @@ namespace NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class Square
 {
     /**
-     * @var Coordinates
+     * @var CoordinatePair
      */
     private $coordinates;
 
@@ -23,9 +23,9 @@ final class Square
     /**
      * Square constructor.
      *
-     * @param Coordinates $coordinates
+     * @param CoordinatePair $coordinates
      */
-    private function __construct(Coordinates $coordinates)
+    private function __construct(CoordinatePair $coordinates)
     {
         $this->coordinates = $coordinates;
     }
@@ -33,11 +33,11 @@ final class Square
     /**
      * Create square for coordinates.
      *
-     * @param Coordinates $coordinates
+     * @param CoordinatePair $coordinates
      *
      * @return Square
      */
-    public static function forCoordinates(Coordinates $coordinates): Square
+    public static function forCoordinates(CoordinatePair $coordinates): Square
     {
         return new Square($coordinates);
     }
@@ -45,9 +45,9 @@ final class Square
     /**
      * Get square's coordinates.
      *
-     * @return Coordinates
+     * @return CoordinatePair
      */
-    public function coordinates(): Coordinates
+    public function coordinates(): CoordinatePair
     {
         return $this->coordinates;
     }

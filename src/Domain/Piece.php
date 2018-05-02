@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Chessboard\Move;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Piece
@@ -28,10 +28,10 @@ interface Piece
     /**
      * Intent piece's move from one square to another, validating if it abide the rules.
      *
-     * @param Coordinates $from
-     * @param Coordinates $to
+     * @param CoordinatePair $from
+     * @param CoordinatePair $to
      *
      * @return Move
      */
-    public function intentMove(Coordinates $from, Coordinates $to): Move;
+    public function intentMove(CoordinatePair $from, CoordinatePair $to): Move;
 }

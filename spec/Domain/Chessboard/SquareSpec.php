@@ -5,7 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
-use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece;
@@ -13,12 +13,12 @@ use PhpSpec\ObjectBehavior;
 
 class SquareSpec extends ObjectBehavior
 {
-    /** @var Coordinates */
+    /** @var CoordinatePair */
     private $coordinates;
 
     function let()
     {
-        $this->coordinates = Coordinates::fromString('a1');
+        $this->coordinates = CoordinatePair::fromString('a1');
         $this->beConstructedThrough('forCoordinates', [$this->coordinates]);
     }
 
