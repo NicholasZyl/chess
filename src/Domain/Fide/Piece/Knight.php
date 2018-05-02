@@ -8,23 +8,21 @@ use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\Coordinates;
 use NicholasZyl\Chess\Domain\Piece;
 
-final class Pawn extends Piece
+final class Knight extends Piece
 {
     /**
      * @var Piece\Color
      */
     private $color;
 
-    private $firstMove = true;
-
     private function __construct(Piece\Color $color)
     {
         $this->color = $color;
     }
 
-    public static function forColor(Piece\Color $color): Pawn
+    public static function forColor(Piece\Color $color): Knight
     {
-        return new Pawn($color);
+        return new Knight($color);
     }
 
     public function color(): Piece\Color
@@ -40,10 +38,9 @@ final class Pawn extends Piece
     public function intentMove(Coordinates $from, Coordinates $to)
     {
         $move = Move::between($from, $to);
-        if (!$move->isForward($this->color) || $move->isHigherThan($this->firstMove ? 2 : 1) || !$move->isVertical()) {
+        if ($move->isVertical() || $move->isHorizontal() || $move->isDiagonal() || $move->isHigherThan(2)) {
             throw new IllegalMove($from, $to);
         }
-        $this->firstMove = false;
 
         return $move;
     }

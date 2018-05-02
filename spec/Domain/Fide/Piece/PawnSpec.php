@@ -17,7 +17,7 @@ class PawnSpec extends ObjectBehavior
         $this->beConstructedThrough('forColor', [Piece\Color::white(),]);
     }
 
-    function it_is_chess_piece()
+    function it_is_a_chess_piece()
     {
         $this->shouldBeAnInstanceOf(Piece::class);
     }
