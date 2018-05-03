@@ -8,6 +8,8 @@ use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
 final class NearestSquareNotFileRankOrDiagonal extends ChessboardMove
 {
+    private const DISTANCE_TO_NEAREST_COORDINATES = 2;
+
     /**
      * {@inheritdoc}
      */
@@ -22,7 +24,7 @@ final class NearestSquareNotFileRankOrDiagonal extends ChessboardMove
         $distanceAlongFile = abs(ord($from->file()) - ord($to->file()));
         $distanceAlongRank = abs($from->rank() - $to->rank());
 
-        if ($distanceAlongFile > 2 || $distanceAlongRank > 2) {
+        if ($distanceAlongFile > self::DISTANCE_TO_NEAREST_COORDINATES || $distanceAlongRank > self::DISTANCE_TO_NEAREST_COORDINATES) {
             throw new \InvalidArgumentException(
                 sprintf('%s and %s are not the nearest squares.', $from, $to)
             );
