@@ -59,7 +59,7 @@ final class Chessboard
 
         try {
             $move = $piece->intentMove($source, $destination);
-            foreach ($move->path() as $stepCoordinates) {
+            foreach ($move as $stepCoordinates) {
                 $this->getSquareAt($stepCoordinates)->verifyThatUnoccupied();
             }
             $to->place($piece);

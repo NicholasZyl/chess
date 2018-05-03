@@ -62,13 +62,6 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->__toString()->shouldBe('a1');
     }
 
-    function it_knows_file_and_rank()
-    {
-        $this->beConstructedThrough('fromFileAndRank', ['a', 1]);
-        $this->file()->shouldBe('a');
-        $this->rank()->shouldBe(1);
-    }
-
     function it_equals_other_pair_if_have_same_rank_and_file()
     {
         $this->beConstructedThrough('fromFileAndRank', ['a', 1]);

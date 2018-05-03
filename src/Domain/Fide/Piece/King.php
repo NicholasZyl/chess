@@ -15,7 +15,7 @@ final class King extends Piece
     public function intentMove(CoordinatePair $from, CoordinatePair $to): Move
     {
         $move = Move::between($from, $to);
-        if ($move->isAwayMoreSquaresThan(1)) {
+        if ((!$move->isAlongDiagonal() && !$move->isAlongRank() && !$move->isAlongFile()) || $move->isAwayMoreSquaresThan(1)) {
             throw new IllegalMove($from, $to);
         }
 

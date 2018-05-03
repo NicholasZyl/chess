@@ -77,26 +77,6 @@ final class CoordinatePair
     }
 
     /**
-     * Get coordinates file part.
-     *
-     * @return string
-     */
-    public function file(): string
-    {
-        return $this->file;
-    }
-
-    /**
-     * Get coordinates rank part.
-     *
-     * @return int
-     */
-    public function rank(): int
-    {
-        return $this->rank;
-    }
-
-    /**
      * Compare if is the same as other pair.
      *
      * @param CoordinatePair $other

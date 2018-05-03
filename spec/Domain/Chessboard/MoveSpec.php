@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Move;
-use NicholasZyl\Chess\Domain\Chessboard\Move\Path;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -130,48 +129,61 @@ class MoveSpec extends ObjectBehavior
         $this->isForward(Color::black())->shouldBe(false);
     }
 
-    function it_knows_path_to_make_move_to_the_adjacent_square_along_file_containing_only_destination_square()
+    function it_is_collection_of_steps_to_make_move_to_the_adjacent_square_along_file_containing_only_destination_square()
     {
         $from = CoordinatePair::fromFileAndRank('d', 6);
         $to = CoordinatePair::fromFileAndRank('d', 7);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->path()->shouldBeLike(Path::forSquares([$to,]));
+        $this->count()->shouldBe(1);
+        $this->current()->shouldBeLike($to);
+        $this->next();
     }
 
-    function it_has_path_to_make_move_to_the_adjacent_square_along_rank_containing_only_destination_square()
+    function it_is_collection_of_steps_to_make_move_to_the_adjacent_square_along_rank_containing_only_destination_square()
     {
         $from = CoordinatePair::fromFileAndRank('d', 6);
         $to = CoordinatePair::fromFileAndRank('e', 6);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->path()->shouldBeLike(Path::forSquares([$to,]));
+        $this->count()->shouldBe(1);
+        $this->current()->shouldBeLike($to);
     }
 
-    function it_has_path_to_make_move_to_the_adjacent_square_along_diagonal_containing_only_destination_square()
+    function it_is_collection_of_steps_to_make_move_to_the_adjacent_square_along_diagonal_containing_only_destination_square()
     {
         $from = CoordinatePair::fromFileAndRank('d', 6);
         $to = CoordinatePair::fromFileAndRank('c', 7);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->path()->shouldBeLike(Path::forSquares([$to,]));
+
+        $this->count()->shouldBe(1);
+        $this->current()->shouldBeLike($to);
     }
 
-    function it_has_path_to_make_move_two_squares_along_file()
+    function it_is_collection_of_steps_to_make_move_two_squares_along_file()
     {
         $from = CoordinatePair::fromFileAndRank('d', 2);
         $to = CoordinatePair::fromFileAndRank('d', 4);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->path()->shouldBeLike(Path::forSquares([CoordinatePair::fromFileAndRank('d', 3), $to,]));
+        $this->count()->shouldBe(2);
+        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('d', 3));
+        $this->next();
+        $this->current()->shouldBeLike($to);
     }
 
-    function it_has_path_to_make_move_three_squares_along_rank()
+    function it_is_collection_of_steps_to_make_move_three_squares_along_rank()
     {
         $from = CoordinatePair::fromFileAndRank('d', 2);
         $to = CoordinatePair::fromFileAndRank('a', 2);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->path()->shouldBeLike(Path::forSquares([CoordinatePair::fromFileAndRank('c', 2), CoordinatePair::fromFileAndRank('b', 2), $to,]));
+        $this->count()->shouldBe(3);
+        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 2));
+        $this->next();
+        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('b', 2));
+        $this->next();
+        $this->current()->shouldBeLike($to);
     }
 }

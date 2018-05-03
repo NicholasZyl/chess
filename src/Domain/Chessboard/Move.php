@@ -3,12 +3,10 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move\Path;
-use NicholasZyl\Chess\Domain\Chessboard\Move\PathPlanner;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
-final class Move
+final class Move implements \Iterator, \Countable
 {
     /**
      * @var CoordinatePair
@@ -21,35 +19,17 @@ final class Move
     private $to;
 
     /**
-     * @var int
+     * @var CoordinatePair[]
      */
-    private $rankDistance;
-    /**
-     * @var int
-     */
-    private $fileDistance;
+    private $path;
 
     /**
-     * Distance constructor.
-     *
-     * @param CoordinatePair $from
-     * @param CoordinatePair $to
-     *
-     * @throws \InvalidArgumentException
+     * @var int
      */
-    private function __construct(CoordinatePair $from, CoordinatePair $to)
-    {
-        if ($from->equals($to)) {
-            throw new \InvalidArgumentException('It is not possible to move to the same square.');
-        }
-        $this->from = $from;
-        $this->to = $to;
-        $this->rankDistance = $to->rank() - $from->rank();
-        $this->fileDistance = ord($to->file()) - ord($from->file());
-    }
+    private $pathIndex = 0;
 
     /**
-     * Calculates distance between two coordinates.
+     * Plan move between two coordinate pairs.
      *
      * @param CoordinatePair $from
      * @param CoordinatePair $to
@@ -64,6 +44,41 @@ final class Move
     }
 
     /**
+     * Move constructor.
+     *
+     * @param CoordinatePair $from
+     * @param CoordinatePair $to
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function __construct(CoordinatePair $from, CoordinatePair $to)
+    {
+        if ($from->equals($to)) {
+            throw new \InvalidArgumentException('It is not possible to move to the same square.');
+        }
+        $this->from = $from;
+        $this->to = $to;
+        $this->path = $this->planPath();
+    }
+
+    /**
+     * Prepare path for planned move.
+     *
+     * @return CoordinatePair[]
+     */
+    private function planPath(): array
+    {
+        $steps = [];
+        $step = $this->from;
+        while (!$step->equals($this->to)) {
+            $step = $step->nextCoordinatesTowards($this->to);
+            $steps[] = $step;
+        }
+
+        return $steps;
+    }
+
+    /**
      * Checks if distance between starting and ending point is bigger than passed number of squares.
      *
      * @param int $numberOfSquares
@@ -72,7 +87,7 @@ final class Move
      */
     public function isAwayMoreSquaresThan(int $numberOfSquares)
     {
-        return abs($this->rankDistance) > $numberOfSquares || abs($this->fileDistance) > $numberOfSquares;
+        return count($this->path) > $numberOfSquares;
     }
 
     /**
@@ -119,15 +134,52 @@ final class Move
         return $color->is(Color::white()) ? $hasDestinationSquareHigherRank : !$hasDestinationSquareHigherRank;
     }
 
-    public function path(): Path
+    /**
+     * {@inheritdoc}
+     * @return CoordinatePair
+     */
+    public function current()
     {
-        $planner = new PathPlanner();
-        $step = $this->from;
-        while (!$step->equals($this->to)) {
-            $step = $step->nextCoordinatesTowards($this->to);
-            $planner->step($step);
-        }
+        return $this->path[$this->pathIndex];
+    }
 
-        return $planner->plan();
+    /**
+     * {@inheritdoc}
+     */
+    public function next()
+    {
+        ++$this->pathIndex;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function key()
+    {
+        return $this->pathIndex;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function valid()
+    {
+        return isset($this->path[$this->pathIndex]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rewind()
+    {
+        $this->pathIndex = 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function count()
+    {
+        return count($this->path);
     }
 }
