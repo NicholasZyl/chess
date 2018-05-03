@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard\Move;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move\MoveAlongDiagonal;
+use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class MoveAlongDiagonalSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    function it_is_chessboard_move()
     {
-        $this->shouldHaveType(MoveAlongDiagonal::class);
+        $this->shouldBeAnInstanceOf(ChessboardMove::class);
     }
 
     function it_cannot_be_made_between_coordinates_not_on_the_same_diagonal()
