@@ -5,6 +5,10 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Move;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
+use NicholasZyl\Chess\Domain\Chessboard\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Piece;
@@ -32,6 +36,52 @@ class KnightSpec extends ObjectBehavior
         $pawn = Knight::forColor(Piece\Color::white());
 
         $this->isSameAs($pawn)->shouldBe(true);
+    }
+
+    function it_cannot_move_along_diagonal()
+    {
+        $move = AlongDiagonal::between(
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 2)
+        );
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+    }
+
+    function it_cannot_move_along_file()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('a', 2);
+        $move = AlongFile::between(
+            $from,
+            $to
+        );
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+    }
+
+    function it_cannot_move_along_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('b', 1);
+        $move = AlongRank::between(
+            $from,
+            $to
+        );
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+    }
+
+    function it_can_move_to_nearest_square()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('c', 2);
+        $move = NearestNotSameFileRankOrDiagonal::between(
+            $from,
+            $to
+        );
+
+        $this->mayMove($move);
     }
 
     function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_forward_queenside()
