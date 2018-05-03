@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard\Square;
 
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+
 final class CoordinatePair
 {
     /**
@@ -126,18 +128,25 @@ final class CoordinatePair
         return $this->rank > $other->rank;
     }
 
-    public function towardsSquareAlongFile(CoordinatePair $other): CoordinatePair
+    public function nextCoordinatesTowards(CoordinatePair $other): CoordinatePair
     {
-        return CoordinatePair::fromFileAndRank($this->file, $this->rank + ($this->rank < $other->rank ? 1 : -1));
+        if ($this->isOnSameFile($other)) {
+            $coordinates = CoordinatePair::fromFileAndRank($this->file, $this->rank + ($this->rank < $other->rank ? 1 : -1));
+        } elseif ($this->isOnSameRank($other)) {
+            $coordinates = CoordinatePair::fromFileAndRank(chr((ord($this->file) + (ord($this->file) < ord($other->file) ? 1 : -1))), $this->rank);
+        } elseif ($this->isOnSameDiagonal($other)) {
+            $coordinates = CoordinatePair::fromFileAndRank(chr((ord($this->file) + (ord($this->file) < ord($other->file) ? 1 : -1))), $this->rank + ($this->rank < $other->rank ? 1 : -1));
+        } elseif ($this->isNearestTo($other)) {
+            $coordinates = $other;
+        } else {
+            throw new IllegalMove($this, $other);
+        }
+
+        return $coordinates;
     }
 
-    public function towardsSquareAlongRank(CoordinatePair $other): CoordinatePair
+    private function isNearestTo(CoordinatePair $other): bool
     {
-        return CoordinatePair::fromFileAndRank(chr((ord($this->file) + (ord($this->file) < ord($other->file) ? 1 : -1))), $this->rank);
-    }
-
-    public function towardsSquareAlongDiagonal(CoordinatePair $other): CoordinatePair
-    {
-        return CoordinatePair::fromFileAndRank(chr((ord($this->file) + (ord($this->file) < ord($other->file) ? 1 : -1))), $this->rank + ($this->rank < $other->rank ? 1 : -1));
+        return abs($this->rank - $other->rank) <= 2 && abs(ord($this->file) - ord($other->file)) <= 2;
     }
 }

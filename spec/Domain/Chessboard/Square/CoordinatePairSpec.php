@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard\Square;
 
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
@@ -169,7 +170,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['b', 1]);
         $other = CoordinatePair::fromFileAndRank('b', 2);
 
-        $this->towardsSquareAlongFile($other)->shouldBeLike(CoordinatePair::fromFileAndRank('b', 2));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('b', 2));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_file_backward()
@@ -177,7 +178,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['b', 5]);
         $other = CoordinatePair::fromFileAndRank('b', 2);
 
-        $this->towardsSquareAlongFile($other)->shouldBeLike(CoordinatePair::fromFileAndRank('b', 4));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('b', 4));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_rank_to_kingside()
@@ -185,7 +186,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['b', 1]);
         $other = CoordinatePair::fromFileAndRank('e', 1);
 
-        $this->towardsSquareAlongRank($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 1));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 1));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_rank_to_queenside()
@@ -193,7 +194,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
         $other = CoordinatePair::fromFileAndRank('b', 5);
 
-        $this->towardsSquareAlongRank($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 5));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 5));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_rising_slope_forwards()
@@ -201,7 +202,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['b', 1]);
         $other = CoordinatePair::fromFileAndRank('d', 3);
 
-        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 2));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 2));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_rising_slope_backwards()
@@ -209,7 +210,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
         $other = CoordinatePair::fromFileAndRank('c', 4);
 
-        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_falling_slope_forwards()
@@ -217,7 +218,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['f', 1]);
         $other = CoordinatePair::fromFileAndRank('b', 5);
 
-        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 2));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 2));
     }
 
     function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_falling_slope_backwards()
@@ -225,6 +226,22 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
         $other = CoordinatePair::fromFileAndRank('f', 3);
 
-        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 4));
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 4));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_if_is_nearest_but_not_on_same_file_rank_or_diagonal()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 4]);
+        $other = CoordinatePair::fromFileAndRank('e', 6);
+
+        $this->nextCoordinatesTowards($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 6));
+    }
+
+    function it_does_not_know_next_coordinate_if_not_on_same_file_rank_diagonal_and_is_not_nearest()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
+        $other = CoordinatePair::fromFileAndRank('e', 8);
+
+        $this->shouldThrow(new IllegalMove($this->getWrappedObject(), $other))->during('nextCoordinatesTowards', [$other,]);
     }
 }

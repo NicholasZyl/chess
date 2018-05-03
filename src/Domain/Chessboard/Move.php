@@ -122,27 +122,10 @@ final class Move
     public function path(): Path
     {
         $planner = new PathPlanner();
-
-        if ($this->isAlongFile()) {
-            $step = $this->from;
-            while (!$step->equals($this->to)) {
-                $step = $step->towardsSquareAlongFile($this->to);
-                $planner->step($step);
-            }
-        } elseif ($this->isAlongRank()) {
-            $step = $this->from;
-            while (!$step->equals($this->to)) {
-                $step = $step->towardsSquareAlongRank($this->to);
-                $planner->step($step);
-            }
-        } elseif ($this->isAlongDiagonal()) {
-            $step = $this->from;
-            while (!$step->equals($this->to)) {
-                $step = $step->towardsSquareAlongDiagonal($this->to);
-                $planner->step($step);
-            }
-        } else {
-            $planner->step($this->to);
+        $step = $this->from;
+        while (!$step->equals($this->to)) {
+            $step = $step->nextCoordinatesTowards($this->to);
+            $planner->step($step);
         }
 
         return $planner->plan();
