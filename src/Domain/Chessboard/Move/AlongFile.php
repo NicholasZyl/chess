@@ -6,16 +6,16 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
-final class MoveAlongRank extends ChessboardMove
+final class AlongFile extends ChessboardMove
 {
     /**
      * {@inheritdoc}
      */
     protected function validateIfMoveIsPossible(CoordinatePair $from, CoordinatePair $to): void
     {
-        if (!$from->isOnSameRank($to)) {
+        if (!$from->isOnSameFile($to)) {
             throw new \InvalidArgumentException(
-                sprintf('%s and %s are not along the same rank.', $from, $to)
+                sprintf('%s and %s are not along the same file.', $from, $to)
             );
         }
     }
@@ -25,11 +25,11 @@ final class MoveAlongRank extends ChessboardMove
      */
     protected function nextCoordinatesTowards(CoordinatePair $from, CoordinatePair $to): CoordinatePair
     {
-        $isTowardsKingside = ord($from->file()) < ord($to->file());
+        $isTowardsHigherRank = $from->rank() < $to->rank();
 
         return CoordinatePair::fromFileAndRank(
-            chr(ord($from->file()) + ($isTowardsKingside ? self::INCREMENT : self::DECREMENT)),
-            $from->rank()
+            $from->file(),
+            $from->rank() + ($isTowardsHigherRank ? self::INCREMENT : self::DECREMENT)
         );
     }
 }

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move\MoveAlongDiagonal;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
 abstract class ChessboardMove implements \Iterator, \Countable
@@ -39,7 +39,7 @@ abstract class ChessboardMove implements \Iterator, \Countable
      *
      * @throws \InvalidArgumentException
      *
-     * @return MoveAlongDiagonal
+     * @return AlongDiagonal
      */
     public static function between(CoordinatePair $from, CoordinatePair $to): ChessboardMove
     {

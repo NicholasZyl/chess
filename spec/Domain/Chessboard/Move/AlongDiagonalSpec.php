@@ -7,7 +7,7 @@ use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
-class MoveAlongDiagonalSpec extends ObjectBehavior
+class AlongDiagonalSpec extends ObjectBehavior
 {
     function it_is_chessboard_move()
     {
