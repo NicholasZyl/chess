@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
@@ -20,5 +21,15 @@ final class Bishop extends Piece
         }
 
         return $move;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mayMove(ChessboardMove $move): void
+    {
+        if (!$move instanceof Move\AlongDiagonal) {
+            throw IllegalMove::forMove($move);
+        }
     }
 }
