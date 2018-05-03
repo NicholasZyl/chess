@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard\Move;
 
-use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class AlongFileSpec extends ObjectBehavior
 {
-    function it_is_chessboard_move()
+    function it_is_chess_move()
     {
-        $this->shouldBeAnInstanceOf(ChessboardMove::class);
+        $this->shouldBeAnInstanceOf(Move::class);
     }
 
     function it_cannot_be_made_between_coordinates_not_on_the_same_file()

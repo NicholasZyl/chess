@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -34,4 +35,15 @@ interface Piece
      * @return Move
      */
     public function intentMove(CoordinatePair $from, CoordinatePair $to): Move;
+
+    /**
+     * Check if intented move is legal for this piece.
+     *
+     * @param \NicholasZyl\Chess\Domain\Move $move
+     *
+     * @throws IllegalMove
+     *
+     * @return void
+     */
+    public function mayMove(\NicholasZyl\Chess\Domain\Move $move): void;
 }

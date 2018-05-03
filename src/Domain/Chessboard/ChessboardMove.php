@@ -5,9 +5,10 @@ namespace NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
-abstract class ChessboardMove implements \Iterator, \Countable
+abstract class ChessboardMove implements Move
 {
     protected const INCREMENT = 1;
     protected const DECREMENT = -1;
@@ -103,11 +104,7 @@ abstract class ChessboardMove implements \Iterator, \Countable
     abstract protected function nextCoordinatesTowards(CoordinatePair $from, CoordinatePair $to): CoordinatePair;
 
     /**
-     * Is move made towards color's opponent's side of the board.
-     *
-     * @param Color $color
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isTowardsOpponentSideFor(Color $color): bool
     {
