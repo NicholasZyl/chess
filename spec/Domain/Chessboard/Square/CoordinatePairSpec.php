@@ -28,28 +28,28 @@ class CoordinatePairSpec extends ObjectBehavior
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_too_small_file()
+    function it_cannot_be_created_for_too_low_file()
     {
         $this->beConstructedThrough('fromFileAndRank', ['Z', 1,]);
         $this->shouldThrow(new \InvalidArgumentException('"Z" is not a proper file.'))
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_too_big_file()
+    function it_cannot_be_created_for_too_high_file()
     {
         $this->beConstructedThrough('fromFileAndRank', ['i', 1,]);
         $this->shouldThrow(new \InvalidArgumentException('"i" is not a proper file.'))
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_too_small_rank()
+    function it_cannot_be_created_for_too_low_rank()
     {
         $this->beConstructedThrough('fromFileAndRank', ['d', 0,]);
         $this->shouldThrow(new \InvalidArgumentException('"0" is not a proper rank.'))
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_too_big_rank()
+    function it_cannot_be_created_for_too_high_rank()
     {
         $this->beConstructedThrough('fromFileAndRank', ['d', 9,]);
         $this->shouldThrow(new \InvalidArgumentException('"9" is not a proper rank.'))
@@ -60,6 +60,13 @@ class CoordinatePairSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('fromString', ['a1']);
         $this->__toString()->shouldBe('a1');
+    }
+
+    function it_knows_file_and_rank()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['a', 1]);
+        $this->file()->shouldBe('a');
+        $this->rank()->shouldBe(1);
     }
 
     function it_equals_other_pair_if_have_same_rank_and_file()
