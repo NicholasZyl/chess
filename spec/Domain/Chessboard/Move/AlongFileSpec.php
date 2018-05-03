@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Move;
 
 use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class AlongFileSpec extends ObjectBehavior
@@ -35,5 +36,41 @@ class AlongFileSpec extends ObjectBehavior
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('b', 3));
         $this->next();
         $this->current()->shouldBeLike($to);
+    }
+
+    function it_is_towards_opponent_rank_for_white_if_moving_to_higher_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('f', 1);
+        $to = CoordinatePair::fromFileAndRank('f', 5);
+        $this->beConstructedThrough('between', [$from, $to,]);
+
+        $this->isTowardsOpponentSideFor(Color::white())->shouldBe(true);
+    }
+
+    function it_is_not_towards_opponent_rank_for_white_if_moving_to_lower_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('d', 5);
+        $to = CoordinatePair::fromFileAndRank('d', 3);
+        $this->beConstructedThrough('between', [$from, $to,]);
+
+        $this->isTowardsOpponentSideFor(Color::white())->shouldBe(false);
+    }
+
+    function it_is_towards_opponent_rank_for_black_if_moving_to_lower_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 5);
+        $to = CoordinatePair::fromFileAndRank('a', 3);
+        $this->beConstructedThrough('between', [$from, $to,]);
+
+        $this->isTowardsOpponentSideFor(Color::black())->shouldBe(true);
+    }
+
+    function it_is_not_towards_opponent_rank_for_black_if_moving_to_higher_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('c', 1);
+        $to = CoordinatePair::fromFileAndRank('c', 5);
+        $this->beConstructedThrough('between', [$from, $to,]);
+
+        $this->isTowardsOpponentSideFor(Color::black())->shouldBe(false);
     }
 }

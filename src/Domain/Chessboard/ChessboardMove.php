@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Piece\Color;
 
 abstract class ChessboardMove implements \Iterator, \Countable
 {
@@ -100,6 +101,18 @@ abstract class ChessboardMove implements \Iterator, \Countable
      * @return CoordinatePair
      */
     abstract protected function nextCoordinatesTowards(CoordinatePair $from, CoordinatePair $to): CoordinatePair;
+
+    /**
+     * Is move made towards color's opponent's side of the board.
+     *
+     * @param Color $color
+     *
+     * @return bool
+     */
+    public function isTowardsOpponentSideFor(Color $color): bool
+    {
+        return $color->is(Color::white()) ? $this->from->rank() < $this->to->rank() : $this->to->rank() < $this->from->rank();
+    }
 
     /**
      * {@inheritdoc}

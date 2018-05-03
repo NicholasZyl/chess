@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Chessboard\Move;
 
 use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class AlongRankSpec extends ObjectBehavior
@@ -33,5 +34,15 @@ class AlongRankSpec extends ObjectBehavior
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 1));
         $this->next();
         $this->current()->shouldBeLike($to);
+    }
+
+    function it_is_never_towards_opponent_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('d', 5);
+        $to = CoordinatePair::fromFileAndRank('b', 5);
+        $this->beConstructedThrough('between', [$from, $to,]);
+
+        $this->isTowardsOpponentSideFor(Color::black())->shouldBe(false);
+        $this->isTowardsOpponentSideFor(Color::white())->shouldBe(false);
     }
 }

@@ -19,6 +19,13 @@ final class IllegalMove extends NotPermittedMove
         parent::__construct(sprintf('Move from %s to %s is illegal', $from, $to));
     }
 
+    /**
+     * Prepare exception for illegal move.
+     *
+     * @param ChessboardMove $move
+     *
+     * @return IllegalMove
+     */
     public static function forMove(ChessboardMove $move): IllegalMove
     {
         return new self(CoordinatePair::fromFileAndRank('a', 1), CoordinatePair::fromFileAndRank('a', 1)); //TODO: Fake value until refactoring
