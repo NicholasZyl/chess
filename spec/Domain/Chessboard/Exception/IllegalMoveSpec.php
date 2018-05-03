@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Move;
 use PhpSpec\ObjectBehavior;
 
 class IllegalMoveSpec extends ObjectBehavior
@@ -32,7 +32,7 @@ class IllegalMoveSpec extends ObjectBehavior
         $this->getMessage()->shouldContain('h8');
     }
 
-    function it_can_be_constructed_for_move(ChessboardMove $move)
+    function it_can_be_constructed_for_move(Move $move)
     {
         $move->from()->willReturn(CoordinatePair::fromFileAndRank('a', 1));
         $move->to()->willReturn(CoordinatePair::fromFileAndRank('a', 2));

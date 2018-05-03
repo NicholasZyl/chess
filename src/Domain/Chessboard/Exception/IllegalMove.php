@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Move;
 
 final class IllegalMove extends NotPermittedMove
 {
@@ -22,11 +22,11 @@ final class IllegalMove extends NotPermittedMove
     /**
      * Prepare exception for illegal move.
      *
-     * @param ChessboardMove $move
+     * @param Move $move
      *
      * @return IllegalMove
      */
-    public static function forMove(ChessboardMove $move): IllegalMove
+    public static function forMove(Move $move): IllegalMove
     {
         return new self($move->from(), $move->to());
     }

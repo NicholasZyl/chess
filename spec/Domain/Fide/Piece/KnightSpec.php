@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
@@ -72,7 +71,7 @@ class KnightSpec extends ObjectBehavior
         $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
     }
 
-    function it_can_move_to_nearest_square()
+    function it_can_move_to_nearest_square_not_on_same_rank_file_or_diagonal()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 2);
@@ -82,125 +81,5 @@ class KnightSpec extends ObjectBehavior
         );
 
         $this->mayMove($move);
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_forward_queenside()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('b', 5);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_queenside_forward()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('a', 4);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_forward_kingside()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('d', 5);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_kingside_forward()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('e', 4);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_backward_queenside()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('b', 1);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_queenside_backward()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('a', 2);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_backward_kingside()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('d', 1);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_move_to_the_nearest_square_not_on_same_rank_file_or_diagonal_kingside_backward()
-    {
-        $from = CoordinatePair::fromFileAndRank('c', 3);
-        $to = CoordinatePair::fromFileAndRank('e', 2);
-
-        $this->intentMove($from, $to)->shouldBeLike(Move::between($from, $to));
-    }
-
-    function it_can_not_move_to_the_nearest_square_on_same_rank()
-    {
-        $from = CoordinatePair::fromFileAndRank('d', 5);
-        $to = CoordinatePair::fromFileAndRank('c', 5);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_can_not_move_to_the_further_square_on_same_rank()
-    {
-        $from = CoordinatePair::fromFileAndRank('d', 5);
-        $to = CoordinatePair::fromFileAndRank('g', 5);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_can_not_move_to_the_nearest_square_on_same_file()
-    {
-        $from = CoordinatePair::fromFileAndRank('d', 5);
-        $to = CoordinatePair::fromFileAndRank('d', 6);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_can_not_move_to_the_further_square_on_same_file()
-    {
-        $from = CoordinatePair::fromFileAndRank('g', 5);
-        $to = CoordinatePair::fromFileAndRank('g', 1);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_can_not_move_to_the_nearest_square_on_same_diagonal()
-    {
-        $from = CoordinatePair::fromFileAndRank('d', 5);
-        $to = CoordinatePair::fromFileAndRank('c', 6);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_can_not_move_to_the_further_square_on_same_diagonal()
-    {
-        $from = CoordinatePair::fromFileAndRank('g', 5);
-        $to = CoordinatePair::fromFileAndRank('g', 4);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_can_not_move_to_further_square_not_on_same_rank_file_or_diagonal()
-    {
-        $from = CoordinatePair::fromFileAndRank('g', 5);
-        $to = CoordinatePair::fromFileAndRank('c', 2);
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }
 }

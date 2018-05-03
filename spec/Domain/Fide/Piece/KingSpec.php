@@ -37,7 +37,7 @@ class KingSpec extends ObjectBehavior
         $this->isSameAs($pawn)->shouldBe(true);
     }
 
-    function it_can_move_along_file()
+    function it_can_move_to_adjoining_square_along_file()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('a', 2);
@@ -49,7 +49,7 @@ class KingSpec extends ObjectBehavior
         $this->mayMove($move);
     }
 
-    function it_can_move_along_rank()
+    function it_can_move_to_adjoining_square_along_rank()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('b', 1);
@@ -61,7 +61,7 @@ class KingSpec extends ObjectBehavior
         $this->mayMove($move);
     }
 
-    function it_can_move_along_diagonal()
+    function it_can_move_to_adjoining_square_along_diagonal()
     {
         $move = AlongDiagonal::between(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -71,7 +71,7 @@ class KingSpec extends ObjectBehavior
         $this->mayMove($move);
     }
 
-    function it_cannot_move_to_nearest_square()
+    function it_cannot_move_to_nearest_square_not_on_same_file_rank_or_diagonal()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 2);
@@ -83,7 +83,7 @@ class KingSpec extends ObjectBehavior
         $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
     }
 
-    function it_cannot_move_more_than_one_square()
+    function it_cannot_move_further_than_to_adjoining_square()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('a', 3);
@@ -93,61 +93,5 @@ class KingSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
-    }
-
-    function it_can_move_to_adjoining_square_forward()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('c4');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_adjoining_square_backward()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('c2');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_adjoining_square_queenside()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('b3');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_adjoining_square_kingside()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('d3');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_adjoining_square_along_diagonal()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('d4');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_not_move_more_than_one_square()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('c5');
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
-    }
-
-    function it_cannot_move_to_other_square()
-    {
-        $from = CoordinatePair::fromString('d4');
-        $to = CoordinatePair::fromString('c2');
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }
 }

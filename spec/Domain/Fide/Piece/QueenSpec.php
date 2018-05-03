@@ -71,7 +71,7 @@ class QueenSpec extends ObjectBehavior
         $this->mayMove($move);
     }
 
-    function it_cannot_move_to_nearest_square()
+    function it_cannot_move_to_nearest_square_not_on_same_rank_file_or_diagonal()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 2);
@@ -81,77 +81,5 @@ class QueenSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
-    }
-
-    function it_can_move_to_any_square_along_file_forward()
-    {
-        $from = CoordinatePair::fromString('c3');
-        $to = CoordinatePair::fromString('c8');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_file_backward()
-    {
-        $from = CoordinatePair::fromString('c6');
-        $to = CoordinatePair::fromString('c1');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_rank_to_queenside()
-    {
-        $from = CoordinatePair::fromString('c4');
-        $to = CoordinatePair::fromString('c2');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_rank_to_kingside()
-    {
-        $from = CoordinatePair::fromString('c4');
-        $to = CoordinatePair::fromString('c7');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_diagonal_forward_kingside()
-    {
-        $from = CoordinatePair::fromString('d4');
-        $to = CoordinatePair::fromString('f6');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_diagonal_forward_queenside()
-    {
-        $from = CoordinatePair::fromString('d4');
-        $to = CoordinatePair::fromString('a7');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_diagonal_backward_kingside()
-    {
-        $from = CoordinatePair::fromString('d4');
-        $to = CoordinatePair::fromString('e3');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_can_move_to_any_square_along_diagonal_backward_queenside()
-    {
-        $from = CoordinatePair::fromString('d4');
-        $to = CoordinatePair::fromString('b2');
-
-        $this->intentMove($from, $to);
-    }
-
-    function it_cannot_move_to_other_square()
-    {
-        $from = CoordinatePair::fromString('d4');
-        $to = CoordinatePair::fromString('c2');
-
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
     }
 }

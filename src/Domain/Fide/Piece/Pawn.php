@@ -5,30 +5,16 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Move;
-use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
 final class Pawn extends Piece
 {
-    /**
-     * @var bool
-     */
-    private $firstMove = true;
-
-    private $maximalDistance = 2;
+    private const MAXIMAL_DISTANCE_FOR_FIRST_MOVE = 2;
+    private const MAXIMAL_DISTANCE_FOR_NEXT_MOVES = 1;
 
     /**
-     * {@inheritdoc}
+     * @var int
      */
-    public function intentMove(CoordinatePair $from, CoordinatePair $to): Move
-    {
-        $move = Move::between($from, $to);
-        if (!$move->isForward($this->color()) || $move->isAwayMoreSquaresThan($this->firstMove ? 2 : 1) || !$move->isAlongFile()) {
-            throw new IllegalMove($from, $to);
-        }
-        $this->firstMove = false;
-
-        return $move;
-    }
+    private $maximalDistance = self::MAXIMAL_DISTANCE_FOR_FIRST_MOVE;
 
     /**
      * {@inheritdoc}
@@ -38,6 +24,6 @@ final class Pawn extends Piece
         if (!$move instanceof Move\AlongFile || !$move->isTowardsOpponentSideFor($this->color()) || count($move) > $this->maximalDistance) {
             throw IllegalMove::forMove($move);
         }
-        $this->maximalDistance = 1;
+        $this->maximalDistance = self::MAXIMAL_DISTANCE_FOR_NEXT_MOVES;
     }
 }
