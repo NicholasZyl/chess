@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Chessboard\Move\Path;
+use NicholasZyl\Chess\Domain\Chessboard\Move\PathPlanner;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -117,12 +119,32 @@ final class Move
         return $color->is(Color::white()) ? $hasDestinationSquareHigherRank : !$hasDestinationSquareHigherRank;
     }
 
-    public function steps(): array
+    public function path(): Path
     {
-        $steps = [];
-        $steps[] = $this->from;
-        $steps[] = $this->to;
+        $planner = new PathPlanner();
 
-        return $steps;
+        if ($this->isAlongFile()) {
+            $step = $this->from;
+            while (!$step->equals($this->to)) {
+                $step = $step->towardsSquareAlongFile($this->to);
+                $planner->step($step);
+            }
+        } elseif ($this->isAlongRank()) {
+            $step = $this->from;
+            while (!$step->equals($this->to)) {
+                $step = $step->towardsSquareAlongRank($this->to);
+                $planner->step($step);
+            }
+        } elseif ($this->isAlongDiagonal()) {
+            $step = $this->from;
+            while (!$step->equals($this->to)) {
+                $step = $step->towardsSquareAlongDiagonal($this->to);
+                $planner->step($step);
+            }
+        } else {
+            $planner->step($this->to);
+        }
+
+        return $planner->plan();
     }
 }

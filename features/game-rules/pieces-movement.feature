@@ -102,5 +102,5 @@ Feature: The moves of the pieces
     And white bishop is placed on d5
     When I move piece from d5 to g8
     Then the move is not permitted
-    And white bishop should still be placed on b3
+    And white bishop should still be placed on d5
     And black pawn should still be placed on f7

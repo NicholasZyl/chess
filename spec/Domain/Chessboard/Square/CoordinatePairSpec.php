@@ -163,4 +163,68 @@ class CoordinatePairSpec extends ObjectBehavior
 
         $this->hasHigherRankThan($other)->shouldBe(false);
     }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_file_forward()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['b', 1]);
+        $other = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->towardsSquareAlongFile($other)->shouldBeLike(CoordinatePair::fromFileAndRank('b', 2));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_file_backward()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['b', 5]);
+        $other = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->towardsSquareAlongFile($other)->shouldBeLike(CoordinatePair::fromFileAndRank('b', 4));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_rank_to_kingside()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['b', 1]);
+        $other = CoordinatePair::fromFileAndRank('e', 1);
+
+        $this->towardsSquareAlongRank($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 1));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_rank_to_queenside()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
+        $other = CoordinatePair::fromFileAndRank('b', 5);
+
+        $this->towardsSquareAlongRank($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 5));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_rising_slope_forwards()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['b', 1]);
+        $other = CoordinatePair::fromFileAndRank('d', 3);
+
+        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 2));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_rising_slope_backwards()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
+        $other = CoordinatePair::fromFileAndRank('c', 4);
+
+        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_falling_slope_forwards()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['f', 1]);
+        $other = CoordinatePair::fromFileAndRank('b', 5);
+
+        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 2));
+    }
+
+    function it_knows_next_coordinate_pair_toward_other_pair_along_diagonal_falling_slope_backwards()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['d', 5]);
+        $other = CoordinatePair::fromFileAndRank('f', 3);
+
+        $this->towardsSquareAlongDiagonal($other)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 4));
+    }
 }

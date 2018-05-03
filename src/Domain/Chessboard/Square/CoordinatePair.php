@@ -125,4 +125,19 @@ final class CoordinatePair
     {
         return $this->rank > $other->rank;
     }
+
+    public function towardsSquareAlongFile(CoordinatePair $other): CoordinatePair
+    {
+        return CoordinatePair::fromFileAndRank($this->file, $this->rank + ($this->rank < $other->rank ? 1 : -1));
+    }
+
+    public function towardsSquareAlongRank(CoordinatePair $other): CoordinatePair
+    {
+        return CoordinatePair::fromFileAndRank(chr((ord($this->file) + (ord($this->file) < ord($other->file) ? 1 : -1))), $this->rank);
+    }
+
+    public function towardsSquareAlongDiagonal(CoordinatePair $other): CoordinatePair
+    {
+        return CoordinatePair::fromFileAndRank(chr((ord($this->file) + (ord($this->file) < ord($other->file) ? 1 : -1))), $this->rank + ($this->rank < $other->rank ? 1 : -1));
+    }
 }
