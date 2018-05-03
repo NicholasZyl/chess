@@ -106,6 +106,22 @@ abstract class ChessboardMove implements Move
     /**
      * {@inheritdoc}
      */
+    public function from(): CoordinatePair
+    {
+        return $this->from;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function to(): CoordinatePair
+    {
+        return $this->to;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isTowardsOpponentSideFor(Color $color): bool
     {
         return $color->is(Color::white()) ? $this->from->rank() < $this->to->rank() : $this->to->rank() < $this->from->rank();

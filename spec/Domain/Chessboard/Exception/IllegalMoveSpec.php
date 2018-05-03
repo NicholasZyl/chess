@@ -34,7 +34,11 @@ class IllegalMoveSpec extends ObjectBehavior
 
     function it_can_be_constructed_for_move(ChessboardMove $move)
     {
+        $move->from()->willReturn(CoordinatePair::fromFileAndRank('a', 1));
+        $move->to()->willReturn(CoordinatePair::fromFileAndRank('a', 2));
+
         $this->beConstructedThrough('forMove', [$move,]);
-        $this->shouldHaveType(IllegalMove::class);
+        $this->getMessage()->shouldContain('a1');
+        $this->getMessage()->shouldContain('a2');
     }
 }

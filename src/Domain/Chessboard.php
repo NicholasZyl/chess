@@ -42,23 +42,22 @@ final class Chessboard
     }
 
     /**
-     * Move a piece from one coordinate to another.
+     * Move a piece from one square to another.
      *
-     * @param CoordinatePair $source
-     * @param CoordinatePair $destination
+     * @param Move $move
      *
      * @throws NotPermittedMove
      *
      * @return void
      */
-    public function movePiece(CoordinatePair $source, CoordinatePair $destination): void
+    public function movePiece(Move $move): void
     {
-        $from = $this->getSquareAt($source);
-        $to = $this->getSquareAt($destination);
+        $from = $this->getSquareAt($move->from());
+        $to = $this->getSquareAt($move->to());
         $piece = $from->pick();
 
         try {
-            $move = $piece->intentMove($source, $destination);
+            $piece->mayMove($move);
             foreach ($move as $stepCoordinates) {
                 $this->getSquareAt($stepCoordinates)->verifyThatUnoccupied();
             }

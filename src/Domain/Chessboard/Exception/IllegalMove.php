@@ -28,6 +28,6 @@ final class IllegalMove extends NotPermittedMove
      */
     public static function forMove(ChessboardMove $move): IllegalMove
     {
-        return new self(CoordinatePair::fromFileAndRank('a', 1), CoordinatePair::fromFileAndRank('a', 1)); //TODO: Fake value until refactoring
+        return new self($move->from(), $move->to());
     }
 }
