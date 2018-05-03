@@ -28,12 +28,18 @@ class ChessboardContext implements Context
     private $caughtException;
 
     /**
+     * @var Chessboard\MoveIntention
+     */
+    private $moveIntention;
+
+    /**
      * ChessboardContext constructor.
      * @param \Helper\PieceFactory $pieceFactory
      */
     public function __construct(\Helper\PieceFactory $pieceFactory)
     {
         $this->pieceFactory = $pieceFactory;
+        $this->moveIntention = new Chessboard\MoveIntention();
     }
 
     /**
@@ -76,7 +82,7 @@ class ChessboardContext implements Context
     public function iMovePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
     {
         try {
-            $this->chessboard->movePiece($source, $destination);
+            $this->chessboard->movePiece($this->moveIntention->intentMove($source, $destination));
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
         }
