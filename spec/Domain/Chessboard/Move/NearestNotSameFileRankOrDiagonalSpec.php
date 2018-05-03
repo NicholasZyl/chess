@@ -7,7 +7,7 @@ use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
-class NearestSquareNotFileRankOrDiagonalSpec extends ObjectBehavior
+class NearestNotSameFileRankOrDiagonalSpec extends ObjectBehavior
 {
     function it_is_chessboard_move()
     {

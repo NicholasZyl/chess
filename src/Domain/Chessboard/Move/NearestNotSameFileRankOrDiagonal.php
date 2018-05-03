@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Move;
 use NicholasZyl\Chess\Domain\Chessboard\ChessboardMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
-final class NearestSquareNotFileRankOrDiagonal extends ChessboardMove
+final class NearestNotSameFileRankOrDiagonal extends ChessboardMove
 {
     private const DISTANCE_TO_NEAREST_COORDINATES = 2;
 
