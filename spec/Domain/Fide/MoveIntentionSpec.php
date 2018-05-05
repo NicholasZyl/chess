@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\MoveIsInvalid;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
@@ -57,5 +58,11 @@ class MoveIntentionSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('c', 6);
 
         $this->shouldThrow(new MoveIsInvalid($from, $to))->during('intentMove', [$from, $to,]);
+    }
+
+    function it_is_not_posible_to_intent_move_for_other_coordinate_system(Coordinates $otherSystemCoordinates)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $this->shouldThrow(new \InvalidArgumentException('Can intent move only for chessboard coordinates.'))->during('intentMove', [$from, $otherSystemCoordinates,]);
     }
 }

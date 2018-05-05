@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Move extends \Iterator, \Countable
@@ -12,16 +12,16 @@ interface Move extends \Iterator, \Countable
     /**
      * Get move's starting coordinates.
      *
-     * @return CoordinatePair
+     * @return Coordinates
      */
-    public function from(): CoordinatePair;
+    public function from(): Coordinates;
 
     /**
      * Get move's destination coordinates.
      *
-     * @return CoordinatePair
+     * @return Coordinates
      */
-    public function to(): CoordinatePair;
+    public function to(): Coordinates;
 
     /**
      * Is move made towards color's opponent's side of the board.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Position;
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
@@ -14,7 +15,7 @@ use PhpSpec\ObjectBehavior;
 
 class SquareSpec extends ObjectBehavior
 {
-    /** @var CoordinatePair */
+    /** @var Coordinates */
     private $coordinates;
 
     function let()

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Move;
@@ -106,7 +107,7 @@ abstract class ChessboardMove implements Move
     /**
      * {@inheritdoc}
      */
-    public function from(): CoordinatePair
+    public function from(): Coordinates
     {
         return $this->from;
     }
@@ -114,7 +115,7 @@ abstract class ChessboardMove implements Move
     /**
      * {@inheritdoc}
      */
-    public function to(): CoordinatePair
+    public function to(): Coordinates
     {
         return $this->to;
     }

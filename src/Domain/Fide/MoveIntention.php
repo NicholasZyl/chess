@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\MoveIsInvalid;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
@@ -16,15 +17,19 @@ final class MoveIntention
     /**
      * Intent move between two coordinates in a known movement type.
      *
-     * @param CoordinatePair $from
-     * @param CoordinatePair $to
+     * @param Coordinates $from
+     * @param Coordinates $to
      *
      * @throws IllegalMove
      *
      * @return ChessboardMove
      */
-    public function intentMove(CoordinatePair $from, CoordinatePair $to): ChessboardMove
+    public function intentMove(Coordinates $from, Coordinates $to): ChessboardMove
     {
+        if (!$from instanceof CoordinatePair || !$to instanceof CoordinatePair) {
+            throw new \InvalidArgumentException('Can intent move only for chessboard coordinates.');
+        }
+
         try {
             if ($from->isOnSameFile($to)) {
                 $move = AlongFile::between($from, $to);

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 
 interface Board
 {
@@ -13,11 +13,11 @@ interface Board
      * Place a piece at given coordinates.
      *
      * @param Piece $piece
-     * @param CoordinatePair $coordinates
+     * @param Coordinates $coordinates
      *
      * @return void
      */
-    public function placePieceAtCoordinates(Piece $piece, CoordinatePair $coordinates): void;
+    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void;
 
     /**
      * Move a piece from one position to another.
@@ -33,21 +33,21 @@ interface Board
     /**
      * Verify that given position is unoccupied.
      *
-     * @param CoordinatePair $position
+     * @param Coordinates $position
      *
      * @throws SquareIsOccupied
      *
      * @return void
      */
-    public function verifyThatPositionIsUnoccupied(CoordinatePair $position);
+    public function verifyThatPositionIsUnoccupied(Coordinates $position);
 
     /**
      * Check if same piece is already placed on square at given coordinates.
      *
      * @param Piece $piece
-     * @param CoordinatePair $coordinates
+     * @param Coordinates $coordinates
      *
      * @return bool
      */
-    public function hasPieceAtCoordinates(Piece $piece, CoordinatePair $coordinates): bool;
+    public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool;
 }

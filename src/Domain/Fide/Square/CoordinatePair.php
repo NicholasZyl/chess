@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Square;
 
-final class CoordinatePair
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
+
+final class CoordinatePair implements Coordinates
 {
     const LOWEST_FILE = 'a';
     const HIGHEST_FILE = 'h';
@@ -122,12 +124,16 @@ final class CoordinatePair
     /**
      * Compare if is the same as other pair.
      *
-     * @param CoordinatePair $other
+     * @param Coordinates $other
      *
      * @return bool
      */
-    public function equals(CoordinatePair $other): bool
+    public function equals(Coordinates $other): bool
     {
+        if (!$other instanceof self) {
+            return false;
+        }
+
         return $this->file === $other->file && $this->rank === $other->rank;
     }
 

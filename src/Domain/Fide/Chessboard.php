@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Position;
+use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Move;
@@ -34,7 +35,7 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function placePieceAtCoordinates(Piece $piece, CoordinatePair $coordinates): void
+    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
         $this->getSquareAt($coordinates)->place($piece);
     }
@@ -60,7 +61,7 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function verifyThatPositionIsUnoccupied(CoordinatePair $position)
+    public function verifyThatPositionIsUnoccupied(Coordinates $position)
     {
         $this->getSquareAt($position)->verifyThatUnoccupied();
     }
@@ -68,7 +69,7 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function hasPieceAtCoordinates(Piece $piece, CoordinatePair $coordinates): bool
+    public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool
     {
         return $this->getSquareAt($coordinates)->hasPlacedPiece($piece);
     }
@@ -76,11 +77,11 @@ final class Chessboard implements Board
     /**
      * Get square at given coordinates.
      *
-     * @param CoordinatePair $coordinates
+     * @param Coordinates $coordinates
      *
      * @return Position
      */
-    private function getSquareAt(CoordinatePair $coordinates): Position
+    private function getSquareAt(Coordinates $coordinates): Position
     {
         return $this->squares[(string)$coordinates];
     }
