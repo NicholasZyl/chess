@@ -90,7 +90,7 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @When I move piece from :source to :destination
+     * @When I (tried to) move(d) piece from :source to :destination
      *
      * @param CoordinatePair $source
      * @param CoordinatePair $destination
@@ -116,7 +116,7 @@ class ChessboardContext implements Context
     }
 
     /**
-     * @Then the move is illegal
+     * @Then the move is/was illegal
      */
     public function theMoveIsIllegal()
     {

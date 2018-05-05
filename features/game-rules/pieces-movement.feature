@@ -79,6 +79,18 @@ Feature: The moves of the pieces
     When I move piece from b2 to b4
     Then white pawn should be placed on b4
 
+  Scenario: The pawn may not advance two squares along the same file, if any square is occupied
+    Given there is a chessboard
+    And following pieces are placed on it
+      | piece        | location |
+      | white pawn   | c2       |
+      | white knight | c3       |
+    And I tried to move piece from c2 to c4
+    But the move was illegal
+    When I moved piece from c3 to e4
+    And I move piece from c2 to c4
+    Then white pawn should be placed on c4
+
   Scenario: The pawn may not move forward if the square is occupied
     Given there is a chessboard
     And white pawn is placed on d4
@@ -88,12 +100,19 @@ Feature: The moves of the pieces
     And white pawn should still be placed on d4
     And black pawn should still be placed on d5
 
-  Scenario: The pawn may not move more than one square forward if not on first move
+  Scenario: The pawn may not advance more than one square forward if not on first move
     Given there is a chessboard with white pawn placed on d2
     When I move piece from d2 to d4
     When I move piece from d4 to d6
     Then the move is illegal
     And white pawn should still be placed on d4
+
+  Scenario: The pawn may advance two squares along the same file if previous move was illegal and not made
+    Given there is a chessboard with white pawn placed on b2
+    And I tried to move piece from b2 to b1
+    But the move was illegal
+    When I move piece from b2 to b4
+    Then white pawn should be placed on b4
 
   Scenario: The king may move to an adjoining square
     Given there is a chessboard with white king placed on d4
