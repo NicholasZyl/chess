@@ -25,13 +25,13 @@ interface Piece
     public function isSameAs(Piece $anotherPiece): bool;
 
     /**
-     * Check if intented move is legal for this piece.
+     * Check if intended move is legal for this piece.
      *
-     * @param \NicholasZyl\Chess\Domain\Move $move
+     * @param Move $move
      *
      * @throws IllegalMove
      *
      * @return void
      */
-    public function mayMove(\NicholasZyl\Chess\Domain\Move $move): void;
+    public function mayMove(Move $move): void;
 }
