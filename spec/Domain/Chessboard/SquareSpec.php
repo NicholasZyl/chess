@@ -62,14 +62,6 @@ class SquareSpec extends ObjectBehavior
         $this->coordinates()->shouldBe($this->coordinates);
     }
 
-    function it_allows_to_peek_what_piece_is_placed_on_it()
-    {
-        $piece = Pawn::forColor(Piece\Color::white());
-        $this->place($piece);
-
-        $this->peek()->shouldBeLike($piece);
-    }
-
     function it_disallows_placing_piece_on_square_occupied_with_same_color()
     {
         $piece = Pawn::forColor(Piece\Color::white());
