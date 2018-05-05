@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard;
+namespace spec\NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
-use NicholasZyl\Chess\Domain\Chessboard\Move\NearestNotSameFileRankOrDiagonal;
-use NicholasZyl\Chess\Domain\Chessboard\MoveIntention;
-use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Exception\MoveIsInvalid;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\MoveIntention;
+use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class MoveIntentionSpec extends ObjectBehavior

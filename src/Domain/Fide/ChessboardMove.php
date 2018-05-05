@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard;
+namespace NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 

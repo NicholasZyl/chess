@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard\Square;
+namespace NicholasZyl\Chess\Domain\Fide\Square;
 
 final class CoordinatePair
 {

@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard;
+namespace NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
-use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
-use NicholasZyl\Chess\Domain\Chessboard\Move\NearestNotSameFileRankOrDiagonal;
-use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\MoveIsInvalid;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 
 final class MoveIntention
 {

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class SquareIsUnoccupiedSpec extends ObjectBehavior
