@@ -5,7 +5,6 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\MoveIntention;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
@@ -124,14 +123,6 @@ class ChessboardContext implements Context
     public function theMoveIsIllegal()
     {
         expect($this->caughtException)->shouldBeAnInstanceOf(IllegalMove::class);
-    }
-
-    /**
-     * @Then the move is not permitted
-     */
-    public function theMoveIsNotPermitted()
-    {
-        expect($this->caughtException)->shouldBeAnInstanceOf(NotPermittedMove::class);
     }
 
     /**

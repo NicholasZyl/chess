@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Move;
 
@@ -17,9 +16,17 @@ final class Queen extends Piece
     public function mayMove(Move $move, Board $board): void
     {
         if ($move instanceof NearestNotSameFileRankOrDiagonal) {
-            throw IllegalMove::forMove($move);
+            throw new MoveNotAllowedForPiece($move, $this);
         }
 
         $this->checkForInterveningPieces($move, $board);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString(): string
+    {
+        return 'queen';
     }
 }

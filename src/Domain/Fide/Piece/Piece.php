@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -72,7 +73,7 @@ abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
                 $board->verifyThatPositionIsUnoccupied($step);
             }
         } catch (SquareIsOccupied $squareIsOccupied) {
-            throw IllegalMove::forMove($move);
+            throw new MoveOverInterveningPiece($move, $step);
         }
     }
 }

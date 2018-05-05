@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
@@ -53,7 +54,7 @@ class BishopSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_along_rank(Board $board)
@@ -65,7 +66,7 @@ class BishopSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_to_nearest_square(Board $board)
@@ -77,7 +78,7 @@ class BishopSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_over_intervening_pieces(Board $board)
@@ -92,6 +93,6 @@ class BishopSpec extends ObjectBehavior
         $interveningPosition = CoordinatePair::fromFileAndRank('b', 2);
         $board->verifyThatPositionIsUnoccupied($interveningPosition)->willThrow(new SquareIsOccupied($interveningPosition));
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveOverInterveningPiece($move, $interveningPosition))->during('mayMove', [$move, $board,]);
     }
 }

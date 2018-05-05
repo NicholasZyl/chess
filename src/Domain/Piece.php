@@ -35,4 +35,11 @@ interface Piece
      * @return void
      */
     public function mayMove(Move $move, Board $board): void;
+
+    /**
+     * Represent piece as a string.
+     *
+     * @return string
+     */
+    public function __toString(): string;
 }

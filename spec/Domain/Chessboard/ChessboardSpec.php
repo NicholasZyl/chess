@@ -4,14 +4,11 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
-use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
 
@@ -79,7 +76,7 @@ class ChessboardSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('b', 1);
         $move = AlongFile::between($from, $to);
 
-        $illegalMove = IllegalMove::forMove($move);
+        $illegalMove = new MoveNotAllowedForPiece($move, $whitePawn);
         $this->placePieceAtCoordinates($whitePawn, $from);
 
         $this->shouldThrow($illegalMove)->during('movePiece', [$move,]);

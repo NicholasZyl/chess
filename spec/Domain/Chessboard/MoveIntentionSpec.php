@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveIsInvalid;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
@@ -51,11 +51,11 @@ class MoveIntentionSpec extends ObjectBehavior
         $this->intentMove($from, $to)->shouldBeLike(NearestNotSameFileRankOrDiagonal::between($from, $to));
     }
 
-    function it_is_illegal_move_if_cannot_intent_known_type_of_moves()
+    function it_is_not_possible_move_if_cannot_intent_known_type_of_moves()
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 6);
 
-        $this->shouldThrow(new IllegalMove($from, $to))->during('intentMove', [$from, $to,]);
+        $this->shouldThrow(new MoveIsInvalid($from, $to))->during('intentMove', [$from, $to,]);
     }
 }

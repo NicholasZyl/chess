@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveIsInvalid;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
@@ -35,7 +36,7 @@ final class MoveIntention
                 $move = NearestNotSameFileRankOrDiagonal::between($from, $to);
             }
         } catch (\InvalidArgumentException $invalidArgumentException) {
-            throw new IllegalMove($from, $to);
+            throw new MoveIsInvalid($from, $to);
         }
 
         return $move;

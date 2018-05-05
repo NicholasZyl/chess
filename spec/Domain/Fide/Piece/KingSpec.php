@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
@@ -81,7 +81,7 @@ class KingSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_further_than_to_adjoining_square(Board $board)
@@ -93,6 +93,6 @@ class KingSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 }

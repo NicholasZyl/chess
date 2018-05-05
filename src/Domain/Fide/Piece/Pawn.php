@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Move;
 
@@ -25,10 +24,18 @@ final class Pawn extends Piece
     public function mayMove(Move $move, Board $board): void
     {
         if (!$move instanceof AlongFile || !$move->isTowardsOpponentSideFor($this->color()) || count($move) > $this->maximalDistance) {
-            throw IllegalMove::forMove($move);
+            throw new MoveNotAllowedForPiece($move, $this);
         }
         $this->checkForInterveningPieces($move, $board);
 
         $this->maximalDistance = self::MAXIMAL_DISTANCE_FOR_NEXT_MOVES;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString(): string
+    {
+        return 'pawn';
     }
 }

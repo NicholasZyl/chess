@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Chessboard;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
+use NicholasZyl\Chess\Domain\Board\Position;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Board\Position;
 
 final class Chessboard implements Board
 {
@@ -51,7 +51,7 @@ final class Chessboard implements Board
         try {
             $piece->mayMove($move, $this);
             $to->place($piece);
-        } catch (NotPermittedMove $invalidMove) {
+        } catch (IllegalMove $invalidMove) {
             $from->place($piece);
             throw $invalidMove;
         }

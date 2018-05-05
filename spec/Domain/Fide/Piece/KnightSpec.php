@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
@@ -57,7 +57,7 @@ class KnightSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_along_file(Board $board)
@@ -69,7 +69,7 @@ class KnightSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_along_rank(Board $board)
@@ -81,6 +81,6 @@ class KnightSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
     }
 }

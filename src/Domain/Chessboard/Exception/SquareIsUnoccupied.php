@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
-final class SquareIsUnoccupied extends NotPermittedMove
+final class SquareIsUnoccupied extends \RuntimeException
 {
     /**
      * SquareIsVacant constructor.

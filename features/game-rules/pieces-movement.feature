@@ -41,7 +41,7 @@ Feature: The moves of the pieces
     And black pawn is placed on f7
     And white bishop is placed on d5
     When I move piece from d5 to g8
-    Then the move is not permitted
+    Then the move is illegal
     And white bishop should still be placed on d5
     And black pawn should still be placed on f7
 
@@ -96,7 +96,7 @@ Feature: The moves of the pieces
     And white pawn is placed on d4
     And black pawn is placed on d5
     When I move piece from d4 to d5
-    Then the move is not permitted
+    Then the move is illegal
     And white pawn should still be placed on d4
     And black pawn should still be placed on d5
 
@@ -129,5 +129,5 @@ Feature: The moves of the pieces
     Given there is a chessboard with white pawn placed on d5
     And white bishop is placed on b3
     When I move piece from b3 to d5
-    Then the move is not permitted
+    Then the move is illegal
     And white bishop should still be placed on b3

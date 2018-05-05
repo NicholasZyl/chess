@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
@@ -24,7 +24,7 @@ interface Board
      *
      * @param Move $move
      *
-     * @throws NotPermittedMove
+     * @throws IllegalMove
      *
      * @return void
      */
