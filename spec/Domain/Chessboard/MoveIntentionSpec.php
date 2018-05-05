@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveIsInvalid;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Chessboard\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\MoveIntention;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\MoveIsInvalid;
 use PhpSpec\ObjectBehavior;
 
 class MoveIntentionSpec extends ObjectBehavior

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use PhpSpec\ObjectBehavior;
 
 class SquareIsUnoccupiedSpec extends ObjectBehavior

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use PhpSpec\ObjectBehavior;
 
 class MoveOverInterveningPieceSpec extends ObjectBehavior

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Board;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece;
 
 interface Position

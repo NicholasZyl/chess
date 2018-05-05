@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveOverInterveningPiece;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Chessboard\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;

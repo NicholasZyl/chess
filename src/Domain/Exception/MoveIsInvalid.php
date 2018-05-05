@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Chessboard\Exception;
+namespace NicholasZyl\Chess\Domain\Exception;
 
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 

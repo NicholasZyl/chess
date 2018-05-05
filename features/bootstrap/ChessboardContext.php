@@ -4,9 +4,9 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\MoveIntention;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 

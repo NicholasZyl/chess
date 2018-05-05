@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;

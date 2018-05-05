@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Chessboard\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception;
 
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use PhpSpec\ObjectBehavior;
 
 class MoveToOccupiedPositionSpec extends ObjectBehavior

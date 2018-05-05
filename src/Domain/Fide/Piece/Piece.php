@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\MoveOverInterveningPiece;
-use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
