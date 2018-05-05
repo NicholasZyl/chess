@@ -19,7 +19,7 @@ class ChessboardContext implements Context
     private $pieceFactory;
 
     /**
-     * @var Chessboard
+     * @var \NicholasZyl\Chess\Domain\Board
      */
     private $chessboard;
 

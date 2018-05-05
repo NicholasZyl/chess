@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
@@ -37,7 +38,7 @@ class KingSpec extends ObjectBehavior
         $this->isSameAs($pawn)->shouldBe(true);
     }
 
-    function it_can_move_to_adjoining_square_along_file()
+    function it_can_move_to_adjoining_square_along_file(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('a', 2);
@@ -46,10 +47,10 @@ class KingSpec extends ObjectBehavior
             $to
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_can_move_to_adjoining_square_along_rank()
+    function it_can_move_to_adjoining_square_along_rank(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('b', 1);
@@ -58,20 +59,20 @@ class KingSpec extends ObjectBehavior
             $to
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_can_move_to_adjoining_square_along_diagonal()
+    function it_can_move_to_adjoining_square_along_diagonal(Board $board)
     {
         $move = AlongDiagonal::between(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_cannot_move_to_nearest_square_not_on_same_file_rank_or_diagonal()
+    function it_cannot_move_to_nearest_square_not_on_same_file_rank_or_diagonal(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 2);
@@ -80,10 +81,10 @@ class KingSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_cannot_move_further_than_to_adjoining_square()
+    function it_cannot_move_further_than_to_adjoining_square(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('a', 3);
@@ -92,6 +93,6 @@ class KingSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 }

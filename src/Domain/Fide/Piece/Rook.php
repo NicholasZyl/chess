@@ -3,18 +3,23 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Move;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
+use NicholasZyl\Chess\Domain\Move;
 
 final class Rook extends Piece
 {
     /**
      * {@inheritdoc}
      */
-    public function mayMove(\NicholasZyl\Chess\Domain\Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move instanceof Move\AlongFile && !$move instanceof Move\AlongRank) {
+        if (!$move instanceof AlongFile && !$move instanceof AlongRank) {
             throw IllegalMove::forMove($move);
         }
+
+        $this->checkForInterveningPieces($move, $board);
     }
 }

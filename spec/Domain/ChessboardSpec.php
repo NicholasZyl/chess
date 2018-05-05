@@ -53,7 +53,23 @@ class ChessboardSpec extends ObjectBehavior
         $this->hasPieceAtCoordinates($whitePawn, $coordinates)->shouldBe(true);
     }
 
-    function it_does_not_illegal_move_for_piece()
+    function it_knows_when_square_at_given_coordinates_is_unoccupied()
+    {
+        $this->verifyThatPositionIsUnoccupied(CoordinatePair::fromFileAndRank('a', 1));
+    }
+
+    function it_knows_when_square_at_given_coordinates_is_occupied()
+    {
+        $position = CoordinatePair::fromFileAndRank('a', 2);
+        $this->placePieceAtCoordinates(
+            Pawn::forColor(Piece\Color::white()),
+            $position
+        );
+
+        $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($position))->during('verifyThatPositionIsUnoccupied', [$position,]);
+    }
+
+    function it_does_not_allow_illegal_move_for_piece()
     {
         $whitePawn = Pawn::forColor(Piece\Color::white());
 
@@ -68,43 +84,5 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->hasPieceAtCoordinates($whitePawn, $from)->shouldBe(true);
         $this->hasPieceAtCoordinates($whitePawn, $to)->shouldBe(false);
-    }
-
-    function it_does_not_move_piece_to_square_with_another_piece_with_same_color_placed_on_it()
-    {
-        $whiteQueen = Queen::forColor(Piece\Color::white());
-        $whiteKnight = Knight::forColor(Piece\Color::white());
-
-        $whiteQueenPosition = CoordinatePair::fromFileAndRank('b', 2);
-        $whiteKnightPosition = CoordinatePair::fromFileAndRank('c', 2);
-        $move = Chessboard\Move\AlongRank::between($whiteQueenPosition, $whiteKnightPosition);
-
-        $this->placePieceAtCoordinates($whiteQueen, $whiteQueenPosition);
-        $this->placePieceAtCoordinates($whiteKnight, $whiteKnightPosition);
-
-        $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($whiteKnightPosition))->during('movePiece', [$move,]);
-
-        $this->hasPieceAtCoordinates($whiteQueen, $whiteQueenPosition)->shouldBe(true);
-        $this->hasPieceAtCoordinates($whiteKnight, $whiteKnightPosition)->shouldBe(true);
-    }
-
-    function it_does_not_allow_to_move_piece_over_other_pieces()
-    {
-        $whiteBishop = Bishop::forColor(Piece\Color::white());
-        $whiteBishopInitialPosition = CoordinatePair::fromFileAndRank('c', 1);
-
-        $whitePawn = Pawn::forColor(Piece\Color::white());
-        $whitePawnPosition = CoordinatePair::fromFileAndRank('d', 2);
-
-        $destination = CoordinatePair::fromFileAndRank('e', 3);
-
-        $this->placePieceAtCoordinates($whiteBishop, $whiteBishopInitialPosition);
-        $this->placePieceAtCoordinates($whitePawn, $whitePawnPosition);
-
-        $move = Chessboard\Move\AlongDiagonal::between($whiteBishopInitialPosition, $destination);
-
-        $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($whitePawnPosition))->during('movePiece', [$move,]);
-
-        $this->hasPieceAtCoordinates($whiteBishop, $whiteBishopInitialPosition)->shouldBe(true);
     }
 }

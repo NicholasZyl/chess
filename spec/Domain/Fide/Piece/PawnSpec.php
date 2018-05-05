@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongRank;
@@ -51,7 +53,7 @@ class PawnSpec extends ObjectBehavior
         $this->isSameAs($piece)->shouldBe(false);
     }
 
-    function it_can_move_forward_to_the_square_immediately_in_front_on_the_same_file()
+    function it_can_move_forward_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('a', 2);
@@ -60,10 +62,10 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_cannot_move_along_rank()
+    function it_cannot_move_along_rank(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('b', 1);
@@ -72,20 +74,20 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_cannot_move_along_diagonal()
+    function it_cannot_move_along_diagonal(Board $board)
     {
         $move = AlongDiagonal::between(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_cannot_move_to_nearest_square_not_on_same_rank_file_or_diagonal()
+    function it_cannot_move_to_nearest_square_not_on_same_rank_file_or_diagonal(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 2);
@@ -94,10 +96,10 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_cannot_move_backward_to_the_square_immediately_in_front_on_the_same_file_for_white()
+    function it_cannot_move_backward_to_the_square_immediately_in_front_on_the_same_file_for_white(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 2);
         $to = CoordinatePair::fromFileAndRank('a', 1);
@@ -106,10 +108,10 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_cannot_move_backward_to_the_square_immediately_in_front_on_the_same_file_for_black()
+    function it_cannot_move_backward_to_the_square_immediately_in_front_on_the_same_file_for_black(Board $board)
     {
         $this->beConstructedThrough('forColor', [Piece\Color::black(),]);
 
@@ -120,10 +122,10 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_can_advance_two_squares_along_the_same_file_on_first_move_for_white()
+    function it_can_advance_two_squares_along_the_same_file_on_first_move_for_white(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 2);
         $to = CoordinatePair::fromFileAndRank('a', 4);
@@ -132,10 +134,10 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_can_advance_two_squares_along_the_same_file_on_first_move_for_black()
+    function it_can_advance_two_squares_along_the_same_file_on_first_move_for_black(Board $board)
     {
         $this->beConstructedThrough('forColor', [Piece\Color::black(),]);
 
@@ -146,16 +148,16 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_cannot_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves()
+    function it_cannot_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Board $board)
     {
         $firstMove = AlongFile::between(
             CoordinatePair::fromFileAndRank('a', 2),
             CoordinatePair::fromFileAndRank('a', 3)
         );
-        $this->mayMove($firstMove);
+        $this->mayMove($firstMove, $board);
 
         $from = CoordinatePair::fromFileAndRank('a', 3);
         $to = CoordinatePair::fromFileAndRank('a', 5);
@@ -164,6 +166,21 @@ class PawnSpec extends ObjectBehavior
             $to
         );
 
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+    }
+
+    function it_cannot_advance_two_squares_if_any_is_occupied(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('a', 3);
+        $move = AlongFile::between(
+            $from,
+            $to
+        );
+
+        $interveningPosition = CoordinatePair::fromFileAndRank('a', 2);
+        $board->verifyThatPositionIsUnoccupied($interveningPosition)->willThrow(new SquareIsOccupied($interveningPosition));
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 }

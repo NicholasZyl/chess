@@ -28,10 +28,11 @@ interface Piece
      * Check if intended move is legal for this piece.
      *
      * @param Move $move
+     * @param Board $board
      *
      * @throws IllegalMove
      *
      * @return void
      */
-    public function mayMove(Move $move): void;
+    public function mayMove(Move $move, Board $board): void;
 }

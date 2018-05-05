@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
@@ -37,41 +38,7 @@ class KnightSpec extends ObjectBehavior
         $this->isSameAs($pawn)->shouldBe(true);
     }
 
-    function it_cannot_move_along_diagonal()
-    {
-        $move = AlongDiagonal::between(
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 2)
-        );
-
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
-    }
-
-    function it_cannot_move_along_file()
-    {
-        $from = CoordinatePair::fromFileAndRank('a', 1);
-        $to = CoordinatePair::fromFileAndRank('a', 2);
-        $move = AlongFile::between(
-            $from,
-            $to
-        );
-
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
-    }
-
-    function it_cannot_move_along_rank()
-    {
-        $from = CoordinatePair::fromFileAndRank('a', 1);
-        $to = CoordinatePair::fromFileAndRank('b', 1);
-        $move = AlongRank::between(
-            $from,
-            $to
-        );
-
-        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move,]);
-    }
-
-    function it_can_move_to_nearest_square_not_on_same_rank_file_or_diagonal()
+    function it_can_move_to_nearest_square_not_on_same_rank_file_or_diagonal(Board $board)
     {
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('c', 2);
@@ -80,6 +47,40 @@ class KnightSpec extends ObjectBehavior
             $to
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
+    }
+
+    function it_cannot_move_along_diagonal(Board $board)
+    {
+        $move = AlongDiagonal::between(
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 2)
+        );
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+    }
+
+    function it_cannot_move_along_file(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('a', 2);
+        $move = AlongFile::between(
+            $from,
+            $to
+        );
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
+    }
+
+    function it_cannot_move_along_rank(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('b', 1);
+        $move = AlongRank::between(
+            $from,
+            $to
+        );
+
+        $this->shouldThrow(IllegalMove::forMove($move))->during('mayMove', [$move, $board,]);
     }
 }

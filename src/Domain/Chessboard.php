@@ -7,7 +7,7 @@ use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 
-final class Chessboard
+final class Chessboard implements Board
 {
     /**
      * @var Square[]
@@ -29,12 +29,7 @@ final class Chessboard
     }
 
     /**
-     * Place a piece on square at given coordinates.
-     *
-     * @param Piece $piece
-     * @param CoordinatePair $coordinates
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function placePieceAtCoordinates(Piece $piece, CoordinatePair $coordinates): void
     {
@@ -42,13 +37,7 @@ final class Chessboard
     }
 
     /**
-     * Move a piece from one square to another.
-     *
-     * @param Move $move
-     *
-     * @throws NotPermittedMove
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function movePiece(Move $move): void
     {
@@ -57,10 +46,7 @@ final class Chessboard
         $piece = $from->pick();
 
         try {
-            $piece->mayMove($move);
-            foreach ($move as $stepCoordinates) {
-                $this->getSquareAt($stepCoordinates)->verifyThatUnoccupied();
-            }
+            $piece->mayMove($move, $this);
             $to->place($piece);
         } catch (NotPermittedMove $invalidMove) {
             $from->place($piece);
@@ -69,12 +55,15 @@ final class Chessboard
     }
 
     /**
-     * Check if same piece is already placed on square at given coordinates.
-     *
-     * @param Piece $piece
-     * @param CoordinatePair $coordinates
-     *
-     * @return bool
+     * {@inheritdoc}
+     */
+    public function verifyThatPositionIsUnoccupied(CoordinatePair $position)
+    {
+        $this->getSquareAt($position)->verifyThatUnoccupied();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function hasPieceAtCoordinates(Piece $piece, CoordinatePair $coordinates): bool
     {

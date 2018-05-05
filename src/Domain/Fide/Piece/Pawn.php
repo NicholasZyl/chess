@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Chessboard\Move;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Move;
 
 final class Pawn extends Piece
 {
@@ -19,11 +22,13 @@ final class Pawn extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(\NicholasZyl\Chess\Domain\Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move instanceof Move\AlongFile || !$move->isTowardsOpponentSideFor($this->color()) || count($move) > $this->maximalDistance) {
+        if (!$move instanceof AlongFile || !$move->isTowardsOpponentSideFor($this->color()) || count($move) > $this->maximalDistance) {
             throw IllegalMove::forMove($move);
         }
+        $this->checkForInterveningPieces($move, $board);
+
         $this->maximalDistance = self::MAXIMAL_DISTANCE_FOR_NEXT_MOVES;
     }
 }
