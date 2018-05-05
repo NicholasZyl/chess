@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
-use NicholasZyl\Chess\Domain\Chessboard;
+use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
+use NicholasZyl\Chess\Domain\Chessboard\MoveIntention;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -29,7 +32,7 @@ class ChessboardContext implements Context
     private $caughtException;
 
     /**
-     * @var Chessboard\MoveIntention
+     * @var MoveIntention
      */
     private $moveIntention;
 
@@ -40,7 +43,7 @@ class ChessboardContext implements Context
     public function __construct(\Helper\PieceFactory $pieceFactory)
     {
         $this->pieceFactory = $pieceFactory;
-        $this->moveIntention = new Chessboard\MoveIntention();
+        $this->moveIntention = new MoveIntention();
     }
 
     /**
@@ -120,7 +123,7 @@ class ChessboardContext implements Context
      */
     public function theMoveIsIllegal()
     {
-        expect($this->caughtException)->shouldBeAnInstanceOf(Chessboard\Exception\IllegalMove::class);
+        expect($this->caughtException)->shouldBeAnInstanceOf(IllegalMove::class);
     }
 
     /**
@@ -128,7 +131,7 @@ class ChessboardContext implements Context
      */
     public function theMoveIsNotPermitted()
     {
-        expect($this->caughtException)->shouldBeAnInstanceOf(Chessboard\Exception\NotPermittedMove::class);
+        expect($this->caughtException)->shouldBeAnInstanceOf(NotPermittedMove::class);
     }
 
     /**

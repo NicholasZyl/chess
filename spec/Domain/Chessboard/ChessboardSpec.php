@@ -1,10 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain;
+namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
-use NicholasZyl\Chess\Domain\Chessboard;
+use NicholasZyl\Chess\Domain\Chessboard\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Chessboard\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
@@ -37,7 +39,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->placePieceAtCoordinates($whitePawn, $source);
 
-        $this->movePiece(Chessboard\Move\AlongFile::between($source, $destination));
+        $this->movePiece(AlongFile::between($source, $destination));
 
         $this->hasPieceAtCoordinates($whitePawn, $source)->shouldBe(false);
         $this->hasPieceAtCoordinates($whitePawn, $destination)->shouldBe(true);
@@ -66,7 +68,7 @@ class ChessboardSpec extends ObjectBehavior
             $position
         );
 
-        $this->shouldThrow(new Chessboard\Exception\SquareIsOccupied($position))->during('verifyThatPositionIsUnoccupied', [$position,]);
+        $this->shouldThrow(new SquareIsOccupied($position))->during('verifyThatPositionIsUnoccupied', [$position,]);
     }
 
     function it_does_not_allow_illegal_move_for_piece()
@@ -75,7 +77,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $from = CoordinatePair::fromFileAndRank('b', 2);
         $to = CoordinatePair::fromFileAndRank('b', 1);
-        $move = Chessboard\Move\AlongFile::between($from, $to);
+        $move = AlongFile::between($from, $to);
 
         $illegalMove = IllegalMove::forMove($move);
         $this->placePieceAtCoordinates($whitePawn, $from);

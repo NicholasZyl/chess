@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain;
+namespace NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
-use NicholasZyl\Chess\Domain\Chessboard\Square;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Piece;
 
 final class Chessboard implements Board
 {
