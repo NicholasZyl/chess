@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Chessboard;
 
+use NicholasZyl\Chess\Domain\Board\Position;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
@@ -20,6 +21,11 @@ class SquareSpec extends ObjectBehavior
     {
         $this->coordinates = CoordinatePair::fromString('a1');
         $this->beConstructedThrough('forCoordinates', [$this->coordinates]);
+    }
+
+    function it_is_a_board_position()
+    {
+        $this->shouldBeAnInstanceOf(Position::class);
     }
 
     function it_allows_to_place_piece_on_it()
@@ -55,11 +61,6 @@ class SquareSpec extends ObjectBehavior
         $this->place($piece);
 
         $this->hasPlacedPiece($piece)->shouldBe(true);
-    }
-
-    function it_allows_to_check_its_coordinates()
-    {
-        $this->coordinates()->shouldBe($this->coordinates);
     }
 
     function it_disallows_placing_piece_on_square_occupied_with_same_color()

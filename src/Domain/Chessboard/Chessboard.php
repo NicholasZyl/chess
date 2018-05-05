@@ -8,11 +8,12 @@ use NicholasZyl\Chess\Domain\Chessboard\Exception\NotPermittedMove;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Board\Position;
 
 final class Chessboard implements Board
 {
     /**
-     * @var Square[]
+     * @var Position[]
      */
     private $squares = [];
 
@@ -77,9 +78,9 @@ final class Chessboard implements Board
      *
      * @param CoordinatePair $coordinates
      *
-     * @return Square
+     * @return Position
      */
-    private function getSquareAt(CoordinatePair $coordinates): Square
+    private function getSquareAt(CoordinatePair $coordinates): Position
     {
         return $this->squares[(string)$coordinates];
     }
