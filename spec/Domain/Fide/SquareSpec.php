@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Board\Position;
-use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
@@ -22,11 +21,6 @@ class SquareSpec extends ObjectBehavior
     {
         $this->coordinates = CoordinatePair::fromString('a1');
         $this->beConstructedThrough('forCoordinates', [$this->coordinates]);
-    }
-
-    function it_is_a_board_position()
-    {
-        $this->shouldBeAnInstanceOf(Position::class);
     }
 
     function it_allows_to_place_piece_on_it()

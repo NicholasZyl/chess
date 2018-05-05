@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Square;
 
-use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 
 final class CoordinatePair implements Coordinates
 {

@@ -4,8 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Board\Position;
-use NicholasZyl\Chess\Domain\Board\Position\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Move;
@@ -14,7 +13,7 @@ use NicholasZyl\Chess\Domain\Piece;
 final class Chessboard implements Board
 {
     /**
-     * @var Position[]
+     * @var Square[]
      */
     private $squares = [];
 
@@ -79,9 +78,9 @@ final class Chessboard implements Board
      *
      * @param Coordinates $coordinates
      *
-     * @return Position
+     * @return Square
      */
-    private function getSquareAt(Coordinates $coordinates): Position
+    private function getSquareAt(Coordinates $coordinates): Square
     {
         return $this->squares[(string)$coordinates];
     }

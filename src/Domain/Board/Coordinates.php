@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Board\Position;
+namespace NicholasZyl\Chess\Domain\Board;
 
 interface Coordinates
 {

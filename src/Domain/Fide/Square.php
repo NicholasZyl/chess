@@ -3,13 +3,12 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Board\Position;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 
-final class Square implements Position
+final class Square
 {
     /**
      * @var CoordinatePair
@@ -36,15 +35,19 @@ final class Square implements Position
      *
      * @param CoordinatePair $coordinates
      *
-     * @return Position
+     * @return Square
      */
-    public static function forCoordinates(CoordinatePair $coordinates): Position
+    public static function forCoordinates(CoordinatePair $coordinates): Square
     {
         return new Square($coordinates);
     }
 
     /**
-     * {@inheritdoc}
+     * Place piece on the square.
+     *
+     * @param Piece $piece
+     *
+     * @throws SquareIsOccupied
      */
     public function place(Piece $piece): void
     {
@@ -54,7 +57,11 @@ final class Square implements Position
     }
 
     /**
-     * {@inheritdoc}
+     * Check if same piece is already placed on the square.
+     *
+     * @param Piece $piece
+     *
+     * @return bool
      */
     public function hasPlacedPiece(Piece $piece): bool
     {
@@ -62,7 +69,11 @@ final class Square implements Position
     }
 
     /**
-     * {@inheritdoc}
+     * Pick a piece from the square.
+     *
+     * @throws SquareIsUnoccupied
+     *
+     * @return Piece
      */
     public function pick(): Piece
     {
@@ -89,7 +100,11 @@ final class Square implements Position
     }
 
     /**
-     * {@inheritdoc}
+     * Verify that the position is unoccupied by any piece.
+     *
+     * @throws SquareIsOccupied
+     *
+     * @return void
      */
     public function verifyThatUnoccupied(): void
     {
