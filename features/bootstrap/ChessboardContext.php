@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Chessboard\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
@@ -71,6 +72,21 @@ class ChessboardContext implements Context
     {
         $this->thereIsAChessboard();
         $this->pieceIsPlacedOnSquare($piece, $coordinates);
+    }
+
+    /**
+     * @Given following pieces are placed on it
+     *
+     * @param TableNode $table
+     */
+    public function followingPiecesArePlacedOnIt(TableNode $table)
+    {
+        foreach ($table->getHash() as $pieceAtLocation) {
+            $this->pieceIsPlacedOnSquare(
+                $this->castToPiece($pieceAtLocation['piece']),
+                $this->castToCoordinates($pieceAtLocation['location'])
+            );
+        }
     }
 
     /**
