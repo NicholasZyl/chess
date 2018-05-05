@@ -20,8 +20,8 @@ final class Chessboard
      */
     public function __construct()
     {
-        foreach (range('a', 'h') as $file) {
-            foreach (range(1, 8) as $rank) {
+        foreach (CoordinatePair::validFiles() as $file) {
+            foreach (CoordinatePair::validRanks() as $rank) {
                 $coordinates = CoordinatePair::fromFileAndRank($file, $rank);
                 $this->squares[(string)$coordinates] = Square::forCoordinates($coordinates);
             }

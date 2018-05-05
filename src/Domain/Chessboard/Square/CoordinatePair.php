@@ -5,6 +5,11 @@ namespace NicholasZyl\Chess\Domain\Chessboard\Square;
 
 final class CoordinatePair
 {
+    const LOWEST_FILE = 'a';
+    const HIGHEST_FILE = 'h';
+    const LOWEST_RANK = 1;
+    const HIGHEST_RANK = 8;
+
     /**
      * @var string
      */
@@ -16,25 +21,7 @@ final class CoordinatePair
     private $rank;
 
     /**
-     * Coordinates constructor.
-     *
-     * @param string $file
-     * @param int $rank
-     */
-    private function __construct(string $file, int $rank)
-    {
-        if (!in_array($file, range('a', 'h'), true)) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a proper file.', $file));
-        }
-        if (!in_array($rank, range(1, 8), true)) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a proper rank.', $rank));
-        }
-        $this->file = $file;
-        $this->rank = $rank;
-    }
-
-    /**
-     * Create coordinates from passed file and rank.
+     * Create coordinate pair from passed file and rank.
      *
      * @param string $file
      * @param int $rank
@@ -47,7 +34,7 @@ final class CoordinatePair
     }
 
     /**
-     * Create coordinates from string.
+     * Create coordinate pair from string.
      *
      * @param string $coordinates
      *
@@ -62,6 +49,44 @@ final class CoordinatePair
         }
 
         return new CoordinatePair(strtolower($coordinates[0]), intval($coordinates[1]));
+    }
+
+    /**
+     * Create a new coordinate pair from valid file and rank.
+     *
+     * @param string $file
+     * @param int $rank
+     */
+    private function __construct(string $file, int $rank)
+    {
+        if (!in_array($file, self::validFiles(), true)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a proper file.', $file));
+        }
+        if (!in_array($rank, self::validRanks(), true)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a proper rank.', $rank));
+        }
+        $this->file = $file;
+        $this->rank = $rank;
+    }
+
+    /**
+     * Get all valid files.
+     *
+     * @return array
+     */
+    public static function validFiles(): array
+    {
+        return range(self::LOWEST_FILE, self::HIGHEST_FILE);
+    }
+
+    /**
+     * Get all valid ranks.
+     *
+     * @return array
+     */
+    public static function validRanks(): array
+    {
+        return range(self::LOWEST_RANK, self::HIGHEST_RANK);
     }
 
     /**
