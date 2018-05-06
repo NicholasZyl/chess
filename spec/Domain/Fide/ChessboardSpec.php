@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
@@ -126,5 +127,21 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->hasPieceAtCoordinates($blackPawn, $destination)->shouldBe(false);
         $this->hasPieceAtCoordinates($whiteRook, $destination)->shouldBe(true);
+    }
+
+    function it_does_not_allow_move_to_square_occupied_by_piece_of_same_color()
+    {
+        $whiteRook = Rook::forColor(Piece\Color::white());
+        $whitePawn = Pawn::forColor(Piece\Color::white());
+
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+
+        $this->placePieceAtCoordinates($whiteRook, $source);
+        $this->placePieceAtCoordinates($whitePawn, $destination);
+
+        $move = AlongFile::between($source, $destination);
+
+        $this->shouldThrow(new MoveToOccupiedPosition($move, $destination))->during('movePiece', [$move,]);
     }
 }

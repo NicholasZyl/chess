@@ -6,7 +6,9 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
 
@@ -55,6 +57,9 @@ final class Chessboard implements Board
         } catch (IllegalMove $invalidMove) {
             $from->place($piece);
             throw $invalidMove;
+        } catch (SquareIsOccupied $squareIsOccupied) {
+            $from->place($piece);
+            throw new MoveToOccupiedPosition($move, $move->to());
         }
     }
 
