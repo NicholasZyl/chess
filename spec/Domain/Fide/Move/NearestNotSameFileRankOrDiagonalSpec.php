@@ -51,14 +51,13 @@ class NearestNotSameFileRankOrDiagonalSpec extends ObjectBehavior
         $this->shouldThrow(new \InvalidArgumentException('c2 and f1 are not the nearest squares.'))->duringInstantiation();
     }
 
-    function it_consists_only_target_coordinates_as_a_step_to_move_to_the_nearest_square()
+    function it_consists_no_steps()
     {
         $from = CoordinatePair::fromFileAndRank('d', 2);
         $to = CoordinatePair::fromFileAndRank('e', 4);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(1);
-        $this->current()->shouldBeLike($to);
+        $this->count()->shouldBe(0);
     }
 
     function it_is_towards_opponent_rank_for_white_if_moving_to_higher_rank()

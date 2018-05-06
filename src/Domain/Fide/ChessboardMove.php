@@ -85,10 +85,10 @@ abstract class ChessboardMove implements Move
     private function planSteps(): array
     {
         $steps = [];
-        $step = $this->from;
+        $step = $this->nextCoordinatesTowards($this->from, $this->to);
         while (!$step->equals($this->to)) {
-            $step = $this->nextCoordinatesTowards($step, $this->to);
             $steps[] = $step;
+            $step = $this->nextCoordinatesTowards($step, $this->to);
         }
 
         return $steps;

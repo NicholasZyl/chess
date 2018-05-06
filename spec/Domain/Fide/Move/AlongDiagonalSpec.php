@@ -30,20 +30,18 @@ class AlongDiagonalSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('d', 3);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(2);
+        $this->count()->shouldBe(1);
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 2));
-        $this->next();
-        $this->current()->shouldBeLike($to);
     }
 
     function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_rising_slope_backwards()
     {
         $from = CoordinatePair::fromFileAndRank('d', 5);
-        $to = CoordinatePair::fromFileAndRank('c', 4);
+        $to = CoordinatePair::fromFileAndRank('b', 3);
         $this->beConstructedThrough('between', [$from, $to,]);
 
         $this->count()->shouldBe(1);
-        $this->current()->shouldBeLike($to);
+        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
     }
 
     function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_falling_slope_forwards()
@@ -52,14 +50,12 @@ class AlongDiagonalSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('b', 5);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(4);
+        $this->count()->shouldBe(3);
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('e', 2));
         $this->next();
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('d', 3));
         $this->next();
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
-        $this->next();
-        $this->current()->shouldBeLike($to);
     }
 
     function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_slope_backwards()
@@ -68,10 +64,8 @@ class AlongDiagonalSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('f', 3);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(2);
+        $this->count()->shouldBe(1);
         $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('e', 4));
-        $this->next();
-        $this->current()->shouldBeLike($to);
     }
 
     function it_is_towards_opponent_rank_for_white_if_moving_to_higher_rank()

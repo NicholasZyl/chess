@@ -10,8 +10,8 @@ use NicholasZyl\Chess\Domain\Move;
 
 final class Pawn extends Piece
 {
-    private const MAXIMAL_DISTANCE_FOR_FIRST_MOVE = 2;
-    private const MAXIMAL_DISTANCE_FOR_NEXT_MOVES = 1;
+    private const MAXIMAL_DISTANCE_FOR_FIRST_MOVE = 1;
+    private const MAXIMAL_DISTANCE_FOR_NEXT_MOVES = 0;
 
     /**
      * @var int
