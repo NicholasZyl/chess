@@ -62,7 +62,9 @@ final class Square
      */
     public function place(Piece $piece): void
     {
-        $this->verifyThatUnoccupied();
+        if ($this->placedPiece !== null && $this->placedPiece->isSameColorAs($piece)) {
+            throw new SquareIsOccupied($this->coordinates);
+        }
 
         $this->placedPiece = $piece;
     }

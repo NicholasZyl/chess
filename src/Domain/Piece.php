@@ -16,6 +16,15 @@ interface Piece
     public function color(): Color;
 
     /**
+     * Compare if piece has the same color as another one;
+     *
+     * @param Piece $anotherPiece
+     *
+     * @return bool
+     */
+    public function isSameColorAs(Piece $anotherPiece): bool;
+
+    /**
      * Compare if piece has the same rank and color as another one.
      *
      * @param Piece $anotherPiece
