@@ -23,6 +23,11 @@ class SquareSpec extends ObjectBehavior
         $this->beConstructedThrough('forCoordinates', [$this->coordinates]);
     }
 
+    function it_has_coordinates()
+    {
+        $this->coordinates()->shouldBe($this->coordinates);
+    }
+
     function it_allows_to_place_piece_on_it()
     {
         $piece = Pawn::forColor(Piece\Color::white());

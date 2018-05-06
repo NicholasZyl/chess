@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
@@ -40,6 +41,16 @@ final class Square
     public static function forCoordinates(CoordinatePair $coordinates): Square
     {
         return new Square($coordinates);
+    }
+
+    /**
+     * Get square's coordinates.
+     *
+     * @return Coordinates
+     */
+    public function coordinates(): Coordinates
+    {
+        return $this->coordinates;
     }
 
     /**

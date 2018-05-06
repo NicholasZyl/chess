@@ -15,19 +15,20 @@ final class Chessboard implements Board
     /**
      * @var Square[]
      */
-    private $squares = [];
+    private $grid = [];
 
     /**
-     * Chessboard constructor.
-     * Initialise the full chessboard with all squares on it. Initially empty.
+     * Build the chessboard from passed grid of squares.
+     *
+     * @param Square[] $grid
      */
-    public function __construct()
+    public function __construct(array $grid)
     {
-        foreach (CoordinatePair::validFiles() as $file) {
-            foreach (CoordinatePair::validRanks() as $rank) {
-                $coordinates = CoordinatePair::fromFileAndRank($file, $rank);
-                $this->squares[(string)$coordinates] = Square::forCoordinates($coordinates);
-            }
+        if (count($grid) !== 64) {
+            throw new \InvalidArgumentException('The chessboard must be composed of an 8 x 8 grid of 64 equal squares.');
+        }
+        foreach ($grid as $square) {
+            $this->grid[(string) $square->coordinates()] = $square;
         }
     }
 
