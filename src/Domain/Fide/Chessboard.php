@@ -75,6 +75,14 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
+    public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool
+    {
+        return $this->getSquareAt($coordinates)->hasPlacedOpponentsPiece($pieceColor);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool
     {
         return $this->getSquareAt($coordinates)->hasPlacedPiece($piece);
@@ -94,13 +102,5 @@ final class Chessboard implements Board
         }
 
         return $this->grid[(string)$coordinates];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool
-    {
-        return $this->getSquareAt($coordinates)->hasPlacedOpponentsPiece($pieceColor);
     }
 }
