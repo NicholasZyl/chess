@@ -125,4 +125,16 @@ final class Square
             throw new SquareIsOccupied($this->coordinates);
         }
     }
+
+    /**
+     * Check if there is a placed piece and the piece has different color.
+     *
+     * @param Piece\Color $color
+     *
+     * @return bool
+     */
+    public function hasPlacedOpponentsPiece(Piece\Color $color): bool
+    {
+        return $this->placedPiece !== null && !$this->placedPiece->hasColor($color);
+    }
 }

@@ -144,4 +144,29 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->shouldThrow(new MoveToOccupiedPosition($move, $destination))->during('movePiece', [$move,]);
     }
+
+    function it_knows_when_square_at_coordinates_is_occupied_by_opponent_if_piece_has_different_color()
+    {
+        $blackPawn = Pawn::forColor(Piece\Color::black());
+        $position = CoordinatePair::fromFileAndRank('c', 4);
+        $this->placePieceAtCoordinates($blackPawn, $position);
+
+        $this->hasOpponentsPieceAt($position, Piece\Color::white())->shouldBe(true);
+    }
+
+    function it_knows_when_square_at_coordinates_is_not_occupied_by_opponent_if_piece_has_same_color()
+    {
+        $blackPawn = Pawn::forColor(Piece\Color::black());
+        $position = CoordinatePair::fromFileAndRank('c', 4);
+        $this->placePieceAtCoordinates($blackPawn, $position);
+
+        $this->hasOpponentsPieceAt($position, Piece\Color::black())->shouldBe(false);
+    }
+
+    function it_knows_when_square_at_coordinates_is_not_occupied_by_opponent_if_piece_is_unoccupied()
+    {
+        $position = CoordinatePair::fromFileAndRank('c', 4);
+
+        $this->hasOpponentsPieceAt($position, Piece\Color::black())->shouldBe(false);
+    }
 }

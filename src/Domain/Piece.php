@@ -16,6 +16,15 @@ interface Piece
     public function color(): Color;
 
     /**
+     * Check if piece has given color.
+     *
+     * @param Color $color
+     *
+     * @return bool
+     */
+    public function hasColor(Color $color): bool;
+
+    /**
      * Compare if piece has the same color as another one;
      *
      * @param Piece $anotherPiece

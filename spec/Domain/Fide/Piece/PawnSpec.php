@@ -6,6 +6,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
@@ -15,11 +16,15 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class PawnSpec extends ObjectBehavior
 {
-    function let()
+    function let(Board $board)
     {
+        $board->hasOpponentsPieceAt(Argument::cetera())->willReturn(false);
+        $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
+
         $this->beConstructedThrough('forColor', [Piece\Color::white(),]);
     }
 
@@ -183,5 +188,19 @@ class PawnSpec extends ObjectBehavior
         $board->verifyThatPositionIsUnoccupied($interveningPosition)->willThrow(new SquareIsOccupied($interveningPosition));
 
         $this->shouldThrow(new MoveOverInterveningPiece($move, $interveningPosition))->during('mayMove', [$move, $board,]);
+    }
+
+    function it_cannot_move_forward_to_the_square_immediately_in_front_on_the_same_file_if_occupied(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 2);
+        $to = CoordinatePair::fromFileAndRank('a', 3);
+        $move = AlongFile::between(
+            $from,
+            $to
+        );
+
+        $board->hasOpponentsPieceAt($to, Piece\Color::white())->willReturn(true);
+
+        $this->shouldThrow(new MoveToOccupiedPosition($move, $to))->during('mayMove', [$move, $board,]);
     }
 }

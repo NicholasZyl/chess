@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Board
 {
@@ -45,6 +46,16 @@ interface Board
      * @return void
      */
     public function verifyThatPositionIsUnoccupied(Coordinates $position);
+
+    /**
+     * Check if given position is occupied by piece of color different than passed one.
+     *
+     * @param Coordinates $coordinates
+     * @param Color $pieceColor
+     *
+     * @return bool
+     */
+    public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool;
 
     /**
      * Check if same piece is already placed on square at given coordinates.

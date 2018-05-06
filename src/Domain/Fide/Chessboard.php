@@ -11,6 +11,7 @@ use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Chessboard implements Board
 {
@@ -93,5 +94,13 @@ final class Chessboard implements Board
         }
 
         return $this->grid[(string)$coordinates];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool
+    {
+        return $this->getSquareAt($coordinates)->hasPlacedOpponentsPiece($pieceColor);
     }
 }

@@ -96,4 +96,25 @@ class SquareSpec extends ObjectBehavior
         $this->place($piece);
         $this->hasPlacedPiece($piece)->shouldBe(true);
     }
+
+    function it_knows_that_it_has_placed_opponents_piece_on_it()
+    {
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->place($piece);
+
+        $this->hasPlacedOpponentsPiece(Piece\Color::black())->shouldBe(true);
+    }
+
+    function it_knows_that_it_has_not_placed_opponents_piece_when_piece_has_different_color()
+    {
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->place($piece);
+
+        $this->hasPlacedOpponentsPiece(Piece\Color::white())->shouldBe(false);
+    }
+
+    function it_knows_that_it_has_not_placed_opponents_piece_when_is_unoccupied()
+    {
+        $this->hasPlacedOpponentsPiece(Piece\Color::black())->shouldBe(false);
+    }
 }
