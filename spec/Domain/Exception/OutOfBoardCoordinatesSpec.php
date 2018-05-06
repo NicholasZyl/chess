@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Exception;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\OutOfBoardPosition;
+use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use PhpSpec\ObjectBehavior;
 
-class OutOfBoardPositionSpec extends ObjectBehavior
+class OutOfBoardCoordinatesSpec extends ObjectBehavior
 {
     function let(Coordinates $coordinates)
     {
@@ -17,7 +17,7 @@ class OutOfBoardPositionSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(OutOfBoardPosition::class);
+        $this->shouldHaveType(OutOfBoardCoordinates::class);
     }
 
     function it_is_invalid_position_exception()

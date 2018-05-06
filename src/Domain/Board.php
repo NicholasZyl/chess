@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Exception\OutOfBoardPosition;
+use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 
 interface Board
@@ -16,7 +16,7 @@ interface Board
      * @param Piece $piece
      * @param Coordinates $coordinates
      *
-     * @throws OutOfBoardPosition
+     * @throws OutOfBoardCoordinates
      *
      * @return void
      */
@@ -28,7 +28,7 @@ interface Board
      * @param Move $move
      *
      * @throws IllegalMove
-     * @throws OutOfBoardPosition
+     * @throws OutOfBoardCoordinates
      *
      * @return void
      */
@@ -40,7 +40,7 @@ interface Board
      * @param Coordinates $position
      *
      * @throws SquareIsOccupied
-     * @throws OutOfBoardPosition
+     * @throws OutOfBoardCoordinates
      *
      * @return void
      */
@@ -52,7 +52,7 @@ interface Board
      * @param Piece $piece
      * @param Coordinates $coordinates
      *
-     * @throws OutOfBoardPosition
+     * @throws OutOfBoardCoordinates
      *
      * @return bool
      */

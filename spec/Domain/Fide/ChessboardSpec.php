@@ -5,7 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\OutOfBoardPosition;
+use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
@@ -41,7 +41,7 @@ class ChessboardSpec extends ObjectBehavior
     {
         $coordinates->__toString()->willReturn('i1');
 
-        $this->shouldThrow(new OutOfBoardPosition($coordinates->getWrappedObject()))->during('verifyThatPositionIsUnoccupied', [$coordinates,]);
+        $this->shouldThrow(new OutOfBoardCoordinates($coordinates->getWrappedObject()))->during('verifyThatPositionIsUnoccupied', [$coordinates,]);
     }
 
     function it_allows_placing_piece_at_given_coordinates()
