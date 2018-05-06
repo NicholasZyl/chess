@@ -21,3 +21,11 @@ Feature: The capture of opponent's piece
     Then the move is illegal
     And white pawn should still be placed on d4
     And black pawn should still be placed on d5
+
+  Scenario: The pawn may move to a square occupied by an opponent’s piece diagonally in front of it on an adjacent file, capturing that piece
+    Given there is a chessboard
+    And white pawn is placed on d4
+    And black pawn is placed on e5
+    When I move piece from d4 to e5
+    Then black pawn on e5 should be captured
+    And white pawn should be placed on e5

@@ -203,4 +203,46 @@ class PawnSpec extends ObjectBehavior
 
         $this->shouldThrow(new MoveToOccupiedPosition($move, $to))->during('mayMove', [$move, $board,]);
     }
+
+    function it_can_move_along_diagonal_to_capture_opponents_piece(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 2);
+        $to = CoordinatePair::fromFileAndRank('b', 3);
+        $move = AlongDiagonal::between(
+            $from,
+            $to
+        );
+
+        $board->hasOpponentsPieceAt($to, Piece\Color::white())->willReturn(true);
+
+        $this->mayMove($move, $board);
+    }
+
+    function it_cannot_capture_piece_on_further_squares(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 4);
+        $move = AlongDiagonal::between(
+            $from,
+            $to
+        );
+
+        $board->hasOpponentsPieceAt($to, Piece\Color::white())->willReturn(true);
+
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
+    }
+
+    function it_cannot_capture_piece_behind_of_it(Board $board)
+    {
+        $from = CoordinatePair::fromFileAndRank('c', 4);
+        $to = CoordinatePair::fromFileAndRank('b', 3);
+        $move = AlongDiagonal::between(
+            $from,
+            $to
+        );
+
+        $board->hasOpponentsPieceAt($to, Piece\Color::white())->willReturn(true);
+
+        $this->shouldThrow(new MoveNotAllowedForPiece($move, $this->getWrappedObject()))->during('mayMove', [$move, $board,]);
+    }
 }
