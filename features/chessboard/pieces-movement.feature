@@ -94,11 +94,11 @@ Feature: The moves of the pieces
   Scenario: The pawn may not move forward if the square is occupied
     Given there is a chessboard
     And white pawn is placed on d4
-    And black pawn is placed on d5
+    And white knight is placed on d5
     When I move piece from d4 to d5
     Then the move is illegal
     And white pawn should still be placed on d4
-    And black pawn should still be placed on d5
+    And white knight should still be placed on d5
 
   Scenario: The pawn may not advance more than one square forward if not on first move
     Given there is a chessboard with white pawn placed on d2

@@ -12,3 +12,12 @@ Feature: The capture of opponent's piece
     When I move piece from d5 to e6
     Then black pawn on e6 should be captured
     And white bishop should be placed on e6
+
+  Scenario: The pawn may not capture opponent's piece on the square immediately in front of it on the same file
+    Given there is a chessboard
+    And white pawn is placed on d4
+    And black pawn is placed on d5
+    When I move piece from d4 to d5
+    Then the move is illegal
+    And white pawn should still be placed on d4
+    And black pawn should still be placed on d5
