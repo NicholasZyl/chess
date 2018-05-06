@@ -128,6 +128,17 @@ class ChessboardContext implements Context
     }
 
     /**
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should be captured/
+     *
+     * @param Piece $piece
+     * @param CoordinatePair $coordinates
+     */
+    public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
+    {
+        expect($this->chessboard->hasPieceAtCoordinates($piece, $coordinates))->shouldBe(false);
+    }
+
+    /**
      * @Transform :piece
      *
      * @param string $pieceDescription

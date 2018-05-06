@@ -9,6 +9,7 @@ use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Fide\Square;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
@@ -52,7 +53,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $coordinates);
     }
 
-    function it_allows_moving_white_pawn_one_square_forward()
+    function it_allows_moving_piece_if_move_is_legal()
     {
         $whitePawn = Pawn::forColor(Piece\Color::white());
 
@@ -108,5 +109,22 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->hasPieceAtCoordinates($whitePawn, $from)->shouldBe(true);
         $this->hasPieceAtCoordinates($whitePawn, $to)->shouldBe(false);
+    }
+
+    function it_allows_capturing_opponents_piece()
+    {
+        $whiteRook = Rook::forColor(Piece\Color::white());
+        $blackPawn = Pawn::forColor(Piece\Color::black());
+
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+
+        $this->placePieceAtCoordinates($whiteRook, $source);
+        $this->placePieceAtCoordinates($blackPawn, $destination);
+
+        $this->movePiece(AlongFile::between($source, $destination));
+
+        $this->hasPieceAtCoordinates($blackPawn, $destination)->shouldBe(false);
+        $this->hasPieceAtCoordinates($whiteRook, $destination)->shouldBe(true);
     }
 }
