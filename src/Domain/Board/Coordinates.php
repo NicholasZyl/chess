@@ -6,13 +6,6 @@ namespace NicholasZyl\Chess\Domain\Board;
 interface Coordinates
 {
     /**
-     * Represent coordinates as string.
-     *
-     * @return string
-     */
-    public function __toString(): string;
-
-    /**
      * Compare if is the same as other pair.
      *
      * @param Coordinates $other
@@ -20,4 +13,11 @@ interface Coordinates
      * @return bool
      */
     public function equals(Coordinates $other): bool;
+
+    /**
+     * Represent coordinates as string.
+     *
+     * @return string
+     */
+    public function __toString(): string;
 }

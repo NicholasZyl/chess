@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\OutOfBoardPosition;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
 
@@ -82,6 +82,10 @@ final class Chessboard implements Board
      */
     private function getSquareAt(Coordinates $coordinates): Square
     {
-        return $this->squares[(string)$coordinates];
+        if (!array_key_exists((string) $coordinates, $this->grid)) {
+            throw new OutOfBoardPosition($coordinates);
+        }
+
+        return $this->grid[(string)$coordinates];
     }
 }

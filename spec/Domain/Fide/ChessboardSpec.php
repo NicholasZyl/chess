@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\OutOfBoardPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Fide\Square;
 use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -17,6 +20,13 @@ class ChessboardSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(Chessboard::class);
+    }
+
+    function it_does_not_allow_interacting_with_position_out_of_board(Coordinates $coordinates)
+    {
+        $coordinates->__toString()->willReturn('i1');
+
+        $this->shouldThrow(new OutOfBoardPosition($coordinates->getWrappedObject()))->during('verifyThatPositionIsUnoccupied', [$coordinates,]);
     }
 
     function it_allows_placing_piece_at_given_coordinates()
