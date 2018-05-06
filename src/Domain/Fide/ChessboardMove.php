@@ -30,11 +30,6 @@ abstract class ChessboardMove implements Move
     private $steps;
 
     /**
-     * @var int
-     */
-    private $stepIndex = 0;
-
-    /**
      * Plan move along diagonal between two coordinates.
      *
      * @param CoordinatePair $from
@@ -123,56 +118,16 @@ abstract class ChessboardMove implements Move
     /**
      * {@inheritdoc}
      */
+    public function steps(): array
+    {
+        return $this->steps;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isTowardsOpponentSideFor(Color $color): bool
     {
         return $color->is(Color::white()) ? $this->from->rank() < $this->to->rank() : $this->to->rank() < $this->from->rank();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function current()
-    {
-        return $this->steps[$this->stepIndex];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
-    {
-        ++$this->stepIndex;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
-    {
-        return $this->stepIndex;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function valid()
-    {
-        return isset($this->steps[$this->key()]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind()
-    {
-        $this->stepIndex = 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function count()
-    {
-        return count($this->steps);
     }
 }

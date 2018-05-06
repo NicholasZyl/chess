@@ -24,48 +24,52 @@ class AlongDiagonalSpec extends ObjectBehavior
         $this->shouldThrow(new \InvalidArgumentException('c1 and b1 are not along the same diagonal.'))->duringInstantiation();
     }
 
-    function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_rising_slope_forwards()
+    function it_has_collection_of_steps_to_make_move_between_coordinates_along_diagonal_rising_slope_forwards()
     {
         $from = CoordinatePair::fromFileAndRank('b', 1);
         $to = CoordinatePair::fromFileAndRank('d', 3);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(1);
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 2));
+        $this->steps()->shouldBeLike(
+            [CoordinatePair::fromFileAndRank('c', 2),]
+        );
     }
 
-    function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_rising_slope_backwards()
+    function it_has_collection_of_steps_to_make_move_between_coordinates_along_diagonal_rising_slope_backwards()
     {
         $from = CoordinatePair::fromFileAndRank('d', 5);
         $to = CoordinatePair::fromFileAndRank('b', 3);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(1);
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
+        $this->steps()->shouldBeLike(
+            [CoordinatePair::fromFileAndRank('c', 4),]
+        );
     }
 
-    function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_falling_slope_forwards()
+    function it_has_collection_of_steps_to_make_move_between_coordinates_along_diagonal_falling_slope_forwards()
     {
         $from = CoordinatePair::fromFileAndRank('f', 1);
         $to = CoordinatePair::fromFileAndRank('b', 5);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(3);
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('e', 2));
-        $this->next();
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('d', 3));
-        $this->next();
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 4));
+        $this->steps()->shouldBeLike(
+            [
+                CoordinatePair::fromFileAndRank('e', 2),
+                CoordinatePair::fromFileAndRank('d', 3),
+                CoordinatePair::fromFileAndRank('c', 4),
+            ]
+        );
     }
 
-    function it_is_collection_of_steps_to_make_move_between_coordinates_along_diagonal_slope_backwards()
+    function it_has_collection_of_steps_to_make_move_between_coordinates_along_diagonal_slope_backwards()
     {
         $from = CoordinatePair::fromFileAndRank('d', 5);
         $to = CoordinatePair::fromFileAndRank('f', 3);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(1);
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('e', 4));
+        $this->steps()->shouldBeLike(
+            [CoordinatePair::fromFileAndRank('e', 4),]
+        );
     }
 
     function it_is_towards_opponent_rank_for_white_if_moving_to_higher_rank()

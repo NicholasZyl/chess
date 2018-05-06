@@ -57,7 +57,7 @@ class NearestNotSameFileRankOrDiagonalSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('e', 4);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(0);
+        $this->steps()->shouldBe([]);
     }
 
     function it_is_towards_opponent_rank_for_white_if_moving_to_higher_rank()

@@ -6,9 +6,8 @@ namespace NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
-interface Move extends \Iterator, \Countable
+interface Move
 {
-
     /**
      * Get move's starting coordinates.
      *
@@ -22,6 +21,13 @@ interface Move extends \Iterator, \Countable
      * @return Coordinates
      */
     public function to(): Coordinates;
+
+    /**
+     * Get coordinates of steps between starting and destination points.
+     *
+     * @return Coordinates[]
+     */
+    public function steps(): array;
 
     /**
      * Is move made towards color's opponent's side of the board.

@@ -30,10 +30,12 @@ class AlongFileSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('b', 4);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(2);
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('b', 2));
-        $this->next();
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('b', 3));
+        $this->steps()->shouldBeLike(
+            [
+                CoordinatePair::fromFileAndRank('b', 2),
+                CoordinatePair::fromFileAndRank('b', 3),
+            ]
+        );
     }
 
     function it_is_towards_opponent_rank_for_white_if_moving_to_higher_rank()

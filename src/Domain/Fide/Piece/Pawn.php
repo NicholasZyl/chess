@@ -10,25 +10,25 @@ use NicholasZyl\Chess\Domain\Move;
 
 final class Pawn extends Piece
 {
-    private const MAXIMAL_DISTANCE_FOR_FIRST_MOVE = 1;
-    private const MAXIMAL_DISTANCE_FOR_NEXT_MOVES = 0;
+    private const ALLOWED_STEPS_COUNT_FOR_FIRST_MOVE = 1;
+    private const ALLOWED_STEPS_COUNT_FOR_NEXT_MOVES = 0;
 
     /**
      * @var int
      */
-    private $maximalDistance = self::MAXIMAL_DISTANCE_FOR_FIRST_MOVE;
+    private $maximalDistance = self::ALLOWED_STEPS_COUNT_FOR_FIRST_MOVE;
 
     /**
      * {@inheritdoc}
      */
     public function mayMove(Move $move, Board $board): void
     {
-        if (!$move instanceof AlongFile || !$move->isTowardsOpponentSideFor($this->color()) || count($move) > $this->maximalDistance) {
+        if (!$move instanceof AlongFile || !$move->isTowardsOpponentSideFor($this->color()) || count($move->steps()) > $this->maximalDistance) {
             throw new MoveNotAllowedForPiece($move, $this);
         }
         $this->checkForInterveningPieces($move, $board);
 
-        $this->maximalDistance = self::MAXIMAL_DISTANCE_FOR_NEXT_MOVES;
+        $this->maximalDistance = self::ALLOWED_STEPS_COUNT_FOR_NEXT_MOVES;
     }
 
     /**

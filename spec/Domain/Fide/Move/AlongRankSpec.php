@@ -30,8 +30,9 @@ class AlongRankSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('d', 1);
         $this->beConstructedThrough('between', [$from, $to,]);
 
-        $this->count()->shouldBe(1);
-        $this->current()->shouldBeLike(CoordinatePair::fromFileAndRank('c', 1));
+        $this->steps()->shouldBeLike(
+            [CoordinatePair::fromFileAndRank('c', 1),]
+        );
     }
 
     function it_is_never_towards_opponent_rank()

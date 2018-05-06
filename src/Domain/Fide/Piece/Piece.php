@@ -69,7 +69,7 @@ abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
     protected function checkForInterveningPieces(Move $move, Board $board): void
     {
         try {
-            foreach ($move as $step) {
+            foreach ($move->steps() as $step) {
                 $board->verifyThatPositionIsUnoccupied($step);
             }
         } catch (SquareIsOccupied $squareIsOccupied) {

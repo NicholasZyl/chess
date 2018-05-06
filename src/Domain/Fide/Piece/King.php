@@ -10,14 +10,12 @@ use NicholasZyl\Chess\Domain\Move;
 
 final class King extends Piece
 {
-    private const ALLOWED_MOVE_DISTANCE = 1;
-
     /**
      * {@inheritdoc}
      */
     public function mayMove(Move $move, Board $board): void
     {
-        if ($move instanceof NearestNotSameFileRankOrDiagonal || count($move) !== 0) {
+        if ($move instanceof NearestNotSameFileRankOrDiagonal || !empty($move->steps())) {
             throw new MoveNotAllowedForPiece($move, $this);
         }
     }
