@@ -102,9 +102,7 @@ final class CoordinatePair implements Coordinates
     }
 
     /**
-     * Get file coordinate.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function file(): string
     {
@@ -112,9 +110,7 @@ final class CoordinatePair implements Coordinates
     }
 
     /**
-     * Get rank coordinate.
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function rank(): int
     {
@@ -122,11 +118,7 @@ final class CoordinatePair implements Coordinates
     }
 
     /**
-     * Compare if is the same as other pair.
-     *
-     * @param Coordinates $other
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function equals(Coordinates $other): bool
     {

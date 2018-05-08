@@ -20,4 +20,18 @@ interface Coordinates
      * @return string
      */
     public function __toString(): string;
+
+    /**
+     * Get file coordinate.
+     *
+     * @return string
+     */
+    public function file(): string;
+
+    /**
+     * Get rank coordinate.
+     *
+     * @return int
+     */
+    public function rank(): int;
 }
