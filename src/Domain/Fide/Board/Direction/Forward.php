@@ -33,6 +33,14 @@ final class Forward implements Direction
     /**
      * {@inheritdoc}
      */
+    public function areOnSame(Coordinates $from, Coordinates $to): bool
+    {
+        return $this->direction->areOnSame($from, $to);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
         $isForward = $this->color->is(Color::white()) ? $from->rank() < $to->rank() : $to->rank() < $from->rank();

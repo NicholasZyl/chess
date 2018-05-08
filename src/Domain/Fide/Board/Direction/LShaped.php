@@ -14,53 +14,54 @@ final class LShaped implements Direction
     /**
      * {@inheritdoc}
      */
-    public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
+    public function areOnSame(Coordinates $from, Coordinates $to): bool
     {
-        $this->validateNotOnSameFileOrRankOrDiagonal($from, $to);
-
-        $this->validateIsTheNearest($from, $to);
-
-        return $to;
+        return $this->areNotOnSameFileOrRankOrDiagonal($from, $to) && $this->areTheNearest($from, $to);
     }
 
     /**
-     * Validate both points are not along the same file, rank or diagonal.
+     * Check if two points are not along the same file, rank or diagonal.
      *
      * @param Coordinates $from
      * @param Coordinates $to
      *
-     * @throws InvalidDirection
-     *
-     * @return void
+     * @return bool
      */
-    private function validateNotOnSameFileOrRankOrDiagonal(Coordinates $from, Coordinates $to): void
+    private function areNotOnSameFileOrRankOrDiagonal(Coordinates $from, Coordinates $to): bool
     {
         $sameFile = $from->file() === $to->file();
         $sameRank = $from->rank() === $to->rank();
         $sameDiagonal = abs($from->rank() - $to->rank()) === abs(ord($from->file()) - ord($to->file()));
-        if ($sameFile || $sameRank || $sameDiagonal) {
-            throw new InvalidDirection($from, $to, $this);
-        }
+
+        return !$sameFile && !$sameRank && !$sameDiagonal;
     }
 
     /**
-     * Validate two points are the nearest ones to each other.
+     * Check if two points are the nearest ones to each other.
      *
      * @param Coordinates $from
      * @param Coordinates $to
      *
-     * @throws InvalidDirection
-     *
-     * @return void
+     * @return bool
      */
-    private function validateIsTheNearest(Coordinates $from, Coordinates $to): void
+    private function areTheNearest(Coordinates $from, Coordinates $to): bool
     {
         $distanceAlongFile = abs(ord($from->file()) - ord($to->file()));
         $distanceAlongRank = abs($from->rank() - $to->rank());
 
-        if ($distanceAlongFile > self::DISTANCE_TO_THE_NEAREST_COORDINATES || $distanceAlongRank > self::DISTANCE_TO_THE_NEAREST_COORDINATES) {
+        return $distanceAlongFile <= self::DISTANCE_TO_THE_NEAREST_COORDINATES && $distanceAlongRank <= self::DISTANCE_TO_THE_NEAREST_COORDINATES;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
+    {
+        if (!$this->areOnSame($from, $to)) {
             throw new InvalidDirection($from, $to, $this);
         }
+
+        return $to;
     }
 
     /**

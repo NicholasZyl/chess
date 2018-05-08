@@ -13,9 +13,17 @@ final class AlongRank implements Direction
     /**
      * {@inheritdoc}
      */
+    public function areOnSame(Coordinates $from, Coordinates $to): bool
+    {
+        return $from->rank() === $to->rank();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
-        if ($from->rank() !== $to->rank()) {
+        if (!$this->areOnSame($from, $to)) {
             throw new InvalidDirection($from, $to, $this);
         }
 

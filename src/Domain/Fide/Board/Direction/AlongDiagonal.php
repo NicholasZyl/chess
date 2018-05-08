@@ -13,9 +13,17 @@ final class AlongDiagonal implements Direction
     /**
      * {@inheritdoc}
      */
+    public function areOnSame(Coordinates $from, Coordinates $to): bool
+    {
+        return abs($from->rank() - $to->rank()) === abs(ord($from->file()) - ord($to->file()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
-        if (abs($from->rank() - $to->rank()) !== abs(ord($from->file()) - ord($to->file()))) {
+        if (!$this->areOnSame($from, $to)) {
             throw new InvalidDirection($from, $to, $this);
         }
 
