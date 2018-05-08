@@ -9,7 +9,7 @@ use NicholasZyl\Chess\Domain\Board\Direction\Direction;
 final class InvalidDirection extends \RuntimeException
 {
     /**
-     * Create exception
+     * Create exception for two coordinates not on same direction.
      *
      * @param Coordinates $from
      * @param Coordinates $to
