@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 
 final class Grid
 {

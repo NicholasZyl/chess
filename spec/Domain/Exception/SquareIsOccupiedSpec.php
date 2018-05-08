@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Exception;
 
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class SquareIsOccupiedSpec extends ObjectBehavior

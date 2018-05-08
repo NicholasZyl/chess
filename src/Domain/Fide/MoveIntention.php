@@ -6,11 +6,11 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\MoveIsInvalid;
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 
 final class MoveIntention
 {

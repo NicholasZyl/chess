@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Fide\Square;
+namespace NicholasZyl\Chess\Domain\Fide\Board;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 

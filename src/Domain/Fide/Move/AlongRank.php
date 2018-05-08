@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Move;
 
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\ChessboardMove;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 
 final class AlongRank extends ChessboardMove
 {

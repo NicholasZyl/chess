@@ -6,9 +6,9 @@ namespace spec\NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
 

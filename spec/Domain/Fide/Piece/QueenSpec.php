@@ -7,12 +7,12 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
 

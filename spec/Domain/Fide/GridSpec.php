@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Grid;
 use NicholasZyl\Chess\Domain\Fide\Square;
-use NicholasZyl\Chess\Domain\Fide\Square\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class GridSpec extends ObjectBehavior
