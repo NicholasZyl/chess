@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Board\Direction;
+namespace NicholasZyl\Chess\Domain\Board;
 
-use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 
 interface Direction

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Board\Direction\Direction;
+use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Piece\Color;
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Exception;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Board\Direction\Direction;
+use NicholasZyl\Chess\Domain\Board\Direction;
 
 final class InvalidDirection extends \RuntimeException
 {

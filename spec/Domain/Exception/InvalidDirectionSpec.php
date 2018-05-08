@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Exception;
 
-use NicholasZyl\Chess\Domain\Board\Direction\Direction;
+use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use PhpSpec\ObjectBehavior;
