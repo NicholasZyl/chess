@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
@@ -20,7 +21,12 @@ class NotIntervenedSpec extends ObjectBehavior
 {
     function it_is_chess_move()
     {
-        // TODO
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $direction = new AlongFile();
+        $this->beConstructedWith($source, $destination, $direction);
+
+        $this->shouldBeAnInstanceOf(BoardMove::class);
     }
 
     function it_knows_source_destination_and_direction()

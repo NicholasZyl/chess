@@ -6,10 +6,12 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -36,6 +38,17 @@ class KnightSpec extends ObjectBehavior
         $pawn = Knight::forColor(Piece\Color::white());
 
         $this->isSameAs($pawn)->shouldBe(true);
+    }
+
+    function it_may_move_to_one_of_the_squares_nearest_to_that_on_which_it_stands_but_not_on_same_rank_file_or_diagonal()
+    {
+        $move = new OverOtherPieces(
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 3),
+            new LShaped()
+        );
+
+        $this->canMove($move);
     }
 
     function it_can_move_to_nearest_square_not_on_same_rank_file_or_diagonal(Board $board)

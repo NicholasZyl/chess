@@ -27,4 +27,9 @@ final class Knight extends Piece
     {
         return 'knight';
     }
+
+    public function canMove($argument1)
+    {
+        // TODO: write logic here
+    }
 }

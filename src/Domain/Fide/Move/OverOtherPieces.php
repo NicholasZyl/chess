@@ -6,10 +6,8 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\BoardMove;
-use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
-use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 
-final class NotIntervened implements BoardMove
+final class OverOtherPieces implements BoardMove
 {
     /**
      * @var Coordinates
@@ -27,11 +25,6 @@ final class NotIntervened implements BoardMove
     private $direction;
 
     /**
-     * @var Coordinates[]
-     */
-    private $steps;
-
-    /**
      * Create move that cannot be done over any intervening pieces.
      *
      * @param Coordinates $source
@@ -43,28 +36,6 @@ final class NotIntervened implements BoardMove
         $this->source = $source;
         $this->destination = $destination;
         $this->direction = $direction;
-        $this->steps = $this->planSteps($source, $destination, $direction);
-    }
-
-    /**
-     * Plan all steps of the move.
-     *
-     * @param Coordinates $source
-     * @param Coordinates $destination
-     * @param Board\Direction $direction
-     *
-     * @return Coordinates[]
-     */
-    private function planSteps(Coordinates $source, Coordinates $destination, Board\Direction $direction): array
-    {
-        $steps = [];
-        $step = $source->nextTowards($destination, $direction);
-        while (!$step->equals($destination)) {
-            $steps[] = $step;
-            $step = $step->nextTowards($destination, $direction);
-        }
-
-        return $steps;
     }
 
     /**
@@ -96,7 +67,7 @@ final class NotIntervened implements BoardMove
      */
     public function __toString(): string
     {
-        return "not intervened move";
+        return "over other pieces";
     }
 
     /**
@@ -104,14 +75,6 @@ final class NotIntervened implements BoardMove
      */
     public function play(Board $board): void
     {
-        try {
-            foreach ($this->steps as $step) {
-                $board->verifyThatPositionIsUnoccupied($step);
-            }
-        } catch (SquareIsOccupied $squareIsOccupied) {
-            throw new MoveOverInterveningPiece($squareIsOccupied->coordinates());
-        }
-
         $piece = $board->pickPieceFromCoordinates($this->source);
         $piece->canMove($this);
         $board->placePieceAtCoordinates($piece, $this->destination);
