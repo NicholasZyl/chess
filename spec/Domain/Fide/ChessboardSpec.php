@@ -8,6 +8,7 @@ use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
@@ -30,7 +31,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->beConstructedWith($grid);
     }
 
-    function it_is_composed_of_sixty_four_squares()
+    function it_must_be_composed_of_sixty_four_squares()
     {
         $this->beConstructedWith(
             [Square::forCoordinates(CoordinatePair::fromFileAndRank('a', 1)),]
@@ -92,7 +93,23 @@ class ChessboardSpec extends ObjectBehavior
             $position
         );
 
-        $this->shouldThrow(new SquareIsOccupied($position))->during('verifyThatPositionIsUnoccupied', [$position,]);
+        $this->shouldThrow(SquareIsOccupied::class)->during('verifyThatPositionIsUnoccupied', [$position,]);
+    }
+
+    function it_allows_picking_up_piece_from_coordinates()
+    {
+        $position = CoordinatePair::fromFileAndRank('a', 2);
+        $pawn = Pawn::forColor(Piece\Color::white());
+        $this->placePieceAtCoordinates($pawn, $position);
+
+        $this->pickPieceFromCoordinates($position)->shouldBe($pawn);
+    }
+
+    function it_fails_if_trying_to_pick_piece_from_unoccupied_position()
+    {
+        $position = CoordinatePair::fromFileAndRank('a', 2);
+
+        $this->shouldThrow(new SquareIsUnoccupied($position))->during('pickPieceFromCoordinates', [$position,]);
     }
 
     function it_does_not_allow_illegal_move_for_piece()

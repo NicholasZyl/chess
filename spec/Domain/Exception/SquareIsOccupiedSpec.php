@@ -23,4 +23,9 @@ class SquareIsOccupiedSpec extends ObjectBehavior
     {
         $this->getMessage()->shouldContain('a1');
     }
+
+    function it_knows_coordinates_of_square()
+    {
+        $this->coordinates()->shouldBeLike(CoordinatePair::fromString('a1'));
+    }
 }

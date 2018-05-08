@@ -93,6 +93,6 @@ class BishopSpec extends ObjectBehavior
         $interveningPosition = CoordinatePair::fromFileAndRank('b', 2);
         $board->verifyThatPositionIsUnoccupied($interveningPosition)->willThrow(new SquareIsOccupied($interveningPosition));
 
-        $this->shouldThrow(new MoveOverInterveningPiece($move, $interveningPosition))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveOverInterveningPiece($interveningPosition))->during('mayMove', [$move, $board,]);
     }
 }

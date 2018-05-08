@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Board
@@ -22,6 +23,18 @@ interface Board
      * @return void
      */
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void;
+
+    /**
+     * Pick piece from given coordinates.
+     *
+     * @param Coordinates $coordinates
+     *
+     * @throws SquareIsUnoccupied
+     * @throws OutOfBoardCoordinates
+     *
+     * @return Piece
+     */
+    public function pickPieceFromCoordinates(Coordinates $coordinates): Piece;
 
     /**
      * Move a piece from one position to another.

@@ -9,10 +9,12 @@ use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -58,6 +60,18 @@ class PawnSpec extends ObjectBehavior
 
         $this->isSameAs($piece)->shouldBe(false);
     }
+
+    function it_may_move_forward_to_the_square_immediately_in_front_on_the_same_file()
+    {
+        $move = new NotIntervened(
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 2),
+            new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+        );
+
+        $this->canMove($move);
+    }
+    
 
     function it_can_move_forward_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
@@ -187,7 +201,7 @@ class PawnSpec extends ObjectBehavior
         $interveningPosition = CoordinatePair::fromFileAndRank('a', 2);
         $board->verifyThatPositionIsUnoccupied($interveningPosition)->willThrow(new SquareIsOccupied($interveningPosition));
 
-        $this->shouldThrow(new MoveOverInterveningPiece($move, $interveningPosition))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveOverInterveningPiece($interveningPosition))->during('mayMove', [$move, $board,]);
     }
 
     function it_cannot_move_forward_to_the_square_immediately_in_front_on_the_same_file_if_occupied(Board $board)

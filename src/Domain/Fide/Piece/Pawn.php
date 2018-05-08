@@ -4,10 +4,14 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Move;
 
 final class Pawn extends Piece
@@ -51,5 +55,22 @@ final class Pawn extends Piece
     public function __toString(): string
     {
         return 'pawn';
+    }
+
+    /**
+     * Check if intended move is legal for this piece.
+     * TODO: rename to mayMove
+     *
+     * @param NotIntervened $move
+     *
+     * @throws IllegalMove
+     *
+     * @return void
+     */
+    public function canMove(NotIntervened $move): void
+    {
+        if (!$move->direction() instanceof Forward) {
+            throw new NotAllowedForPiece($this, $move);
+        }
     }
 }

@@ -88,7 +88,7 @@ abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
                 $board->verifyThatPositionIsUnoccupied($step);
             }
         } catch (SquareIsOccupied $squareIsOccupied) {
-            throw new MoveOverInterveningPiece($move, $step);
+            throw new MoveOverInterveningPiece($step);
         }
     }
 }

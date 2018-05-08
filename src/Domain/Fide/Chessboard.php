@@ -46,6 +46,14 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
+    public function pickPieceFromCoordinates(Coordinates $coordinates): Piece
+    {
+        return $this->getSquareAt($coordinates)->pick();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function movePiece(Move $move): void
     {
         $from = $this->getSquareAt($move->from());

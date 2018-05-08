@@ -98,6 +98,6 @@ class RookSpec extends ObjectBehavior
         $interveningPosition = CoordinatePair::fromFileAndRank('a', 2);
         $board->verifyThatPositionIsUnoccupied($interveningPosition)->willThrow(new SquareIsOccupied($interveningPosition));
 
-        $this->shouldThrow(new MoveOverInterveningPiece($move, $interveningPosition))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveOverInterveningPiece($interveningPosition))->during('mayMove', [$move, $board,]);
     }
 }
