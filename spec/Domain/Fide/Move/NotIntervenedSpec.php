@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\BoardMove;
+use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
@@ -27,6 +28,16 @@ class NotIntervenedSpec extends ObjectBehavior
         $this->beConstructedWith($source, $destination, $direction);
 
         $this->shouldBeAnInstanceOf(BoardMove::class);
+    }
+
+    function it_validates_if_coordinates_are_on_same_direction()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $direction = new AlongFile();
+        $this->beConstructedWith($source, $destination, $direction);
+
+        $this->shouldThrow(new InvalidDirection($source, $destination, $direction))->duringInstantiation();
     }
 
     function it_knows_source_destination_and_direction()

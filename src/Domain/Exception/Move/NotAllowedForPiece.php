@@ -7,7 +7,7 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece;
 
-class NotAllowedForPiece extends IllegalMove
+final class NotAllowedForPiece extends IllegalMove
 {
     public function __construct(Piece $piece, BoardMove $move)
     {

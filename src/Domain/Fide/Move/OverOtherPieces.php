@@ -6,6 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\BoardMove;
+use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 
 final class OverOtherPieces implements BoardMove
 {
@@ -30,9 +31,15 @@ final class OverOtherPieces implements BoardMove
      * @param Coordinates $source
      * @param Coordinates $destination
      * @param Board\Direction $direction
+     *
+     * @throws InvalidDirection
      */
     public function __construct(Coordinates $source, Coordinates $destination, Board\Direction $direction)
     {
+        if (!$direction->areOnSame($source, $destination)) {
+            throw new InvalidDirection($source, $destination, $direction);
+        }
+
         $this->source = $source;
         $this->destination = $destination;
         $this->direction = $direction;
