@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Board;
 
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use PhpSpec\ObjectBehavior;
 
 class CoordinatePairSpec extends ObjectBehavior
@@ -61,7 +62,7 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->__toString()->shouldBe('a1');
     }
 
-    function it_knows_file_and_rank()
+    function it_has_file_and_rank()
     {
         $this->beConstructedThrough('fromFileAndRank', ['a', 1]);
         $this->file()->shouldBe('a');
@@ -91,6 +92,18 @@ class CoordinatePairSpec extends ObjectBehavior
 
         $this->equals($other)->shouldBe(false);
     }
+
+    function it_calculates_next_coordinates_towards_destination_in_given_direction()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['a', 1]);
+        $destination = CoordinatePair::fromFileAndRank('d', 1);
+
+        $this->nextTowards($destination, new AlongRank())->shouldBeLike(CoordinatePair::fromFileAndRank('b', 1));
+    }
+
+
+
+
 
     function it_knows_when_is_on_same_file_with_other_pair()
     {

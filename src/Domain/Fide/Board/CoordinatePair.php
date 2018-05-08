@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Board;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Direction;
 
 final class CoordinatePair implements Coordinates
 {
@@ -92,16 +93,6 @@ final class CoordinatePair implements Coordinates
     }
 
     /**
-     * Represent coordinates as string.
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->file . $this->rank;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function file(): string
@@ -120,6 +111,14 @@ final class CoordinatePair implements Coordinates
     /**
      * {@inheritdoc}
      */
+    public function nextTowards(Coordinates $destination, Direction $direction): Coordinates
+    {
+        return $direction->nextCoordinatesTowards($this, $destination);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function equals(Coordinates $other): bool
     {
         if (!$other instanceof self) {
@@ -127,6 +126,16 @@ final class CoordinatePair implements Coordinates
         }
 
         return $this->file === $other->file && $this->rank === $other->rank;
+    }
+
+    /**
+     * Represent coordinates as string.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->file . $this->rank;
     }
 
     /**
