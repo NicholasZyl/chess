@@ -15,6 +15,7 @@ final class King extends Piece
      */
     public function mayMove(Move $move, Board $board): void
     {
+
         if ($move instanceof NearestNotSameFileRankOrDiagonal || !empty($move->steps())) {
             throw new MoveNotAllowedForPiece($move, $this);
         }

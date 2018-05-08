@@ -125,6 +125,16 @@ Feature: The moves of the pieces
     Then the move is illegal
     And white king should still be placed on d4
 
+  Scenario: The king may move by 'castling'
+    Given there is a chessboard
+    And following pieces are placed on it
+      | piece      | location |
+      | white king | e1       |
+      | white rook | a1       |
+    When I move piece from e1 to c1
+    Then white king should be placed on c1
+    And white rook should be placed on d1
+
   Scenario: It is not permitted to move a piece to a square occupied by a piece of the same colour
     Given there is a chessboard with white pawn placed on d5
     And white bishop is placed on b3
