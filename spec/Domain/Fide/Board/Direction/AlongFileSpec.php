@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
+use NicholasZyl\Chess\Domain\Board\Direction\Direction;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use PhpSpec\ObjectBehavior;
 
 class AlongFileSpec extends ObjectBehavior
 {
-    function it_is_initializable()
+    function it_is_direction()
     {
-        $this->shouldHaveType(AlongFile::class);
+        $this->shouldBeAnInstanceOf(Direction::class);
     }
 
     function it_calculates_coordinates_to_next_adjacent_higher_rank()
@@ -36,6 +36,6 @@ class AlongFileSpec extends ObjectBehavior
         $from = CoordinatePair::fromFileAndRank('a', 2);
         $to = CoordinatePair::fromFileAndRank('b', 1);
 
-        $this->shouldThrow(new InvalidDirection($from, $to, 'along same file'))->during('nextCoordinatesTowards', [$from, $to,]);
+        $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
     }
 }

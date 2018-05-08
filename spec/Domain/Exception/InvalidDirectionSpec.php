@@ -3,18 +3,20 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Exception;
 
+use NicholasZyl\Chess\Domain\Board\Direction\Direction;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class InvalidDirectionSpec extends ObjectBehavior
 {
-    function let()
+    function let(Direction $direction)
     {
+        $direction->__toString()->willReturn('exemplar direction');
         $this->beConstructedWith(
             CoordinatePair::fromFileAndRank('a', 3),
             CoordinatePair::fromFileAndRank('e', 8),
-            'along same rank'
+            $direction
         );
     }
 
