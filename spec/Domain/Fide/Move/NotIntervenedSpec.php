@@ -17,9 +17,15 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class NotIntervenedSpec extends ObjectBehavior
 {
+    function let(Board $board)
+    {
+        $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
+    }
+
     function it_is_chess_move()
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);

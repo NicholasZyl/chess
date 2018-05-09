@@ -68,7 +68,7 @@ final class Chessboard implements Board
             throw $invalidMove;
         } catch (SquareIsOccupied $squareIsOccupied) {
             $from->place($piece);
-            throw new MoveToOccupiedPosition($move, $move->to());
+            throw new MoveToOccupiedPosition($move->to());
         }
     }
 

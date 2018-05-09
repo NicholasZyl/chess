@@ -12,6 +12,7 @@ use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -33,6 +34,17 @@ class BishopSpec extends ObjectBehavior
         $pawn = Bishop::forColor(Piece\Color::white());
 
         $this->isSameAs($pawn)->shouldBe(true);
+    }
+
+    function it_may_move_to_any_square_along_a_diagonal_on_which_it_stands()
+    {
+        $move = new NotIntervened(
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 2),
+            new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
+        );
+
+        $this->canMove($move);
     }
 
     function it_can_move_along_diagonal(Board $board)

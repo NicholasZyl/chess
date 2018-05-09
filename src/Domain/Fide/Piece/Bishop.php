@@ -29,4 +29,9 @@ final class Bishop extends Piece
     {
         return 'bishop';
     }
+
+    public function canMove($argument1)
+    {
+        // TODO: write logic here
+    }
 }

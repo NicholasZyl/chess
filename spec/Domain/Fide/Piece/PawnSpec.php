@@ -215,7 +215,7 @@ class PawnSpec extends ObjectBehavior
 
         $board->hasOpponentsPieceAt($to, Piece\Color::white())->willReturn(true);
 
-        $this->shouldThrow(new MoveToOccupiedPosition($move, $to))->during('mayMove', [$move, $board,]);
+        $this->shouldThrow(new MoveToOccupiedPosition($to))->during('mayMove', [$move, $board,]);
     }
 
     function it_can_move_along_diagonal_to_capture_opponents_piece(Board $board)

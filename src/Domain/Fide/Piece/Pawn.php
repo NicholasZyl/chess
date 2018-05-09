@@ -42,7 +42,7 @@ final class Pawn extends Piece
         }
 
         if ($hasOpponentsPieceAtDestination) {
-            throw new MoveToOccupiedPosition($move, $move->to());
+            throw new MoveToOccupiedPosition($move->to());
         }
         $this->checkForInterveningPieces($move, $board);
 

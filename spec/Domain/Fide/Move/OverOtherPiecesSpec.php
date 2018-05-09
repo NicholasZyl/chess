@@ -11,9 +11,15 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class OverOtherPiecesSpec extends ObjectBehavior
 {
+    function let(Board $board)
+    {
+        $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
+    }
+
     function it_is_chess_move()
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);

@@ -74,7 +74,7 @@ final class OverOtherPieces implements BoardMove
      */
     public function __toString(): string
     {
-        return "over other pieces";
+        return "move over other pieces";
     }
 
     /**

@@ -159,7 +159,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $move = AlongFile::between($source, $destination);
 
-        $this->shouldThrow(new MoveToOccupiedPosition($move, $destination))->during('movePiece', [$move,]);
+        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('movePiece', [$move,]);
     }
 
     function it_knows_when_square_at_coordinates_is_occupied_by_opponent_if_piece_has_different_color()
