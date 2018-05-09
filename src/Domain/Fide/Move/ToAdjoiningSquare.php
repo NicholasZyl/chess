@@ -6,12 +6,14 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\BoardMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
-use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
-use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 
-final class NotIntervened implements BoardMove
+final class ToAdjoiningSquare implements BoardMove
 {
+    private const DISTANCE_TO_ADJOINING_SQUARE = 1;
+
     /**
      * @var Coordinates
      */
@@ -28,12 +30,7 @@ final class NotIntervened implements BoardMove
     private $direction;
 
     /**
-     * @var Coordinates[]
-     */
-    private $steps;
-
-    /**
-     * Create move that cannot be done over any intervening pieces.
+     * Create move to adjoining square.
      *
      * @param Coordinates $source
      * @param Coordinates $destination
@@ -50,32 +47,12 @@ final class NotIntervened implements BoardMove
         $this->source = $source;
         $this->destination = $destination;
         $this->direction = $direction;
-        $this->steps = $this->planSteps($source, $destination, $direction);
     }
 
     /**
-     * Plan all steps of the move.
+     * Get the source coordinates.
      *
-     * @param Coordinates $source
-     * @param Coordinates $destination
-     * @param Board\Direction $direction
-     *
-     * @return Coordinates[]
-     */
-    private function planSteps(Coordinates $source, Coordinates $destination, Board\Direction $direction): array
-    {
-        $steps = [];
-        $step = $source->nextTowards($destination, $direction);
-        while (!$step->equals($destination)) {
-            $steps[] = $step;
-            $step = $step->nextTowards($destination, $direction);
-        }
-
-        return $steps;
-    }
-
-    /**
-     * {@inheritdoc}
+     * @return Coordinates
      */
     public function source(): Coordinates
     {
@@ -83,7 +60,9 @@ final class NotIntervened implements BoardMove
     }
 
     /**
-     * {@inheritdoc}
+     * Get the destination coordinates.
+     *
+     * @return Coordinates
      */
     public function destination(): Coordinates
     {
@@ -91,7 +70,9 @@ final class NotIntervened implements BoardMove
     }
 
     /**
-     * {@inheritdoc}
+     * Get the move direction.
+     *
+     * @return Board\Direction
      */
     public function direction(): Board\Direction
     {
@@ -99,24 +80,30 @@ final class NotIntervened implements BoardMove
     }
 
     /**
-     * {@inheritdoc}
+     * Get string representation of the move.
+     *
+     * @return string
      */
     public function __toString(): string
     {
-        return 'not intervened move';
+        return 'move to an adjoining square';
     }
 
     /**
-     * {@inheritdoc}
+     * Play the move on the board.
+     *
+     * @param Board $board
+     *
+     * @throws IllegalMove
+     *
+     * @return void
      */
     public function play(Board $board): void
     {
-        try {
-            foreach ($this->steps as $step) {
-                $board->verifyThatPositionIsUnoccupied($step);
-            }
-        } catch (SquareIsOccupied $squareIsOccupied) {
-            throw new MoveOverInterveningPiece($squareIsOccupied->coordinates());
+        $distanceAlongFile = abs(ord($this->source()->file()) - ord($this->destination()->file()));
+        $distanceAlongRank = abs($this->source()->rank() - $this->destination()->rank());
+        if ($distanceAlongFile > self::DISTANCE_TO_ADJOINING_SQUARE || $distanceAlongRank > self::DISTANCE_TO_ADJOINING_SQUARE) {
+            throw new TooDistant($this);
         }
 
         $piece = $board->pickPieceFromCoordinates($this->source);
