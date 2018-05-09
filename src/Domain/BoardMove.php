@@ -24,13 +24,6 @@ interface BoardMove
     public function destination(): Coordinates;
 
     /**
-     * Get the move direction.
-     *
-     * @return Board\Direction
-     */
-    public function direction(): Board\Direction;
-
-    /**
      * Get string representation of the move.
      *
      * @return string
@@ -56,4 +49,13 @@ interface BoardMove
      * @return bool
      */
     public function is(string $moveType): bool;
+
+    /**
+     * Check if move is made in same direction.
+     *
+     * @param string $direction
+     *
+     * @return bool
+     */
+    public function inDirection(string $direction): bool;
 }

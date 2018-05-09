@@ -93,14 +93,6 @@ final class NotIntervened implements BoardMove
     /**
      * {@inheritdoc}
      */
-    public function direction(): Board\Direction
-    {
-        return $this->direction;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return 'not intervened move';
@@ -130,5 +122,13 @@ final class NotIntervened implements BoardMove
     public function is(string $moveType): bool
     {
         return $this instanceof $moveType ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function inDirection(string $direction): bool
+    {
+        return $this->direction instanceof $direction;
     }
 }

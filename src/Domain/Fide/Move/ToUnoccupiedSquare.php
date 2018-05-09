@@ -44,14 +44,6 @@ final class ToUnoccupiedSquare implements BoardMove
     /**
      * {@inheritdoc}
      */
-    public function direction(): Board\Direction
-    {
-        return $this->move->direction();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return sprintf('%s to unoccupied square', $this->move);
@@ -76,5 +68,13 @@ final class ToUnoccupiedSquare implements BoardMove
     public function is(string $moveType): bool
     {
         return $this instanceof $moveType || $this->move->is($moveType);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function inDirection(string $direction): bool
+    {
+        return $this->move->inDirection($direction);
     }
 }

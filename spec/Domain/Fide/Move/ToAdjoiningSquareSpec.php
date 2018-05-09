@@ -8,7 +8,7 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
@@ -21,10 +21,27 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('a', 3);
-        $direction = new AlongFile();
-        $this->beConstructedWith($source, $destination, $direction);
+        $this->beConstructedWith($source, $destination);
 
         $this->shouldBeAnInstanceOf(BoardMove::class);
+    }
+
+    function it_is_in_any_direction_to_adjoining_square()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $this->beConstructedWith($source, $destination);
+
+        $this->inDirection(AlongDiagonal::class)->shouldBe(true);
+    }
+
+    function it_is_not_in_direction_not_to_adjoining_square()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $this->beConstructedWith($source, $destination);
+
+        $this->inDirection(LShaped::class)->shouldBe(false);
     }
 
     function it_moves_piece_from_square_to_adjoining_square_when_limited_to_one_square(Board $board)
@@ -33,8 +50,7 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
 
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('a', 3);
-        $direction = new AlongFile();
-        $this->beConstructedWith($source, $destination, $direction);
+        $this->beConstructedWith($source, $destination);
 
         $board->pickPieceFromCoordinates($source)->willReturn($king);
         $board->placePieceAtCoordinates($king, $destination)->shouldBeCalled();
@@ -48,8 +64,7 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
 
         $source = CoordinatePair::fromFileAndRank('a', 1);
         $destination = CoordinatePair::fromFileAndRank('c', 3);
-        $direction = new AlongDiagonal();
-        $this->beConstructedWith($source, $destination, $direction);
+        $this->beConstructedWith($source, $destination);
 
         $board->pickPieceFromCoordinates($source)->shouldNotBeCalled();
         $board->placePieceAtCoordinates($king, $destination)->shouldNotBeCalled();
@@ -61,7 +76,7 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('a', 1);
-        $this->beConstructedWith($source, $destination, new AlongFile());
+        $this->beConstructedWith($source, $destination);
 
         $this->is(ToAdjoiningSquare::class)->shouldBe(true);
     }
@@ -70,7 +85,7 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('a', 1);
-        $this->beConstructedWith($source, $destination, new AlongFile());
+        $this->beConstructedWith($source, $destination);
 
         $this->is(NotIntervened::class)->shouldBe(false);
     }

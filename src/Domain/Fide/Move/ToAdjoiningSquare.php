@@ -24,28 +24,23 @@ final class ToAdjoiningSquare implements BoardMove
     private $destination;
 
     /**
-     * @var Board\Direction
-     */
-    private $direction;
-
-    /**
      * Create move to adjoining square.
      *
      * @param Coordinates $source
      * @param Coordinates $destination
-     * @param Board\Direction $direction
      *
      * @throws InvalidDirection
      */
-    public function __construct(Coordinates $source, Coordinates $destination, Board\Direction $direction)
-    {
-        if (!$direction->areOnSame($source, $destination)) {
-            throw new InvalidDirection($source, $destination, $direction);
-        }
+    private const ALLOWED_DIRECTIONS = [
+        \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal::class,
+        \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile::class,
+        \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank::class,
+    ];
 
+    public function __construct(Coordinates $source, Coordinates $destination)
+    {
         $this->source = $source;
         $this->destination = $destination;
-        $this->direction = $direction;
     }
 
     /**
@@ -62,14 +57,6 @@ final class ToAdjoiningSquare implements BoardMove
     public function destination(): Coordinates
     {
         return $this->destination;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function direction(): Board\Direction
-    {
-        return $this->direction;
     }
 
     /**
@@ -101,6 +88,14 @@ final class ToAdjoiningSquare implements BoardMove
      */
     public function is(string $moveType): bool
     {
-        return $this instanceof $moveType ;
+        return $this instanceof $moveType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function inDirection(string $direction): bool
+    {
+        return in_array($direction,self::ALLOWED_DIRECTIONS, true);
     }
 }

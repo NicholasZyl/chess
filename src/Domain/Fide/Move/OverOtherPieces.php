@@ -64,14 +64,6 @@ final class OverOtherPieces implements BoardMove
     /**
      * {@inheritdoc}
      */
-    public function direction(): Board\Direction
-    {
-        return $this->direction;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return "move over other pieces";
@@ -93,5 +85,10 @@ final class OverOtherPieces implements BoardMove
     public function is(string $moveType): bool
     {
         return $this instanceof $moveType ;
+    }
+
+    public function inDirection(string $direction): bool
+    {
+        return $this->direction instanceof $direction;
     }
 }

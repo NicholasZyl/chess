@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
@@ -42,7 +43,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $this->shouldThrow(new InvalidDirection($source, $destination, $direction))->duringInstantiation();
     }
 
-    function it_knows_source_destination_and_direction()
+    function it_knows_source_and_destination()
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('c', 3);
@@ -51,7 +52,26 @@ class OverOtherPiecesSpec extends ObjectBehavior
 
         $this->source()->shouldBe($source);
         $this->destination()->shouldBe($destination);
-        $this->direction()->shouldBe($direction);
+    }
+
+    function it_is_in_given_direction()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('c', 3);
+        $direction = new LShaped();
+        $this->beConstructedWith($source, $destination, $direction);
+
+        $this->inDirection(LShaped::class)->shouldBe(true);
+    }
+
+    function it_is_not_in_different_direction()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('c', 3);
+        $direction = new LShaped();
+        $this->beConstructedWith($source, $destination, $direction);
+
+        $this->inDirection(AlongDiagonal::class)->shouldBe(false);
     }
 
     function it_moves_piece_from_one_square_to_another(Board $board)

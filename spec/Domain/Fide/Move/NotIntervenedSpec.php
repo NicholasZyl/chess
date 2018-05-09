@@ -48,7 +48,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $this->shouldThrow(new InvalidDirection($source, $destination, $direction))->duringInstantiation();
     }
 
-    function it_knows_source_destination_and_direction()
+    function it_knows_source_and_destination()
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('a', 3);
@@ -57,7 +57,26 @@ class NotIntervenedSpec extends ObjectBehavior
 
         $this->source()->shouldBe($source);
         $this->destination()->shouldBe($destination);
-        $this->direction()->shouldBe($direction);
+    }
+
+    function it_is_in_given_direction()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $direction = new AlongDiagonal();
+        $this->beConstructedWith($source, $destination, $direction);
+
+        $this->inDirection(AlongDiagonal::class)->shouldBe(true);
+    }
+
+    function it_is_not_in_different_direction()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $direction = new AlongDiagonal();
+        $this->beConstructedWith($source, $destination, $direction);
+
+        $this->inDirection(AlongFile::class)->shouldBe(false);
     }
 
     function it_moves_piece_from_one_square_to_another(Board $board)
