@@ -34,11 +34,25 @@ class SquareSpec extends ObjectBehavior
         $this->place($piece);
     }
 
+    function it_allows_to_peek_at_it_to_see_what_piece_is_placed()
+    {
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->place($piece);
+        $this->peek()->shouldBe($piece);
+        $this->hasPlacedPiece($piece)->shouldBe(true);
+    }
+
+    function it_knows_when_peeking_at_unoccupied_square()
+    {
+        $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('peek');
+    }
+
     function it_allows_to_pick_piece_placed_on_it()
     {
         $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
         $this->pick()->shouldBe($piece);
+        $this->hasPlacedPiece($piece)->shouldBe(false);
     }
 
     function it_does_not_allow_to_pick_a_piece_if_none_is_placed()
@@ -55,7 +69,7 @@ class SquareSpec extends ObjectBehavior
         $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('pick');
     }
 
-    function it_allows_to_check_what_piece_is_placed_on_it()
+    function it_allows_to_check_if_given_piece_is_placed_on_it()
     {
         $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);

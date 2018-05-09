@@ -103,7 +103,7 @@ final class Square
      *
      * @return Piece
      */
-    private function peek(): Piece
+    public function peek(): Piece
     {
         if ($this->placedPiece === null) {
             throw new SquareIsUnoccupied($this->coordinates);

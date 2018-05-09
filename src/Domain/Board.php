@@ -25,7 +25,19 @@ interface Board
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void;
 
     /**
-     * Pick piece from given coordinates.
+     * Peek at given coordinates to see what piece is placed there but don't pick it up.
+     *
+     * @param Coordinates $coordinates
+     *
+     * @throws SquareIsUnoccupied
+     * @throws OutOfBoardCoordinates
+     *
+     * @return Piece
+     */
+    public function peekPieceAtCoordinates(Coordinates $coordinates): Piece;
+
+    /**
+     * Pick a piece from given coordinates.
      *
      * @param Coordinates $coordinates
      *

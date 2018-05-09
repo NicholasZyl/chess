@@ -46,6 +46,14 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
+    public function peekPieceAtCoordinates(Coordinates $coordinates): Piece
+    {
+        return $this->getSquareAt($coordinates)->peek();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function pickPieceFromCoordinates(Coordinates $coordinates): Piece
     {
         return $this->getSquareAt($coordinates)->pick();
