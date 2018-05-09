@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\BoardMove;
+use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Move;
 
 final class Bishop extends Piece
@@ -30,8 +33,17 @@ final class Bishop extends Piece
         return 'bishop';
     }
 
-    public function canMove($argument1)
+    /**
+     * Validate if given move is legal for this piece.
+     *
+     * @param BoardMove $move
+     *
+     * @return void
+     */
+    public function canMove(BoardMove $move): void
     {
-        // TODO: write logic here
+        if (!$move instanceof NotIntervened || !$move->direction() instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal) {
+            throw new NotAllowedForPiece($this, $move);
+        }
     }
 }
