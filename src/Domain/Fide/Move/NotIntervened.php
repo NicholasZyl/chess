@@ -93,9 +93,17 @@ final class NotIntervened implements BoardMove
     /**
      * {@inheritdoc}
      */
+    public function distance(): int
+    {
+        return count(array_merge($this->steps, [$this->destination]));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
-        return 'not intervened move';
+        return sprintf('not intervened move %s', $this->direction);
     }
 
     /**
@@ -121,7 +129,7 @@ final class NotIntervened implements BoardMove
      */
     public function is(string $moveType): bool
     {
-        return $this instanceof $moveType ;
+        return $this instanceof $moveType;
     }
 
     /**

@@ -18,21 +18,6 @@ final class Color
     private $colorName;
 
     /**
-     * Color constructor.
-     *
-     * @param string $colorName
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function __construct(string $colorName)
-    {
-        if (!in_array($colorName, self::VALID_COLORS)) {
-            throw new \InvalidArgumentException(sprintf('"%s" is not a valid color in the game of chess.', $colorName));
-        }
-        $this->colorName = $colorName;
-    }
-
-    /**
      * Create White color.
      *
      * @return Color
@@ -65,6 +50,21 @@ final class Color
     }
 
     /**
+     * Color constructor.
+     *
+     * @param string $colorName
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function __construct(string $colorName)
+    {
+        if (!in_array($colorName, self::VALID_COLORS)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not a valid color in the game of chess.', $colorName));
+        }
+        $this->colorName = $colorName;
+    }
+
+    /**
      * Compare if color is the same as another one.
      *
      * @param Color $color
@@ -74,5 +74,15 @@ final class Color
     public function is(Color $color): bool
     {
         return $this->colorName === $color->colorName;
+    }
+
+    /**
+     * Get string representation of color.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->colorName;
     }
 }

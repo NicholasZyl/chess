@@ -44,6 +44,14 @@ final class Capturing implements BoardMove
     /**
      * {@inheritdoc}
      */
+    public function distance(): int
+    {
+        return $this->move->distance();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return sprintf('capturing after %s', $this->move);

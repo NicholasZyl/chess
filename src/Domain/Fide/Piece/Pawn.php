@@ -13,6 +13,7 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
+use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Move;
 
@@ -25,6 +26,11 @@ final class Pawn extends Piece
      * @var int
      */
     private $maximalDistance = self::ALLOWED_STEPS_COUNT_FOR_FIRST_MOVE;
+
+    /**
+     * @var bool
+     */
+    private $hasMoved = false;
 
     /**
      * {@inheritdoc}
@@ -71,13 +77,70 @@ final class Pawn extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if ($move->is(ToUnoccupiedSquare::class) && $move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()))) {
+        if ($move->is(Capturing::class)) {
+            $this->validateCapturingMove($move);
+
             return;
         }
-        if ($move->is(Capturing::class) && $move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()))) {
+
+        if ($move->is(ToUnoccupiedSquare::class)) {
+            $this->validateMoveToUnoccupiedSquare($move);
+
             return;
         }
 
         throw new NotAllowedForPiece($this, $move);
+    }
+
+    /**
+     * Validate if capturing move is legal.
+     *
+     * @param BoardMove $move
+     *
+     * @return void
+     */
+    private function validateCapturingMove(BoardMove $move): void
+    {
+        if (!$move->is(ToAdjoiningSquare::class)) {
+            throw new NotAllowedForPiece($this, $move);
+        }
+
+        if (!$move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()))) {
+            throw new NotAllowedForPiece($this, $move);
+        }
+    }
+
+    /**
+     * Validate if move to unoccupied square is legal.
+     *
+     * @param BoardMove $move
+     *
+     * @return void
+     */
+    private function validateMoveToUnoccupiedSquare(BoardMove $move): void
+    {
+        if (!$move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()))) {
+            throw new NotAllowedForPiece($this, $move);
+        }
+
+        if ($this->hasMoved && !$move->is(ToAdjoiningSquare::class)) {
+            throw new NotAllowedForPiece($this, $move);
+        }
+
+        if (!$this->hasMoved && $move->distance() > 2) {
+            throw new NotAllowedForPiece($this, $move);
+        }
+    }
+
+    /**
+     * Place piece at given coordinates.
+     *
+     * @param Board\Coordinates $coordinates
+     *
+     * @return void
+     */
+    public function placeAt(Board\Coordinates $coordinates): void
+    {
+        $this->hasMoved = true;
     }
 }

@@ -68,7 +68,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_move_forward_to_the_square_immediately_in_front_on_the_same_file()
     {
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('a', 2),
                 new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -81,7 +81,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_move_backward_to_the_square_immediately_in_front_on_the_same_file()
     {
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 2),
                 CoordinatePair::fromFileAndRank('a', 1),
                 new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
@@ -94,7 +94,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_move_forward_for_another_color_to_the_square_immediately_in_front_on_the_same_file()
     {
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 2),
                 CoordinatePair::fromFileAndRank('a', 1),
                 new Forward(Piece\Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -107,7 +107,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_move_along_diagonal()
     {
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('b', 2),
                 new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
@@ -120,7 +120,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_move_along_rank()
     {
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('b', 1),
                 new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
@@ -133,7 +133,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_capture_along_file()
     {
         $move = new Capturing(
-            new NotIntervened(
+            new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('a', 2),
                 new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -154,6 +154,62 @@ class PawnSpec extends ObjectBehavior
         );
 
         $this->canMove($move);
+    }
+
+    function it_may_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied()
+    {
+        $this->beConstructedThrough('forColor', [Piece\Color::black(),]);
+
+        $move = new ToUnoccupiedSquare(
+            new NotIntervened(
+                CoordinatePair::fromFileAndRank('a', 7),
+                CoordinatePair::fromFileAndRank('a', 5),
+                new Forward(Piece\Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+            )
+        );
+
+        $this->canMove($move);
+    }
+
+    function it_may_not_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Board $board)
+    {
+        $this->placeAt(CoordinatePair::fromFileAndRank('a', 3));
+
+        $move = new ToUnoccupiedSquare(
+            new NotIntervened(
+                CoordinatePair::fromFileAndRank('a', 3),
+                CoordinatePair::fromFileAndRank('a', 5),
+                new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+            )
+        );
+
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+    }
+
+    function it_may_not_advance_more_than_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied()
+    {
+        $move = new ToUnoccupiedSquare(
+            new NotIntervened(
+                CoordinatePair::fromFileAndRank('a', 1),
+                CoordinatePair::fromFileAndRank('a', 6),
+                new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+            )
+        );
+
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+    }
+
+    function it_may_not_capture_opponents_piece_diagonally_not_directly_in_front_of_it()
+    {
+        $move = new Capturing(
+            new NotIntervened(
+                CoordinatePair::fromFileAndRank('a', 1),
+                CoordinatePair::fromFileAndRank('c', 3),
+                new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
+            )
+        );
+
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
     }
 
 

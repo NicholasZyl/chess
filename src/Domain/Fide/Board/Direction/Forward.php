@@ -30,12 +30,13 @@ final class Forward implements Direction
         $this->color = $color;
         $this->direction = $direction;
     }
+
     /**
      * {@inheritdoc}
      */
     public function areOnSame(Coordinates $from, Coordinates $to): bool
     {
-        return $this->direction->areOnSame($from, $to);
+        return $this->isForward($from, $to) && $this->direction->areOnSame($from, $to);
     }
 
     /**
@@ -43,12 +44,24 @@ final class Forward implements Direction
      */
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
-        $isForward = $this->color->is(Color::white()) ? $from->rank() < $to->rank() : $to->rank() < $from->rank();
-        if (!$isForward) {
+        if (!$this->isForward($from, $to)) {
             throw new InvalidDirection($from, $to, $this);
         }
 
         return $this->direction->nextCoordinatesTowards($from, $to);
+    }
+
+    /**
+     * Is direction from source coordinates to destination made forward.
+     *
+     * @param Coordinates $from
+     * @param Coordinates $to
+     *
+     * @return bool
+     */
+    private function isForward(Coordinates $from, Coordinates $to): bool
+    {
+        return $this->color->is(Color::white()) ? $from->rank() < $to->rank() : $to->rank() < $from->rank();
     }
 
     /**

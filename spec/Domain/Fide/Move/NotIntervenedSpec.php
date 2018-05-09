@@ -136,4 +136,13 @@ class NotIntervenedSpec extends ObjectBehavior
 
         $this->is(OverOtherPieces::class)->shouldBe(false);
     }
+
+    function it_has_distance_of_all_squares_passed_from_source_to_destination()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 6);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $this->distance()->shouldBe(4);
+    }
 }

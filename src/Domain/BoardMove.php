@@ -25,6 +25,13 @@ interface BoardMove
     public function destination(): Coordinates;
 
     /**
+     * Get the distance between source and destination of the move.
+     *
+     * @return int
+     */
+    public function distance(): int;
+
+    /**
      * Get string representation of the move.
      *
      * @return string

@@ -12,7 +12,7 @@ final class NotAllowedForPiece extends IllegalMove
     public function __construct(Piece $piece, BoardMove $move)
     {
         parent::__construct(
-            sprintf('%s from %s to %s is not allowed for %s.', $move, $move->source(), $move->destination(), $piece)
+            sprintf('%s from %s to %s is not allowed for %s %s.', $move, $move->source(), $move->destination(), $piece->color(), $piece)
         );
     }
 }

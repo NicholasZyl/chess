@@ -44,6 +44,14 @@ final class ToUnoccupiedSquare implements BoardMove
     /**
      * {@inheritdoc}
      */
+    public function distance(): int
+    {
+        return $this->move->distance();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return sprintf('%s to unoccupied square', $this->move);

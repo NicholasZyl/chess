@@ -89,4 +89,13 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
 
         $this->is(NotIntervened::class)->shouldBe(false);
     }
+
+    function it_has_distance_of_one()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $this->distance()->shouldBe(1);
+    }
 }

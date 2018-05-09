@@ -89,4 +89,15 @@ class ToUnoccupiedSquareSpec extends ObjectBehavior
 
         $this->inDirection(new AlongDiagonal())->shouldBe(true);
     }
+
+    function it_has_distance_same_as_base_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $direction = new AlongDiagonal();
+        $move = new NotIntervened($source, $destination, $direction);
+        $this->beConstructedWith($move);
+
+        $this->distance()->shouldBe(1);
+    }
 }

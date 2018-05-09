@@ -10,6 +10,8 @@ use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 
 final class OverOtherPieces implements BoardMove
 {
+    private const DISTANCE = 1;
+
     /**
      * @var Coordinates
      */
@@ -59,6 +61,14 @@ final class OverOtherPieces implements BoardMove
     public function destination(): Coordinates
     {
         return $this->destination;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function distance(): int
+    {
+        return self::DISTANCE;
     }
 
     /**

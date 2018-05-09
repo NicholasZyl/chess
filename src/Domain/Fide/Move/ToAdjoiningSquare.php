@@ -67,6 +67,14 @@ final class ToAdjoiningSquare implements BoardMove
     /**
      * {@inheritdoc}
      */
+    public function distance(): int
+    {
+        return self::DISTANCE_TO_ADJOINING_SQUARE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return sprintf('move to an adjoining square %s', $this->direction);
