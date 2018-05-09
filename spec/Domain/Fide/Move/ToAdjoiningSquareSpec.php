@@ -9,6 +9,8 @@ use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
+use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -53,5 +55,23 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($king, $destination)->shouldNotBeCalled();
 
         $this->shouldThrow(new TooDistant($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_is_same_as_other_move_to_adjoining_square()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $this->is(ToAdjoiningSquare::class)->shouldBe(true);
+    }
+
+    function it_is_not_different_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $this->is(NotIntervened::class)->shouldBe(false);
     }
 }

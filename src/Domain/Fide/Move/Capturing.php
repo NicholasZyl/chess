@@ -6,7 +6,6 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\BoardMove;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToUnoccupiedPosition;
 
 final class Capturing implements BoardMove
@@ -16,15 +15,18 @@ final class Capturing implements BoardMove
      */
     private $move;
 
+    /**
+     * Create move that ends in capture of opponent's piece.
+     *
+     * @param BoardMove $move
+     */
     public function __construct(BoardMove $move)
     {
         $this->move = $move;
     }
 
     /**
-     * Get the source coordinates.
-     *
-     * @return Coordinates
+     * {@inheritdoc}
      */
     public function source(): Coordinates
     {
@@ -32,9 +34,7 @@ final class Capturing implements BoardMove
     }
 
     /**
-     * Get the destination coordinates.
-     *
-     * @return Coordinates
+     * {@inheritdoc}
      */
     public function destination(): Coordinates
     {
@@ -42,9 +42,7 @@ final class Capturing implements BoardMove
     }
 
     /**
-     * Get the move direction.
-     *
-     * @return Board\Direction
+     * {@inheritdoc}
      */
     public function direction(): Board\Direction
     {
@@ -52,9 +50,7 @@ final class Capturing implements BoardMove
     }
 
     /**
-     * Get string representation of the move.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function __toString(): string
     {
@@ -62,13 +58,7 @@ final class Capturing implements BoardMove
     }
 
     /**
-     * Play the move on the board.
-     *
-     * @param Board $board
-     *
-     * @throws IllegalMove
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function play(Board $board): void
     {
@@ -77,5 +67,13 @@ final class Capturing implements BoardMove
             throw new MoveToUnoccupiedPosition($this->move->destination());
         }
         $this->move->play($board);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function is(string $moveType): bool
+    {
+        return $this instanceof $moveType || $this->move->is($moveType);
     }
 }

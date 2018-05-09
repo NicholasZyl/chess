@@ -86,4 +86,12 @@ final class OverOtherPieces implements BoardMove
         $piece->canMove($this);
         $board->placePieceAtCoordinates($piece, $this->destination);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function is(string $moveType): bool
+    {
+        return $this instanceof $moveType ;
+    }
 }

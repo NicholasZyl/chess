@@ -13,6 +13,8 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
+use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -97,5 +99,23 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($pawn);
 
         $this->shouldThrow(new NotAllowedForPiece($pawn, $this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_is_same_as_other_not_intervened_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $this->is(NotIntervened::class)->shouldBe(true);
+    }
+
+    function it_is_not_different_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $this->is(OverOtherPieces::class)->shouldBe(false);
     }
 }

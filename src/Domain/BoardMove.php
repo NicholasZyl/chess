@@ -47,4 +47,13 @@ interface BoardMove
      * @return void
      */
     public function play(Board $board): void;
+
+    /**
+     * Check if move is done same way as provided.
+     *
+     * @param string $moveType
+     *
+     * @return bool
+     */
+    public function is(string $moveType): bool;
 }

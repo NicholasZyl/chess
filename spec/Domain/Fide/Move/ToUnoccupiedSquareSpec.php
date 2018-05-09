@@ -8,10 +8,12 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
+use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -42,5 +44,38 @@ class ToUnoccupiedSquareSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($knight, $destination)->shouldNotBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
+    }
+
+    function it_is_same_as_base_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $direction = new AlongDiagonal();
+        $move = new NotIntervened($source, $destination, $direction);
+        $this->beConstructedWith($move);
+
+        $this->is(NotIntervened::class)->shouldBe(true);
+    }
+
+    function it_move_to_unoccupied_square()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $direction = new AlongDiagonal();
+        $move = new NotIntervened($source, $destination, $direction);
+        $this->beConstructedWith($move);
+
+        $this->is(ToUnoccupiedSquare::class)->shouldBe(true);
+    }
+
+    function it_is_not_different_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $direction = new AlongDiagonal();
+        $move = new NotIntervened($source, $destination, $direction);
+        $this->beConstructedWith($move);
+
+        $this->is(OverOtherPieces::class)->shouldBe(false);
     }
 }

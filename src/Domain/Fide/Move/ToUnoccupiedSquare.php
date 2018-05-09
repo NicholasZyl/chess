@@ -69,4 +69,12 @@ final class ToUnoccupiedSquare implements BoardMove
         }
         $this->move->play($board);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function is(string $moveType): bool
+    {
+        return $this instanceof $moveType || $this->move->is($moveType);
+    }
 }
