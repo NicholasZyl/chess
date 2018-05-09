@@ -119,6 +119,9 @@ class BishopSpec extends ObjectBehavior
     }
 
 
+
+
+
     function it_can_move_along_diagonal(Board $board)
     {
         $move = AlongDiagonal::between(

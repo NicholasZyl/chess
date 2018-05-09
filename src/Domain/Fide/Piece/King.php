@@ -42,7 +42,7 @@ final class King extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move instanceof ToAdjoiningSquare || $move->inDirection(LShaped::class)) {
+        if (!$move->is(ToAdjoiningSquare::class) || $move->inDirection(LShaped::class)) {
             throw new NotAllowedForPiece($this, $move);
         }
     }
