@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use PhpSpec\ObjectBehavior;
 
 class AlongDiagonalSpec extends ObjectBehavior
@@ -67,5 +68,15 @@ class AlongDiagonalSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('b', 2);
 
         $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
+    }
+
+    function it_is_same_direction_if_along_diagonal()
+    {
+        $this->inSameDirectionAs(new AlongDiagonal())->shouldBe(true);
+    }
+
+    function it_is_not_same_direction_if_not_along_diagonal()
+    {
+        $this->inSameDirectionAs(new AlongFile())->shouldBe(false);
     }
 }

@@ -8,6 +8,8 @@ use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -58,5 +60,33 @@ class ForwardSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('a', 2);
 
         $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
+    }
+
+    function it_is_same_direction_if_forward_along_same_direction()
+    {
+        $this->beConstructedWith(Color::white(), new AlongFile());
+
+        $this->inSameDirectionAs(new Forward(Color::white(), new AlongFile()))->shouldBe(true);
+    }
+
+    function it_is_not_same_direction_if_not_along_same_direction()
+    {
+        $this->beConstructedWith(Color::white(), new AlongFile());
+
+        $this->inSameDirectionAs(new Forward(Color::white(), new AlongRank()))->shouldBe(false);
+    }
+
+    function it_is_not_same_direction_if_not_forward()
+    {
+        $this->beConstructedWith(Color::white(), new AlongFile());
+
+        $this->inSameDirectionAs(new AlongFile())->shouldBe(false);
+    }
+
+    function it_is_not_same_direction_if_not_forward_for_same_color()
+    {
+        $this->beConstructedWith(Color::white(), new AlongFile());
+
+        $this->inSameDirectionAs(new Forward(Color::black(), new AlongFile()))->shouldBe(false);
     }
 }

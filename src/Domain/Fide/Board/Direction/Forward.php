@@ -54,6 +54,14 @@ final class Forward implements Direction
     /**
      * {@inheritdoc}
      */
+    public function inSameDirectionAs(Direction $direction): bool
+    {
+        return $direction instanceof self && $this->color->is($direction->color) && $this->direction->inSameDirectionAs($direction->direction);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return sprintf('forward %s', $this->direction);

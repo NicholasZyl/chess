@@ -6,6 +6,8 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Board\Direction;
 use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use PhpSpec\ObjectBehavior;
 
 class LShapedSpec extends ObjectBehavior
@@ -61,5 +63,15 @@ class LShapedSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('b', 3);
 
         $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
+    }
+
+    function it_is_same_direction_if_to_nearest_square_but_not_on_same_file_or_rank_or_diagonal()
+    {
+        $this->inSameDirectionAs(new LShaped())->shouldBe(true);
+    }
+
+    function it_is_not_same_direction_if_not_along_diagonal()
+    {
+        $this->inSameDirectionAs(new AlongFile())->shouldBe(false);
     }
 }

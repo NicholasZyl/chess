@@ -67,6 +67,14 @@ final class LShaped implements Direction
     /**
      * {@inheritdoc}
      */
+    public function inSameDirectionAs(Direction $direction): bool
+    {
+        return $direction instanceof self;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return 'nearest but not along same file, rank or diagonal';

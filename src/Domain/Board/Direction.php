@@ -30,6 +30,15 @@ interface Direction
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates;
 
     /**
+     * Check if is in same direction as another.
+     *
+     * @param Direction $direction
+     *
+     * @return bool
+     */
+    public function inSameDirectionAs(Direction $direction): bool;
+
+    /**
      * Get string representation of the direction.
      *
      * @return string

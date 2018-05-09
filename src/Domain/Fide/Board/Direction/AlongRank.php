@@ -38,6 +38,14 @@ final class AlongRank implements Direction
     /**
      * {@inheritdoc}
      */
+    public function inSameDirectionAs(Direction $direction): bool
+    {
+        return $direction instanceof self;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function __toString(): string
     {
         return 'along same rank';
