@@ -63,7 +63,8 @@ class KnightSpec extends ObjectBehavior
         $move = new ToUnoccupiedSquare(
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
-                CoordinatePair::fromFileAndRank('b', 2)
+                CoordinatePair::fromFileAndRank('b', 2),
+                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
             )
         );
 

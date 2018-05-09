@@ -12,6 +12,8 @@ use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
+use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Move;
 
 final class Pawn extends Piece
@@ -69,8 +71,13 @@ final class Pawn extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()))) {
-            throw new NotAllowedForPiece($this, $move);
+        if ($move->is(ToUnoccupiedSquare::class) && $move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()))) {
+            return;
         }
+        if ($move->is(Capturing::class) && $move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()))) {
+            return;
+        }
+
+        throw new NotAllowedForPiece($this, $move);
     }
 }

@@ -12,7 +12,6 @@ use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
@@ -82,13 +81,13 @@ class NotIntervenedSpec extends ObjectBehavior
     function it_moves_piece_from_one_square_to_another(Board $board)
     {
         $white = Color::white();
-        $pawn = Pawn::forColor($white);
+        $bishop = Bishop::forColor($white);
         $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('a', 3);
-        $this->beConstructedWith($source, $destination, new Forward( $white, new AlongFile()));
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+        $this->beConstructedWith($source, $destination, new AlongDiagonal());
 
-        $board->pickPieceFromCoordinates($source)->willReturn($pawn);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled();
+        $board->pickPieceFromCoordinates($source)->willReturn($bishop);
+        $board->placePieceAtCoordinates($bishop, $destination)->shouldBeCalled();
 
         $this->play($board);
     }

@@ -24,23 +24,28 @@ final class ToAdjoiningSquare implements BoardMove
     private $destination;
 
     /**
-     * Create move to adjoining square.
+     * @var Board\Direction
+     */
+    private $direction;
+
+    /**
+     * Create move to an adjoining square.
      *
      * @param Coordinates $source
      * @param Coordinates $destination
+     * @param Board\Direction $direction
      *
      * @throws InvalidDirection
      */
-    private const ALLOWED_DIRECTIONS = [
-        \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal::class,
-        \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile::class,
-        \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank::class,
-    ];
-
-    public function __construct(Coordinates $source, Coordinates $destination)
+    public function __construct(Coordinates $source, Coordinates $destination, Board\Direction $direction)
     {
+        if (!$direction->areOnSame($source, $destination)) {
+            throw new InvalidDirection($source, $destination, $direction);
+        }
+
         $this->source = $source;
         $this->destination = $destination;
+        $this->direction = $direction;
     }
 
     /**
@@ -64,7 +69,7 @@ final class ToAdjoiningSquare implements BoardMove
      */
     public function __toString(): string
     {
-        return 'move to an adjoining square';
+        return sprintf('move to an adjoining square %s', $this->direction);
     }
 
     /**
@@ -96,6 +101,6 @@ final class ToAdjoiningSquare implements BoardMove
      */
     public function inDirection(Board\Direction $direction): bool
     {
-        return in_array(get_class($direction), self::ALLOWED_DIRECTIONS, true);
+        return $this->direction->inSameDirectionAs($direction);
     }
 }

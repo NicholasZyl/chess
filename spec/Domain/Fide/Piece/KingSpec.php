@@ -49,7 +49,8 @@ class KingSpec extends ObjectBehavior
         $move = new ToUnoccupiedSquare(
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
-                CoordinatePair::fromFileAndRank('a', 2)
+                CoordinatePair::fromFileAndRank('a', 2),
+                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
             )
         );
 
@@ -61,7 +62,8 @@ class KingSpec extends ObjectBehavior
         $move = new ToUnoccupiedSquare(
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
-                CoordinatePair::fromFileAndRank('b', 1)
+                CoordinatePair::fromFileAndRank('b', 1),
+                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
             )
         );
 
@@ -73,7 +75,8 @@ class KingSpec extends ObjectBehavior
         $move = new ToUnoccupiedSquare(
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
-                CoordinatePair::fromFileAndRank('b', 2)
+                CoordinatePair::fromFileAndRank('b', 2),
+                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
             )
         );
 
@@ -124,7 +127,8 @@ class KingSpec extends ObjectBehavior
         $move = new Capturing(
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
-                CoordinatePair::fromFileAndRank('b', 2)
+                CoordinatePair::fromFileAndRank('b', 2),
+                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
             )
         );
 
