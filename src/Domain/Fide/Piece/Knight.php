@@ -4,8 +4,12 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\BoardMove;
+use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Move;
 
 final class Knight extends Piece
@@ -28,8 +32,17 @@ final class Knight extends Piece
         return 'knight';
     }
 
-    public function canMove($argument1)
+    /**
+     * Validate if given move is legal for this piece.
+     *
+     * @param BoardMove $move
+     *
+     * @return void
+     */
+    public function canMove(BoardMove $move): void
     {
-        // TODO: write logic here
+        if (!$move->is(OverOtherPieces::class) || !$move->inDirection(LShaped::class)) {
+            throw new NotAllowedForPiece($this, $move);
+        }
     }
 }
