@@ -73,7 +73,7 @@ final class ToUnoccupiedSquare implements BoardMove
     /**
      * {@inheritdoc}
      */
-    public function inDirection(string $direction): bool
+    public function inDirection(Board\Direction $direction): bool
     {
         return $this->move->inDirection($direction);
     }

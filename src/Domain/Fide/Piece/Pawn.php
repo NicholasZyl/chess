@@ -69,7 +69,7 @@ final class Pawn extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->inDirection(Forward::class)) {
+        if (!$move->inDirection(new Forward($this->color(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()))) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

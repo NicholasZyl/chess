@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
 //TODO: Rename to Move
@@ -53,9 +54,9 @@ interface BoardMove
     /**
      * Check if move is made in same direction.
      *
-     * @param string $direction
+     * @param Direction $direction
      *
      * @return bool
      */
-    public function inDirection(string $direction): bool;
+    public function inDirection(Direction $direction): bool;
 }

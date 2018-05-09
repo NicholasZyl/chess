@@ -61,7 +61,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $direction = new LShaped();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->inDirection(LShaped::class)->shouldBe(true);
+        $this->inDirection(new LShaped())->shouldBe(true);
     }
 
     function it_is_not_in_different_direction()
@@ -71,7 +71,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $direction = new LShaped();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->inDirection(AlongDiagonal::class)->shouldBe(false);
+        $this->inDirection(new AlongDiagonal())->shouldBe(false);
     }
 
     function it_moves_piece_from_one_square_to_another(Board $board)

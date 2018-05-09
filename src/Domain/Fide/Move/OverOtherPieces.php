@@ -87,8 +87,11 @@ final class OverOtherPieces implements BoardMove
         return $this instanceof $moveType ;
     }
 
-    public function inDirection(string $direction): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function inDirection(Board\Direction $direction): bool
     {
-        return $this->direction instanceof $direction;
+        return $this->direction->inSameDirectionAs($direction);
     }
 }

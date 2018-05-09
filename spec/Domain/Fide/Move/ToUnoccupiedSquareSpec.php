@@ -87,6 +87,6 @@ class ToUnoccupiedSquareSpec extends ObjectBehavior
         $move = new NotIntervened($source, $destination, $direction);
         $this->beConstructedWith($move);
 
-        $this->inDirection(AlongDiagonal::class)->shouldBe(true);
+        $this->inDirection(new AlongDiagonal())->shouldBe(true);
     }
 }

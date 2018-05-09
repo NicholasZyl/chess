@@ -127,8 +127,8 @@ final class NotIntervened implements BoardMove
     /**
      * {@inheritdoc}
      */
-    public function inDirection(string $direction): bool
+    public function inDirection(Board\Direction $direction): bool
     {
-        return $this->direction instanceof $direction;
+        return $this->direction->inSameDirectionAs($direction);
     }
 }

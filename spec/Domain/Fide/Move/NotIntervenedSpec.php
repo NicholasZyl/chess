@@ -66,7 +66,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $direction = new AlongDiagonal();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->inDirection(AlongDiagonal::class)->shouldBe(true);
+        $this->inDirection(new AlongDiagonal())->shouldBe(true);
     }
 
     function it_is_not_in_different_direction()
@@ -76,7 +76,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $direction = new AlongDiagonal();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->inDirection(AlongFile::class)->shouldBe(false);
+        $this->inDirection(new AlongFile())->shouldBe(false);
     }
 
     function it_moves_piece_from_one_square_to_another(Board $board)

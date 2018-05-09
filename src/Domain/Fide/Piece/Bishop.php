@@ -42,7 +42,7 @@ final class Bishop extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->is(NotIntervened::class) || !$move->inDirection(\NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal::class)) {
+        if (!$move->is(NotIntervened::class) || !$move->inDirection(new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

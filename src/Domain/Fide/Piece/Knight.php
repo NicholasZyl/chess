@@ -41,7 +41,7 @@ final class Knight extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->is(OverOtherPieces::class) || !$move->inDirection(LShaped::class)) {
+        if (!$move->is(OverOtherPieces::class) || !$move->inDirection(new LShaped())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

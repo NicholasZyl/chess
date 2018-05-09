@@ -32,7 +32,7 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('a', 3);
         $this->beConstructedWith($source, $destination);
 
-        $this->inDirection(AlongDiagonal::class)->shouldBe(true);
+        $this->inDirection(new AlongDiagonal())->shouldBe(true);
     }
 
     function it_is_not_in_direction_not_to_adjoining_square()
@@ -41,7 +41,7 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('a', 3);
         $this->beConstructedWith($source, $destination);
 
-        $this->inDirection(LShaped::class)->shouldBe(false);
+        $this->inDirection(new LShaped())->shouldBe(false);
     }
 
     function it_moves_piece_from_square_to_adjoining_square_when_limited_to_one_square(Board $board)

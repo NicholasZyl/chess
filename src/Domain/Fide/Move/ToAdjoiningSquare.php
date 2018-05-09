@@ -94,8 +94,8 @@ final class ToAdjoiningSquare implements BoardMove
     /**
      * {@inheritdoc}
      */
-    public function inDirection(string $direction): bool
+    public function inDirection(Board\Direction $direction): bool
     {
-        return in_array($direction,self::ALLOWED_DIRECTIONS, true);
+        return in_array(get_class($direction), self::ALLOWED_DIRECTIONS, true);
     }
 }
