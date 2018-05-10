@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
@@ -122,6 +123,31 @@ class QueenSpec extends ObjectBehavior
         );
 
         $this->canMove($move);
+    }
+
+    function it_intents_not_intervened_move_to_any_square()
+    {
+        $source = CoordinatePair::fromFileAndRank('d', 3);
+        $destination = CoordinatePair::fromFileAndRank('c', 2);
+
+        $this->placeAt($source);
+        $this->intentMoveTo($destination)->shouldBeLike(
+            new NotIntervened(
+                $source,
+                $destination,
+                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
+            )
+        );
+    }
+
+    function it_may_not_intent_move_to_illegal_position()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+
+        $this->placeAt($source);
+
+        $this->shouldThrow(new ToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
     }
     
 
