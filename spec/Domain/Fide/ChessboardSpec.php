@@ -157,6 +157,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $destination);
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('movePiece', [$source, $destination,]);
+        $this->hasPieceAtCoordinates($whiteRook, $source)->shouldBe(true);
     }
 
     function it_knows_when_square_at_coordinates_is_occupied_by_opponent_if_piece_has_different_color()
