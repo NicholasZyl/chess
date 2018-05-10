@@ -10,7 +10,7 @@ use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 
-final class NotIntervened implements BoardMove
+class NotIntervened implements BoardMove
 {
     /**
      * @var Coordinates
@@ -88,14 +88,6 @@ final class NotIntervened implements BoardMove
     public function destination(): Coordinates
     {
         return $this->destination;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function distance(): int
-    {
-        return count(array_merge($this->steps, [$this->destination]));
     }
 
     /**

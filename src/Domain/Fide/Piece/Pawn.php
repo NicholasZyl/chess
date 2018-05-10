@@ -5,10 +5,15 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\BoardMove;
+use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
+use NicholasZyl\Chess\Domain\Fide\Move\AdvancingTwoSquares;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
@@ -30,6 +35,11 @@ final class Pawn extends Piece
      * @var bool
      */
     private $hasMoved = false;
+
+    /**
+     * @var Board\Coordinates
+     */
+    private $position;
 
     /**
      * {@inheritdoc}
@@ -119,7 +129,7 @@ final class Pawn extends Piece
             throw new NotAllowedForPiece($this, $move);
         }
 
-        if (!$this->hasMoved && $move->distance() > 2) {
+        if (!$this->hasMoved && !$move->is(AdvancingTwoSquares::class) && !$move->is(ToAdjoiningSquare::class)) {
             throw new NotAllowedForPiece($this, $move);
         }
     }
@@ -133,6 +143,56 @@ final class Pawn extends Piece
      */
     public function placeAt(Board\Coordinates $coordinates): void
     {
-        $this->hasMoved = true;
+        $this->hasMoved = !is_null($this->position);
+        $this->position = $coordinates;
+    }
+
+    /**
+     * Intent move from piece's current position to the destination.
+     *
+     * @param Board\Coordinates $destination
+     *
+     * @throws ToIllegalPosition
+     *
+     * @return BoardMove
+     */
+    public function intentMoveTo(Board\Coordinates $destination): BoardMove
+    {
+        try {
+            $direction = $this->position->directionTo($destination);
+            if ($direction instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal) {
+                return new Capturing(
+                    new ToAdjoiningSquare(
+                        $this->position,
+                        $destination,
+                        new Forward($this->color(), $direction)
+                    )
+                );
+            }
+
+            if ($direction instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile) {
+                if ($this->hasMoved) {
+                    $move = new ToAdjoiningSquare(
+                        $this->position,
+                        $destination,
+                        new Forward($this->color(), $direction)
+                    );
+                } else {
+                    $move = new AdvancingTwoSquares(
+                        $this->position,
+                        $destination,
+                        new Forward($this->color(), $direction)
+                    );
+                }
+
+                return new ToUnoccupiedSquare(
+                    $move
+                );
+            }
+        } catch (InvalidDirection | UnknownDirection | TooDistant $exception) {
+            throw new ToIllegalPosition($this, $this->position, $destination);
+        }
+
+        throw new ToIllegalPosition($this, $this->position, $destination);
     }
 }

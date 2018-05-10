@@ -5,12 +5,14 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
+use NicholasZyl\Chess\Domain\Fide\Move\AdvancingTwoSquares;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
@@ -161,7 +163,7 @@ class PawnSpec extends ObjectBehavior
         $this->beConstructedThrough('forColor', [Piece\Color::black(),]);
 
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new AdvancingTwoSquares(
                 CoordinatePair::fromFileAndRank('a', 7),
                 CoordinatePair::fromFileAndRank('a', 5),
                 new Forward(Piece\Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -173,10 +175,11 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_not_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Board $board)
     {
+        $this->placeAt(CoordinatePair::fromFileAndRank('a', 2));
         $this->placeAt(CoordinatePair::fromFileAndRank('a', 3));
 
         $move = new ToUnoccupiedSquare(
-            new NotIntervened(
+            new AdvancingTwoSquares(
                 CoordinatePair::fromFileAndRank('a', 3),
                 CoordinatePair::fromFileAndRank('a', 5),
                 new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -210,6 +213,50 @@ class PawnSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+    }
+
+    function it_intents_move_to_unoccupied_square_along_file()
+    {
+        $source = CoordinatePair::fromFileAndRank('d', 2);
+        $destination = CoordinatePair::fromFileAndRank('d', 4);
+
+        $this->placeAt($source);
+        $this->intentMoveTo($destination)->shouldBeLike(
+            new ToUnoccupiedSquare(
+                new AdvancingTwoSquares(
+                    $source,
+                    $destination,
+                    new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+                )
+            )
+        );
+    }
+
+    function it_intents_capturing_move_along_diagonal()
+    {
+        $source = CoordinatePair::fromFileAndRank('d', 2);
+        $destination = CoordinatePair::fromFileAndRank('e', 3);
+
+        $this->placeAt($source);
+        $this->intentMoveTo($destination)->shouldBeLike(
+            new Capturing(
+                new ToAdjoiningSquare(
+                    $source,
+                    $destination,
+                    new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
+                )
+            )
+        );
+    }
+
+    function it_may_not_intent_move_to_illegal_position()
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 6);
+
+        $this->placeAt($source);
+
+        $this->shouldThrow(new ToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
     }
 
 

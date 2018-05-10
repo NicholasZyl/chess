@@ -104,13 +104,4 @@ class OverOtherPiecesSpec extends ObjectBehavior
 
         $this->is(NotIntervened::class)->shouldBe(false);
     }
-
-    function it_has_distance_of_one()
-    {
-        $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('c', 3);
-        $this->beConstructedWith($source, $destination, new LShaped());
-
-        $this->distance()->shouldBe(1);
-    }
 }

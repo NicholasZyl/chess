@@ -106,15 +106,4 @@ class CapturingSpec extends ObjectBehavior
 
         $this->inDirection(new AlongDiagonal())->shouldBe(true);
     }
-
-    function it_has_distance_same_as_base_move()
-    {
-        $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('c', 4);
-        $direction = new AlongDiagonal();
-        $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
-
-        $this->distance()->shouldBe(2);
-    }
 }
