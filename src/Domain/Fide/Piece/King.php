@@ -10,6 +10,7 @@ use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
@@ -80,7 +81,7 @@ final class King extends Piece
                 $destination,
                 $this->position->directionTo($destination)
             );
-        } catch (InvalidDirection | TooDistant $exception) {
+        } catch (InvalidDirection | UnknownDirection | TooDistant $exception) {
             throw new ToIllegalPosition($this, $this->position, $destination);
         }
     }
