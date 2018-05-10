@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Piece
@@ -60,4 +61,15 @@ interface Piece
      * @return string
      */
     public function __toString(): string;
+
+    /**
+     * Validate if given move is legal for this piece.
+     *
+     * @param BoardMove $move
+     *
+     * @throws NotAllowedForPiece
+     *
+     * @return void
+     */
+    public function canMove(BoardMove $move): void;
 }

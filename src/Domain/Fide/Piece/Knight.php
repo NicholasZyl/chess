@@ -33,11 +33,7 @@ final class Knight extends Piece
     }
 
     /**
-     * Validate if given move is legal for this piece.
-     *
-     * @param BoardMove $move
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function canMove(BoardMove $move): void
     {

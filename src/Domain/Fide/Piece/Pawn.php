@@ -5,7 +5,6 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\BoardMove;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
@@ -66,14 +65,7 @@ final class Pawn extends Piece
     }
 
     /**
-     * Check if intended move is legal for this piece.
-     * TODO: rename to mayMove
-     *
-     * @param BoardMove $move
-     *
-     * @throws IllegalMove
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function canMove(BoardMove $move): void
     {
