@@ -14,7 +14,6 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
-use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
@@ -110,19 +109,6 @@ class RookSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
-    }
-
-    function it_may_capture_other_pieces()
-    {
-        $move = new Capturing(
-            new NotIntervened(
-                CoordinatePair::fromFileAndRank('c', 4),
-                CoordinatePair::fromFileAndRank('c', 2),
-                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
-            )
-        );
-
-        $this->canMove($move);
     }
 
     function it_intents_not_intervened_move_to_any_square()

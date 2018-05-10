@@ -152,6 +152,7 @@ final class Pawn extends Piece
             $direction = $this->position->directionTo($destination);
             if ($direction instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal) {
                 return new Capturing(
+                    $this->color(),
                     new ToAdjoiningSquare(
                         $this->position,
                         $destination,

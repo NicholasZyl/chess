@@ -7,9 +7,15 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToUnoccupiedPosition;
+use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Capturing implements BoardMove
 {
+    /**
+     * @var Color
+     */
+    private $color;
+
     /**
      * @var BoardMove
      */
@@ -18,10 +24,12 @@ final class Capturing implements BoardMove
     /**
      * Create move that ends in capture of opponent's piece.
      *
+     * @param Color $color
      * @param BoardMove $move
      */
-    public function __construct(BoardMove $move)
+    public function __construct(Color $color, BoardMove $move)
     {
+        $this->color = $color;
         $this->move = $move;
     }
 
@@ -54,8 +62,7 @@ final class Capturing implements BoardMove
      */
     public function play(Board $board): void
     {
-        $piece = $board->peekPieceAtCoordinates($this->move->source());
-        if (!$board->hasOpponentsPieceAt($this->move->destination(), $piece->color())) {
+        if (!$board->hasOpponentsPieceAt($this->move->destination(), $this->color)) {
             throw new MoveToUnoccupiedPosition($this->move->destination());
         }
         $this->move->play($board);

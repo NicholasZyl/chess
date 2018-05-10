@@ -24,7 +24,7 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('a', 3);
         $direction = new AlongFile();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
         $this->shouldBeAnInstanceOf(BoardMove::class);
     }
@@ -36,9 +36,8 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $direction = new AlongDiagonal();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
-        $board->peekPieceAtCoordinates($source)->willReturn($bishop);
         $board->hasOpponentsPieceAt($destination, Color::white())->willReturn(true);
         $board->pickPieceFromCoordinates($source)->willReturn($bishop);
         $board->placePieceAtCoordinates($bishop, $destination)->shouldBeCalled();
@@ -53,9 +52,8 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $direction = new AlongDiagonal();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
-        $board->peekPieceAtCoordinates($source)->willReturn($bishop);
         $board->hasOpponentsPieceAt($destination, Color::white())->willReturn(false);
         $board->pickPieceFromCoordinates($source)->shouldNotBeCalled();
         $board->placePieceAtCoordinates($bishop, $source)->shouldNotBeCalled();
@@ -69,7 +67,7 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $direction = new AlongDiagonal();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
         $this->is(NotIntervened::class)->shouldBe(true);
     }
@@ -80,7 +78,7 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $direction = new AlongDiagonal();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
         $this->is(Capturing::class)->shouldBe(true);
     }
@@ -91,7 +89,7 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $direction = new AlongDiagonal();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
         $this->is(OverOtherPieces::class)->shouldBe(false);
     }
@@ -102,7 +100,7 @@ class CapturingSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $direction = new AlongDiagonal();
         $move = new NotIntervened($source, $destination, $direction);
-        $this->beConstructedWith($move);
+        $this->beConstructedWith(Color::white(), $move);
 
         $this->inDirection(new AlongDiagonal())->shouldBe(true);
     }

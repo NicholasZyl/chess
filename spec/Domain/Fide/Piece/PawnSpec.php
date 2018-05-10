@@ -23,6 +23,7 @@ use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -135,6 +136,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_capture_along_file()
     {
         $move = new Capturing(
+            Color::white(),
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('a', 2),
@@ -148,6 +150,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file()
     {
         $move = new Capturing(
+            Color::white(),
             new ToAdjoiningSquare(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('b', 2),
@@ -205,6 +208,7 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_capture_opponents_piece_diagonally_not_directly_in_front_of_it()
     {
         $move = new Capturing(
+            Color::white(),
             new NotIntervened(
                 CoordinatePair::fromFileAndRank('a', 1),
                 CoordinatePair::fromFileAndRank('c', 3),
@@ -240,6 +244,7 @@ class PawnSpec extends ObjectBehavior
         $this->placeAt($source);
         $this->intentMoveTo($destination)->shouldBeLike(
             new Capturing(
+                Color::white(),
                 new ToAdjoiningSquare(
                     $source,
                     $destination,

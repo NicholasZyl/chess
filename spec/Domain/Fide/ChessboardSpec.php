@@ -113,23 +113,6 @@ class ChessboardSpec extends ObjectBehavior
         $this->shouldThrow(new SquareIsUnoccupied($position))->during('pickPieceFromCoordinates', [$position,]);
     }
 
-    function it_allows_to_peek_what_piece_is_placed_at_coordinates_but_not_picking_it()
-    {
-        $position = CoordinatePair::fromFileAndRank('a', 2);
-        $pawn = Pawn::forColor(Piece\Color::white());
-        $this->placePieceAtCoordinates($pawn, $position);
-
-        $this->peekPieceAtCoordinates($position)->shouldBe($pawn);
-        $this->hasPieceAtCoordinates($pawn, $position)->shouldBe(true);
-    }
-
-    function it_fails_if_trying_to_peek_at_unoccupied_position()
-    {
-        $position = CoordinatePair::fromFileAndRank('a', 2);
-
-        $this->shouldThrow(new SquareIsUnoccupied($position))->during('peekPieceAtCoordinates', [$position,]);
-    }
-
     function it_does_not_allow_illegal_move_for_piece()
     {
         $whitePawn = Pawn::forColor(Piece\Color::white());
