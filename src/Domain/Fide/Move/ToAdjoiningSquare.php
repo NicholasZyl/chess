@@ -36,11 +36,17 @@ final class ToAdjoiningSquare implements BoardMove
      * @param Board\Direction $direction
      *
      * @throws InvalidDirection
+     * @throws TooDistant
      */
     public function __construct(Coordinates $source, Coordinates $destination, Board\Direction $direction)
     {
         if (!$direction->areOnSame($source, $destination)) {
             throw new InvalidDirection($source, $destination, $direction);
+        }
+        $distanceAlongFile = abs(ord($source->file()) - ord($destination->file()));
+        $distanceAlongRank = abs($source->rank() - $destination->rank());
+        if ($distanceAlongFile > self::DISTANCE_TO_ADJOINING_SQUARE || $distanceAlongRank > self::DISTANCE_TO_ADJOINING_SQUARE) {
+            throw new TooDistant($source, $destination, self::DISTANCE_TO_ADJOINING_SQUARE);
         }
 
         $this->source = $source;
@@ -85,12 +91,6 @@ final class ToAdjoiningSquare implements BoardMove
      */
     public function play(Board $board): void
     {
-        $distanceAlongFile = abs(ord($this->source()->file()) - ord($this->destination()->file()));
-        $distanceAlongRank = abs($this->source()->rank() - $this->destination()->rank());
-        if ($distanceAlongFile > self::DISTANCE_TO_ADJOINING_SQUARE || $distanceAlongRank > self::DISTANCE_TO_ADJOINING_SQUARE) {
-            throw new TooDistant($this);
-        }
-
         $piece = $board->pickPieceFromCoordinates($this->source);
         $piece->canMove($this);
         $board->placePieceAtCoordinates($piece, $this->destination);

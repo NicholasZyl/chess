@@ -5,6 +5,10 @@ namespace NicholasZyl\Chess\Domain\Fide\Board;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
+use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 
 final class CoordinatePair implements Coordinates
 {
@@ -114,6 +118,24 @@ final class CoordinatePair implements Coordinates
     public function nextTowards(Coordinates $destination, Direction $direction): Coordinates
     {
         return $direction->nextCoordinatesTowards($this, $destination);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function directionTo(Coordinates $coordinates): Direction
+    {
+        if (abs($this->rank() - $coordinates->rank()) === abs(ord($this->file()) - ord($coordinates->file()))) {
+            return new AlongDiagonal();
+        }
+        if ($this->file() === $coordinates->file()) {
+            return new AlongFile();
+        }
+        if ($this->rank() === $coordinates->rank()) {
+            return new AlongRank();
+        }
+
+        throw new UnknownDirection($this, $coordinates);
     }
 
     /**

@@ -58,18 +58,13 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
         $this->play($board);
     }
 
-    function it_does_not_allow_move_that_is_further_than_adjoining_square(Board $board)
+    function it_does_not_allow_move_that_is_further_than_adjoining_square()
     {
-        $king = King::forColor(Color::white());
-
         $source = CoordinatePair::fromFileAndRank('a', 1);
         $destination = CoordinatePair::fromFileAndRank('c', 2);
         $this->beConstructedWith($source, $destination, new LShaped());
 
-        $board->pickPieceFromCoordinates($source)->shouldNotBeCalled();
-        $board->placePieceAtCoordinates($king, $destination)->shouldNotBeCalled();
-
-        $this->shouldThrow(new TooDistant($this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new TooDistant($source, $destination, 1))->duringInstantiation();
     }
 
     function it_is_same_as_other_move_to_adjoining_square()

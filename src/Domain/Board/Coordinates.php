@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Board;
 
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 
 interface Coordinates
 {
@@ -32,6 +33,17 @@ interface Coordinates
      * @return Coordinates
      */
     public function nextTowards(Coordinates $destination, Direction $direction): Coordinates;
+
+    /**
+     * Get direction to another coordinates.
+     *
+     * @param Coordinates $coordinates
+     *
+     * @throws UnknownDirection
+     *
+     * @return Direction
+     */
+    public function directionTo(Coordinates $coordinates): Direction;
 
     /**
      * Compare if is the same as other pair.
