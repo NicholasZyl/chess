@@ -5,11 +5,9 @@ namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -54,21 +52,16 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function movePiece(Move $move): void
+    public function movePiece(Coordinates $source, Coordinates $destination): void
     {
-        $from = $this->getSquareAt($move->from());
-        $to = $this->getSquareAt($move->to());
-        $piece = $from->pick();
+        $from = $this->getSquareAt($source);
+        $piece = $from->peek();
+        $move = $piece->intentMoveTo($destination);
 
         try {
-            $piece->mayMove($move, $this);
-            $to->place($piece);
-        } catch (IllegalMove $invalidMove) {
-            $from->place($piece);
-            throw $invalidMove;
+            $move->play($this);
         } catch (SquareIsOccupied $squareIsOccupied) {
-            $from->place($piece);
-            throw new MoveToOccupiedPosition($move->to());
+            throw new MoveToOccupiedPosition($destination);
         }
     }
 

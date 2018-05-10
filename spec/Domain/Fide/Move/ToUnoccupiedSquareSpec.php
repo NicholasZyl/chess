@@ -10,11 +10,14 @@ use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
+use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
+use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -44,6 +47,21 @@ class ToUnoccupiedSquareSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($knight, $destination)->shouldNotBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
+    }
+
+    function it_does_allows_move_to_unoccupied_square(Board $board)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $move = new ToAdjoiningSquare($source, $destination, new Forward(Color::white(), new AlongFile()));
+        $this->beConstructedWith($move);
+
+        $board->verifyThatPositionIsUnoccupied($destination)->willReturn();
+        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
+        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled();
+
+        $this->play($board);
     }
 
     function it_is_same_as_base_move()

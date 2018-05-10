@@ -39,14 +39,15 @@ interface Board
     /**
      * Move a piece from one position to another.
      *
-     * @param Move $move
+     * @param Coordinates $source
+     * @param Coordinates $destination
      *
      * @throws IllegalMove
      * @throws OutOfBoardCoordinates
      *
      * @return void
      */
-    public function movePiece(Move $move): void;
+    public function movePiece(Coordinates $source, Coordinates $destination): void;
 
     /**
      * Verify that given position is unoccupied.
