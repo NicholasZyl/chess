@@ -5,22 +5,22 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Move;
 
-final class ToUnoccupiedSquare implements BoardMove
+final class ToUnoccupiedSquare implements Move
 {
     /**
-     * @var BoardMove
+     * @var Move
      */
     private $move;
 
     /**
      * Create move to an unoccupied square.
-     * @param BoardMove $move
+     * @param Move $move
      */
-    public function __construct(BoardMove $move)
+    public function __construct(Move $move)
     {
         $this->move = $move;
     }

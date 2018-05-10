@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToUnoccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -13,6 +12,7 @@ use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -26,7 +26,7 @@ class CapturingSpec extends ObjectBehavior
         $move = new NotIntervened($source, $destination, $direction);
         $this->beConstructedWith(Color::white(), $move);
 
-        $this->shouldBeAnInstanceOf(BoardMove::class);
+        $this->shouldBeAnInstanceOf(Move::class);
     }
 
     function it_can_capture_opponents_piece_at_destination(Board $board)

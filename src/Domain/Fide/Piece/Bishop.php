@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
+use NicholasZyl\Chess\Domain\Move;
 
 final class Bishop extends Piece
 {
@@ -29,7 +29,7 @@ final class Bishop extends Piece
     /**
      * {@inheritdoc}
      */
-    public function canMove(BoardMove $move): void
+    public function mayMove(Move $move): void
     {
         if (!$move->is(NotIntervened::class) || !$move->inDirection(new AlongDiagonal())) {
             throw new NotAllowedForPiece($this, $move);
@@ -47,7 +47,7 @@ final class Bishop extends Piece
     /**
      * {@inheritdoc}
      */
-    public function intentMoveTo(Board\Coordinates $destination): BoardMove
+    public function intentMoveTo(Board\Coordinates $destination): Move
     {
         try {
             return new NotIntervened(

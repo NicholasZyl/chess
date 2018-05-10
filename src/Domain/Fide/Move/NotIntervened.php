@@ -5,12 +5,12 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Move;
 
-class NotIntervened implements BoardMove
+class NotIntervened implements Move
 {
     /**
      * @var Coordinates
@@ -112,7 +112,7 @@ class NotIntervened implements BoardMove
         }
 
         $piece = $board->pickPieceFromCoordinates($this->source);
-        $piece->canMove($this);
+        $piece->mayMove($this);
         $board->placePieceAtCoordinates($piece, $this->destination);
     }
 

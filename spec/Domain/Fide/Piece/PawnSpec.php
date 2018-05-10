@@ -75,7 +75,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_not_move_backward_to_the_square_immediately_in_front_on_the_same_file()
@@ -88,7 +88,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_forward_for_another_color_to_the_square_immediately_in_front_on_the_same_file()
@@ -101,7 +101,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_diagonal()
@@ -114,7 +114,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_rank()
@@ -127,7 +127,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_capture_along_file()
@@ -141,7 +141,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file()
@@ -155,7 +155,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied()
@@ -170,7 +170,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_not_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Board $board)
@@ -186,7 +186,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_advance_more_than_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied()
@@ -199,7 +199,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_capture_opponents_piece_diagonally_not_directly_in_front_of_it()
@@ -213,7 +213,7 @@ class PawnSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_intents_move_to_unoccupied_square_along_file()

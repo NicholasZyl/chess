@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -18,6 +17,7 @@ use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -31,7 +31,7 @@ class ToUnoccupiedSquareSpec extends ObjectBehavior
         $move = new NotIntervened($source, $destination, $direction);
         $this->beConstructedWith($move);
 
-        $this->shouldBeAnInstanceOf(BoardMove::class);
+        $this->shouldBeAnInstanceOf(Move::class);
     }
 
     function it_does_not_allow_move_to_occupied_square(Board $board)
@@ -49,7 +49,7 @@ class ToUnoccupiedSquareSpec extends ObjectBehavior
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
     }
 
-    function it_does_allows_move_to_unoccupied_square(Board $board)
+    function it_allows_move_to_unoccupied_square(Board $board)
     {
         $pawn = Pawn::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);

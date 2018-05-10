@@ -53,13 +53,13 @@ interface Piece
     /**
      * Validate if given move is legal for this piece.
      *
-     * @param BoardMove $move
+     * @param Move $move
      *
      * @throws NotAllowedForPiece
      *
      * @return void
      */
-    public function canMove(BoardMove $move): void;
+    public function mayMove(Move $move): void;
 
     /**
      * Place piece at given coordinates.
@@ -77,7 +77,7 @@ interface Piece
      *
      * @throws ToIllegalPosition
      *
-     * @return BoardMove
+     * @return Move
      */
-    public function intentMoveTo(Board\Coordinates $destination): BoardMove;
+    public function intentMoveTo(Board\Coordinates $destination): Move;
 }

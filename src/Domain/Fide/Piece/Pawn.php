@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
@@ -42,7 +41,7 @@ final class Pawn extends Piece
     /**
      * {@inheritdoc}
      */
-    public function canMove(BoardMove $move): void
+    public function mayMove(Move $move): void
     {
         if ($move->is(Capturing::class)) {
             $this->validateCapturingMove($move);
@@ -62,11 +61,11 @@ final class Pawn extends Piece
     /**
      * Validate if capturing move is legal.
      *
-     * @param BoardMove $move
+     * @param Move $move
      *
      * @return void
      */
-    private function validateCapturingMove(BoardMove $move): void
+    private function validateCapturingMove(Move $move): void
     {
         if (!$move->is(ToAdjoiningSquare::class)) {
             throw new NotAllowedForPiece($this, $move);
@@ -80,11 +79,11 @@ final class Pawn extends Piece
     /**
      * Validate if move to unoccupied square is legal.
      *
-     * @param BoardMove $move
+     * @param Move $move
      *
      * @return void
      */
-    private function validateMoveToUnoccupiedSquare(BoardMove $move): void
+    private function validateMoveToUnoccupiedSquare(Move $move): void
     {
         if (!$move->inDirection(new Forward($this->color(), new AlongFile()))) {
             throw new NotAllowedForPiece($this, $move);
@@ -111,7 +110,7 @@ final class Pawn extends Piece
     /**
      * {@inheritdoc}
      */
-    public function intentMoveTo(Board\Coordinates $destination): BoardMove
+    public function intentMoveTo(Board\Coordinates $destination): Move
     {
         try {
             $direction = $this->position->directionTo($destination);

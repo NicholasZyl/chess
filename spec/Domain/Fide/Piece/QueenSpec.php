@@ -53,7 +53,7 @@ class QueenSpec extends ObjectBehavior
             )
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_move_to_any_square_along_rank()
@@ -66,7 +66,7 @@ class QueenSpec extends ObjectBehavior
             )
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_move_to_any_square_along_diagonal()
@@ -79,7 +79,7 @@ class QueenSpec extends ObjectBehavior
             )
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_not_move_to_square_not_on_same_file_or_rank_or_diagonal()
@@ -92,7 +92,7 @@ class QueenSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_over_intervening_pieces()
@@ -105,7 +105,7 @@ class QueenSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_intents_not_intervened_move_to_any_square()

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -12,6 +11,7 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -30,7 +30,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $direction = new LShaped();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->shouldBeAnInstanceOf(BoardMove::class);
+        $this->shouldBeAnInstanceOf(Move::class);
     }
 
     function it_validates_if_coordinates_are_on_same_direction()

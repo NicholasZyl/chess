@@ -44,7 +44,7 @@ class BishopSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_not_move_over_any_intervening_pieces()
@@ -55,7 +55,7 @@ class BishopSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_file()
@@ -66,7 +66,7 @@ class BishopSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_rank()
@@ -77,7 +77,7 @@ class BishopSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_to_nearest_square()
@@ -88,7 +88,7 @@ class BishopSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_intents_not_intervened_move_along_diagonal()

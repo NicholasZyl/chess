@@ -50,7 +50,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_move_to_adjoining_square_along_rank()
@@ -61,7 +61,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_move_to_adjoining_square_along_diagonal()
@@ -72,7 +72,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_not_move_over_any_intervening_pieces()
@@ -83,7 +83,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_to_nearest_square()
@@ -94,7 +94,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_more_than_to_adjoining_square()
@@ -105,7 +105,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_capture_at_any_square_along_a_diagonal_on_which_it_stands()
@@ -116,7 +116,7 @@ class KingSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_intents_move_to_adjoining_square()

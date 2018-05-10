@@ -7,8 +7,7 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
-//TODO: Rename to Move
-interface BoardMove
+interface Move
 {
     /**
      * Get the source coordinates.

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
@@ -12,6 +11,7 @@ use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
+use NicholasZyl\Chess\Domain\Move;
 
 final class Rook extends Piece
 {
@@ -31,7 +31,7 @@ final class Rook extends Piece
     /**
      * {@inheritdoc}
      */
-    public function canMove(BoardMove $move): void
+    public function mayMove(Move $move): void
     {
         if (!$move->is(NotIntervened::class) || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
             throw new NotAllowedForPiece($this, $move);
@@ -49,7 +49,7 @@ final class Rook extends Piece
     /**
      * {@inheritdoc}
      */
-    public function intentMoveTo(Board\Coordinates $destination): BoardMove
+    public function intentMoveTo(Board\Coordinates $destination): Move
     {
         try {
             $direction = $this->position->directionTo($destination);

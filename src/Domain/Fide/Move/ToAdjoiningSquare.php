@@ -5,11 +5,11 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
+use NicholasZyl\Chess\Domain\Move;
 
-final class ToAdjoiningSquare implements BoardMove
+final class ToAdjoiningSquare implements Move
 {
     private const DISTANCE_TO_ADJOINING_SQUARE = 1;
 
@@ -84,7 +84,7 @@ final class ToAdjoiningSquare implements BoardMove
     public function play(Board $board): void
     {
         $piece = $board->pickPieceFromCoordinates($this->source);
-        $piece->canMove($this);
+        $piece->mayMove($this);
         $board->placePieceAtCoordinates($piece, $this->destination);
     }
 

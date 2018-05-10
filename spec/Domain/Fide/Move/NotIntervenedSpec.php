@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
@@ -16,6 +15,7 @@ use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -34,7 +34,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $direction = new AlongFile();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->shouldBeAnInstanceOf(BoardMove::class);
+        $this->shouldBeAnInstanceOf(Move::class);
     }
 
     function it_validates_if_coordinates_are_on_same_direction()

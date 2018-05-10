@@ -51,7 +51,7 @@ class KnightSpec extends ObjectBehavior
             new LShaped()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_may_not_move_to_adjoining_square()
@@ -62,7 +62,7 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_file()
@@ -73,7 +73,7 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_rank()
@@ -84,7 +84,7 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_move_along_diagonal()
@@ -95,7 +95,7 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_not_be_blocked_by_intervening_pieces()
@@ -106,7 +106,7 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('canMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
     }
 
     function it_may_capture_the_same_way_it_moves()
@@ -117,7 +117,7 @@ class KnightSpec extends ObjectBehavior
             new LShaped()
         );
 
-        $this->canMove($move);
+        $this->mayMove($move);
     }
 
     function it_intents_move_to_adjoining_square()

@@ -5,11 +5,11 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\MoveToUnoccupiedPosition;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
-final class Capturing implements BoardMove
+final class Capturing implements Move
 {
     /**
      * @var Color
@@ -17,7 +17,7 @@ final class Capturing implements BoardMove
     private $color;
 
     /**
-     * @var BoardMove
+     * @var Move
      */
     private $move;
 
@@ -25,9 +25,9 @@ final class Capturing implements BoardMove
      * Create move that ends in capture of opponent's piece.
      *
      * @param Color $color
-     * @param BoardMove $move
+     * @param Move $move
      */
-    public function __construct(Color $color, BoardMove $move)
+    public function __construct(Color $color, Move $move)
     {
         $this->color = $color;
         $this->move = $move;

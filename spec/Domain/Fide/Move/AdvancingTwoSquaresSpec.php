@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AdvancingTwoSquares;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -22,7 +22,7 @@ class AdvancingTwoSquaresSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('a', 3);
         $this->beConstructedWith($source, $destination, new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal());
 
-        $this->shouldBeAnInstanceOf(BoardMove::class);
+        $this->shouldBeAnInstanceOf(Move::class);
     }
 
     function it_is_in_any_direction()

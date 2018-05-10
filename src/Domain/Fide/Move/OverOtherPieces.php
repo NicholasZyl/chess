@@ -5,10 +5,10 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Move;
 
-final class OverOtherPieces implements BoardMove
+final class OverOtherPieces implements Move
 {
     /**
      * @var Coordinates
@@ -75,7 +75,7 @@ final class OverOtherPieces implements BoardMove
     public function play(Board $board): void
     {
         $piece = $board->pickPieceFromCoordinates($this->source);
-        $piece->canMove($this);
+        $piece->mayMove($this);
         $board->placePieceAtCoordinates($piece, $this->destination);
     }
 
