@@ -7,7 +7,6 @@ use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Grid;
-use NicholasZyl\Chess\Domain\Fide\MoveIntention;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -32,18 +31,12 @@ class ChessboardContext implements Context
     private $caughtException;
 
     /**
-     * @var MoveIntention
-     */
-    private $moveIntention;
-
-    /**
      * ChessboardContext constructor.
      * @param \Helper\PieceFactory $pieceFactory
      */
     public function __construct(\Helper\PieceFactory $pieceFactory)
     {
         $this->pieceFactory = $pieceFactory;
-        $this->moveIntention = new MoveIntention();
     }
 
     /**
@@ -102,7 +95,7 @@ class ChessboardContext implements Context
     public function iMovePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
     {
         try {
-            $this->chessboard->movePiece($this->moveIntention->intentMove($source, $destination));
+            $this->chessboard->movePiece($source, $destination);
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
         }

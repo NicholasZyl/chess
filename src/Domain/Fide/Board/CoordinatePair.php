@@ -125,17 +125,53 @@ final class CoordinatePair implements Coordinates
      */
     public function directionTo(Coordinates $coordinates): Direction
     {
-        if (abs($this->rank() - $coordinates->rank()) === abs(ord($this->file()) - ord($coordinates->file()))) {
+        if ($this->isOnSameDiagonal($coordinates)) {
             return new AlongDiagonal();
         }
-        if ($this->file() === $coordinates->file()) {
+        if ($this->isOnSameFile($coordinates)) {
             return new AlongFile();
         }
-        if ($this->rank() === $coordinates->rank()) {
+        if ($this->isOnSameRank($coordinates)) {
             return new AlongRank();
         }
 
         throw new UnknownDirection($this, $coordinates);
+    }
+
+    /**
+     * Is pair on the same file as another.
+     *
+     * @param Coordinates $other
+     *
+     * @return bool
+     */
+    private function isOnSameFile(Coordinates $other): bool
+    {
+        return $this->file() === $other->file();
+    }
+
+    /**
+     * Is pair on the same rank as another.
+     *
+     * @param Coordinates $other
+     *
+     * @return bool
+     */
+    private function isOnSameRank(Coordinates $other): bool
+    {
+        return $this->rank() === $other->rank();
+    }
+
+    /**
+     * Is pair on the same diagonal as another.
+     *
+     * @param Coordinates $other
+     *
+     * @return bool
+     */
+    private function isOnSameDiagonal(Coordinates $other): bool
+    {
+        return abs($this->rank() - $other->rank()) === abs(ord($this->file()) - ord($other->file()));
     }
 
     /**
@@ -158,41 +194,5 @@ final class CoordinatePair implements Coordinates
     public function __toString(): string
     {
         return $this->file . $this->rank;
-    }
-
-    /**
-     * Is pair on the same file as another.
-     *
-     * @param CoordinatePair $other
-     *
-     * @return bool
-     */
-    public function isOnSameFile(CoordinatePair $other): bool
-    {
-        return $this->file === $other->file;
-    }
-
-    /**
-     * Is pair on the same rank as another.
-     *
-     * @param CoordinatePair $other
-     *
-     * @return bool
-     */
-    public function isOnSameRank(CoordinatePair $other): bool
-    {
-        return $this->rank === $other->rank;
-    }
-
-    /**
-     * Is pair on the same diagonal as another.
-     *
-     * @param CoordinatePair $other
-     *
-     * @return bool
-     */
-    public function isOnSameDiagonal(CoordinatePair $other): bool
-    {
-        return abs($this->rank - $other->rank) === abs(ord($this->file) - ord($other->file));
     }
 }

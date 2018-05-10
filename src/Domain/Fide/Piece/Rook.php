@@ -8,12 +8,10 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
-use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Move;
 
 final class Rook extends Piece
 {
@@ -21,18 +19,6 @@ final class Rook extends Piece
      * @var Board\Coordinates
      */
     private $position;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function mayMove(Move $move, Board $board): void
-    {
-        if (!$move instanceof AlongFile && !$move instanceof AlongRank) {
-            throw new MoveNotAllowedForPiece($move, $this);
-        }
-
-        $this->checkForInterveningPieces($move, $board);
-    }
 
     /**
      * {@inheritdoc}
@@ -47,7 +33,7 @@ final class Rook extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->is(NotIntervened::class) || !($move->inDirection(new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()) || $move->inDirection(new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()))) {
+        if (!$move->is(NotIntervened::class) || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
             throw new NotAllowedForPiece($this, $move);
         }
     }
@@ -67,7 +53,7 @@ final class Rook extends Piece
     {
         try {
             $direction = $this->position->directionTo($destination);
-            if (!$direction instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile && !$direction instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank) {
+            if (!$direction instanceof AlongFile && !$direction instanceof AlongRank) {
                 throw new ToIllegalPosition($this, $this->position, $destination);
             }
 

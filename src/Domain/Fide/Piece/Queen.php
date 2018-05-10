@@ -8,11 +8,9 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
-use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Move;
 
 final class Queen extends Piece
 {
@@ -20,18 +18,6 @@ final class Queen extends Piece
      * @var Board\Coordinates
      */
     private $position;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function mayMove(Move $move, Board $board): void
-    {
-        if ($move instanceof NearestNotSameFileRankOrDiagonal) {
-            throw new MoveNotAllowedForPiece($move, $this);
-        }
-
-        $this->checkForInterveningPieces($move, $board);
-    }
 
     /**
      * {@inheritdoc}
@@ -46,7 +32,7 @@ final class Queen extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->is(NotIntervened::class) || $move->inDirection(new \NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped())) {
+        if (!$move->is(NotIntervened::class) || $move->inDirection(new LShaped())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

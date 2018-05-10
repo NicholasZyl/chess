@@ -8,11 +8,8 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
-use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
-use NicholasZyl\Chess\Domain\Move;
 
 final class Knight extends Piece
 {
@@ -20,16 +17,6 @@ final class Knight extends Piece
      * @var Board\Coordinates
      */
     private $position;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function mayMove(Move $move, Board $board): void
-    {
-        if (!$move instanceof NearestNotSameFileRankOrDiagonal) {
-            throw new MoveNotAllowedForPiece($move, $this);
-        }
-    }
 
     /**
      * {@inheritdoc}

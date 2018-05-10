@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -43,18 +42,6 @@ interface Piece
      * @return bool
      */
     public function isSameAs(Piece $anotherPiece): bool;
-
-    /**
-     * Check if intended move is legal for this piece.
-     *
-     * @param Move $move
-     * @param Board $board
-     *
-     * @throws IllegalMove
-     *
-     * @return void
-     */
-    public function mayMove(Move $move, Board $board): void;
 
     /**
      * Represent piece as a string.

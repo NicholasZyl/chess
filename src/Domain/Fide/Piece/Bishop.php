@@ -8,10 +8,8 @@ use NicholasZyl\Chess\Domain\BoardMove;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Move;
 
 final class Bishop extends Piece
 {
@@ -19,18 +17,6 @@ final class Bishop extends Piece
      * @var Board\Coordinates
      */
     private $position;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function mayMove(Move $move, Board $board): void
-    {
-        if (!$move instanceof AlongDiagonal) {
-            throw new MoveNotAllowedForPiece($move, $this);
-        }
-
-        $this->checkForInterveningPieces($move, $board);
-    }
 
     /**
      * {@inheritdoc}
@@ -45,7 +31,7 @@ final class Bishop extends Piece
      */
     public function canMove(BoardMove $move): void
     {
-        if (!$move->is(NotIntervened::class) || !$move->inDirection(new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())) {
+        if (!$move->is(NotIntervened::class) || !$move->inDirection(new AlongDiagonal())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }
@@ -67,7 +53,7 @@ final class Bishop extends Piece
             return new NotIntervened(
                 $this->position,
                 $destination,
-                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
+                new AlongDiagonal()
             );
         } catch (InvalidDirection $invalidDirection) {
             throw new ToIllegalPosition($this, $this->position, $destination);

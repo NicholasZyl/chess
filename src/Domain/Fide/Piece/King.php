@@ -9,12 +9,9 @@ use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
-use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
-use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
-use NicholasZyl\Chess\Domain\Move;
 
 final class King extends Piece
 {
@@ -22,17 +19,6 @@ final class King extends Piece
      * @var Board\Coordinates
      */
     private $position;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function mayMove(Move $move, Board $board): void
-    {
-
-        if ($move instanceof NearestNotSameFileRankOrDiagonal || !empty($move->steps())) {
-            throw new MoveNotAllowedForPiece($move, $this);
-        }
-    }
 
     /**
      * {@inheritdoc}
