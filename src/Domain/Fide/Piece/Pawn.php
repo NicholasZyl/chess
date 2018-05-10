@@ -135,11 +135,7 @@ final class Pawn extends Piece
     }
 
     /**
-     * Place piece at given coordinates.
-     *
-     * @param Board\Coordinates $coordinates
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function placeAt(Board\Coordinates $coordinates): void
     {
@@ -148,13 +144,7 @@ final class Pawn extends Piece
     }
 
     /**
-     * Intent move from piece's current position to the destination.
-     *
-     * @param Board\Coordinates $destination
-     *
-     * @throws ToIllegalPosition
-     *
-     * @return BoardMove
+     * {@inheritdoc}
      */
     public function intentMoveTo(Board\Coordinates $destination): BoardMove
     {
@@ -171,28 +161,44 @@ final class Pawn extends Piece
             }
 
             if ($direction instanceof \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile) {
-                if ($this->hasMoved) {
-                    $move = new ToAdjoiningSquare(
-                        $this->position,
-                        $destination,
-                        new Forward($this->color(), $direction)
-                    );
-                } else {
-                    $move = new AdvancingTwoSquares(
-                        $this->position,
-                        $destination,
-                        new Forward($this->color(), $direction)
-                    );
-                }
-
-                return new ToUnoccupiedSquare(
-                    $move
-                );
+                return $this->intentMoveToUnoccupiedSquare($destination, $direction);
             }
         } catch (InvalidDirection | UnknownDirection | TooDistant $exception) {
             throw new ToIllegalPosition($this, $this->position, $destination);
         }
 
         throw new ToIllegalPosition($this, $this->position, $destination);
+    }
+
+    /**
+     * Prepare move to unoccupied square basing on information if pawn already moved or not.
+     *
+     * @param Board\Coordinates $destination
+     * @param Board\Direction $direction
+     *
+     * @throws InvalidDirection
+     * @throws TooDistant
+     *
+     * @return ToUnoccupiedSquare
+     */
+    private function intentMoveToUnoccupiedSquare(Board\Coordinates $destination, Board\Direction $direction): ToUnoccupiedSquare
+    {
+        if ($this->hasMoved) {
+            $move = new ToAdjoiningSquare(
+                $this->position,
+                $destination,
+                new Forward($this->color(), $direction)
+            );
+        } else {
+            $move = new AdvancingTwoSquares(
+                $this->position,
+                $destination,
+                new Forward($this->color(), $direction)
+            );
+        }
+
+        return new ToUnoccupiedSquare(
+            $move
+        );
     }
 }

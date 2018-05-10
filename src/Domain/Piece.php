@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Piece
@@ -72,4 +73,24 @@ interface Piece
      * @return void
      */
     public function canMove(BoardMove $move): void;
+
+    /**
+     * Place piece at given coordinates.
+     *
+     * @param Board\Coordinates $coordinates
+     *
+     * @return void
+     */
+    public function placeAt(Board\Coordinates $coordinates): void;
+
+    /**
+     * Intent move from piece's current position to the destination.
+     *
+     * @param Board\Coordinates $destination
+     *
+     * @throws ToIllegalPosition
+     *
+     * @return BoardMove
+     */
+    public function intentMoveTo(Board\Coordinates $destination): BoardMove;
 }

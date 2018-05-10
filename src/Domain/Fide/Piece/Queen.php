@@ -52,11 +52,7 @@ final class Queen extends Piece
     }
 
     /**
-     * Place piece at given coordinates.
-     *
-     * @param Board\Coordinates $coordinates
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function placeAt(Board\Coordinates $coordinates): void
     {
@@ -64,13 +60,7 @@ final class Queen extends Piece
     }
 
     /**
-     * Intent move from piece's current position to the destination.
-     *
-     * @param Board\Coordinates $destination
-     *
-     * @throws ToIllegalPosition
-     *
-     * @return BoardMove
+     * {@inheritdoc}
      */
     public function intentMoveTo(Board\Coordinates $destination): BoardMove
     {
