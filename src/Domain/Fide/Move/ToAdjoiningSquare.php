@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 
 final class ToAdjoiningSquare extends NotIntervened

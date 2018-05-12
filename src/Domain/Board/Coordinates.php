@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Board;
 
-use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
-use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 
 interface Coordinates
 {

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception\Board;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use PhpSpec\ObjectBehavior;
 
 class OutOfBoardCoordinatesSpec extends ObjectBehavior

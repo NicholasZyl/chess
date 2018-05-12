@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Exception;
+namespace NicholasZyl\Chess\Domain\Exception\Board;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Exception\BoardException;
 
-final class SquareIsOccupied extends \RuntimeException
+final class SquareIsOccupied extends BoardException
 {
     /**
      * @var Coordinates
@@ -13,7 +14,7 @@ final class SquareIsOccupied extends \RuntimeException
     private $coordinates;
 
     /**
-     * SquareIsNotVacant constructor.
+     * Create exception for situation when square is occupied but it was expected to be.
      *
      * @param Coordinates $coordinates
      */

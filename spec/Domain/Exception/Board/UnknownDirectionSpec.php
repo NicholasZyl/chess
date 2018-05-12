@@ -1,28 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception\Board;
 
-use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
-class InvalidDirectionSpec extends ObjectBehavior
+class UnknownDirectionSpec extends ObjectBehavior
 {
-    function let(Direction $direction)
+    function let()
     {
-        $direction->__toString()->willReturn('exemplar direction');
         $this->beConstructedWith(
             CoordinatePair::fromFileAndRank('a', 3),
-            CoordinatePair::fromFileAndRank('e', 8),
-            $direction
+            CoordinatePair::fromFileAndRank('e', 8)
         );
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(InvalidDirection::class);
+        $this->shouldHaveType(UnknownDirection::class);
     }
 
     function it_specifies_coordinates_of_the_move()

@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
-use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Exception\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Board
