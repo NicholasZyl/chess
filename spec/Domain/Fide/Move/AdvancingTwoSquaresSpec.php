@@ -5,8 +5,8 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
-use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveTooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
@@ -40,7 +40,7 @@ class AdvancingTwoSquaresSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('d', 4);
         $this->beConstructedWith($source, $destination, new AlongFile());
 
-        $this->shouldThrow(new TooDistant($source, $destination, 2))->duringInstantiation();
+        $this->shouldThrow(new MoveTooDistant($source, $destination, 2))->duringInstantiation();
     }
 
     function it_moves_piece_from_source_to_destination_while_checking_if_there_is_no_intervening_piece(Board $board)

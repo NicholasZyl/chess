@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveTooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
@@ -62,6 +62,6 @@ class ToAdjoiningSquareSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 2);
         $this->beConstructedWith($source, $destination, new LShaped());
 
-        $this->shouldThrow(new TooDistant($source, $destination, 1))->duringInstantiation();
+        $this->shouldThrow(new MoveTooDistant($source, $destination, 1))->duringInstantiation();
     }
 }

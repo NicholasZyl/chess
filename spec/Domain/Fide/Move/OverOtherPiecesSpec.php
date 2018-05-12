@@ -6,8 +6,8 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
@@ -113,6 +113,6 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($knight);
         $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
-        $this->shouldThrow(new NotAllowedForPiece($knight, $this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($knight, $this->getWrappedObject()))->during('play', [$board,]);
     }
 }

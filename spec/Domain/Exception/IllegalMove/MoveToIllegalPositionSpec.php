@@ -1,25 +1,28 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Exception;
+namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
-class MoveOverInterveningPieceSpec extends ObjectBehavior
+class MoveToIllegalPositionSpec extends ObjectBehavior
 {
     function let()
     {
         $this->beConstructedWith(
+            Pawn::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('a', 2),
             CoordinatePair::fromFileAndRank('b', 2)
         );
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(MoveOverInterveningPiece::class);
+        $this->shouldHaveType(IllegalMove\MoveToIllegalPosition::class);
     }
 
     function it_is_illegal_move()
@@ -29,6 +32,6 @@ class MoveOverInterveningPieceSpec extends ObjectBehavior
 
     function it_specifies_the_reason_why_it_is_illegal()
     {
-        $this->getMessage()->shouldContain('intervening piece at b2');
+        $this->getMessage()->shouldContain('is illegal position for pawn');
     }
 }

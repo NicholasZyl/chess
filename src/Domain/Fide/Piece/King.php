@@ -6,9 +6,9 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveTooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\Castling;
@@ -41,7 +41,7 @@ final class King extends Piece
     public function mayMove(Move $move, Board $board): void
     {
         if (!$move instanceof ToAdjoiningSquare && (!$move instanceof Castling || $this->hasMoved) || $move->inDirection(new LShaped())) {
-            throw new NotAllowedForPiece($this, $move);
+            throw new MoveNotAllowedForPiece($this, $move);
         }
     }
 
@@ -74,8 +74,8 @@ final class King extends Piece
                 $destination,
                 $this->position->directionTo($destination)
             );
-        } catch (InvalidDirection | UnknownDirection | TooDistant $exception) {
-            throw new ToIllegalPosition($this, $this->position, $destination);
+        } catch (InvalidDirection | UnknownDirection | MoveTooDistant $exception) {
+            throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
     }
 }

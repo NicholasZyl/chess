@@ -7,9 +7,9 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveTooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
@@ -46,7 +46,7 @@ final class Pawn extends Piece
             try {
                 $board->verifyThatPositionIsUnoccupied($move->destination());
             } catch (SquareIsOccupied $squareIsOccupied) {
-                throw new NotAllowedForPiece($this, $move);
+                throw new MoveNotAllowedForPiece($this, $move);
             }
             return;
         }
@@ -59,13 +59,13 @@ final class Pawn extends Piece
                 try {
                     $board->verifyThatPositionIsUnoccupied($move->destination());
                 } catch (SquareIsOccupied $squareIsOccupied) {
-                    throw new NotAllowedForPiece($this, $move);
+                    throw new MoveNotAllowedForPiece($this, $move);
                 }
                 return;
             }
         }
 
-        throw new NotAllowedForPiece($this, $move);
+        throw new MoveNotAllowedForPiece($this, $move);
     }
 
     /**
@@ -95,11 +95,11 @@ final class Pawn extends Piece
             if ($direction instanceof AlongFile) {
                 return $this->intentMoveToUnoccupiedSquare($destination, $direction);
             }
-        } catch (InvalidDirection | UnknownDirection | TooDistant $exception) {
-            throw new ToIllegalPosition($this, $this->position, $destination);
+        } catch (InvalidDirection | UnknownDirection | MoveTooDistant $exception) {
+            throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
 
-        throw new ToIllegalPosition($this, $this->position, $destination);
+        throw new MoveToIllegalPosition($this, $this->position, $destination);
     }
 
     /**
@@ -109,7 +109,7 @@ final class Pawn extends Piece
      * @param Board\Direction $direction
      *
      * @throws InvalidDirection
-     * @throws TooDistant
+     * @throws MoveTooDistant
      *
      * @return Move
      */

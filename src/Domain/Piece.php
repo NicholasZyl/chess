@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Piece
@@ -56,7 +56,7 @@ interface Piece
      * @param Move $move
      * @param Board $board
      *
-     * @throws NotAllowedForPiece
+     * @throws MoveNotAllowedForPiece
      *
      * @return void
      */
@@ -76,7 +76,7 @@ interface Piece
      *
      * @param Board\Coordinates $destination
      *
-     * @throws ToIllegalPosition
+     * @throws MoveToIllegalPosition
      *
      * @return Move
      */

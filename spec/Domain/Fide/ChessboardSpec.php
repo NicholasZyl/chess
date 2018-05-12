@@ -7,8 +7,8 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
-use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
@@ -119,7 +119,7 @@ class ChessboardSpec extends ObjectBehavior
         $source = CoordinatePair::fromFileAndRank('b', 2);
         $destination = CoordinatePair::fromFileAndRank('b', 1);
 
-        $illegalMove = new ToIllegalPosition($whitePawn, $source, $destination);
+        $illegalMove = new MoveToIllegalPosition($whitePawn, $source, $destination);
         $this->placePieceAtCoordinates($whitePawn, $source);
 
         $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);

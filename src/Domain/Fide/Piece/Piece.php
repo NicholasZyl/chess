@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 

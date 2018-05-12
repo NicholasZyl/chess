@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Exception;
+namespace NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
-final class MoveToUnoccupiedPosition extends IllegalMove
+final class MoveToOccupiedPosition extends IllegalMove
 {
     /**
      * Create exception for move to position occupied by piece of the same color.
@@ -15,7 +16,7 @@ final class MoveToUnoccupiedPosition extends IllegalMove
     public function __construct(Coordinates $destinationPosition)
     {
         parent::__construct(
-            sprintf('Move is illegal because %s is not occupied by a piece of opponent\'s color.', $destinationPosition)
+            sprintf('Move is illegal because %s is occupied by a piece of same color.', $destinationPosition)
         );
     }
 }

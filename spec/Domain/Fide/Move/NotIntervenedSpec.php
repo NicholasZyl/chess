@@ -6,9 +6,9 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
-use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
@@ -117,7 +117,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($pawn);
         $board->placePieceAtCoordinates($pawn, $source)->shouldBeCalled();
 
-        $this->shouldThrow(new NotAllowedForPiece($pawn, $this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($pawn, $this->getWrappedObject()))->during('play', [$board,]);
     }
 
     function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)

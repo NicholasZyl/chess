@@ -7,8 +7,8 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Move;
 
 final class OverOtherPieces implements Move
@@ -81,7 +81,7 @@ final class OverOtherPieces implements Move
         try {
             $piece->mayMove($this, $board);
             $board->placePieceAtCoordinates($piece, $this->destination);
-        } catch (NotAllowedForPiece $notAllowedForPiece) {
+        } catch (MoveNotAllowedForPiece $notAllowedForPiece) {
             $board->placePieceAtCoordinates($piece, $this->source);
             throw $notAllowedForPiece;
         } catch (SquareIsOccupied $squareIsOccupied) {

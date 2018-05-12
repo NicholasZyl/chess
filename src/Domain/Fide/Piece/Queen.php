@@ -6,8 +6,8 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Move;
@@ -33,7 +33,7 @@ final class Queen extends Piece
     public function mayMove(Move $move, Board $board): void
     {
         if (!$move instanceof NotIntervened || $move->inDirection(new LShaped())) {
-            throw new NotAllowedForPiece($this, $move);
+            throw new MoveNotAllowedForPiece($this, $move);
         }
     }
 
@@ -57,7 +57,7 @@ final class Queen extends Piece
                 $this->position->directionTo($destination)
             );
         } catch (InvalidDirection | UnknownDirection $exception) {
-            throw new ToIllegalPosition($this, $this->position, $destination);
+            throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
     }
 }

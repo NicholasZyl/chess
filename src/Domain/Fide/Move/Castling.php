@@ -9,7 +9,7 @@ use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Exception\Move\Prevented;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MovePrevented;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
@@ -102,7 +102,7 @@ final class Castling implements Move
     public function play(Board $board): void
     {
         if (!$board->hasPieceAtCoordinates(King::forColor($this->color), $this->kingPosition) || !$board->hasPieceAtCoordinates(Rook::forColor($this->color), $this->rookPosition)) {
-            throw new Prevented($this);
+            throw new MovePrevented($this);
         }
 
         $king = $board->pickPieceFromCoordinates($this->kingPosition);
@@ -115,7 +115,7 @@ final class Castling implements Move
         } catch (SquareIsOccupied | IllegalMove $squareIsOccupied) {
             $board->placePieceAtCoordinates($king, $this->kingPosition);
             $board->placePieceAtCoordinates($rook, $this->rookPosition);
-            throw new Prevented($this);
+            throw new MovePrevented($this);
         }
 
         $board->placePieceAtCoordinates($king, $this->kingDestination);

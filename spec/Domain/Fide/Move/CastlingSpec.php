@@ -6,8 +6,8 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
-use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Exception\Move\Prevented;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MovePrevented;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
@@ -131,7 +131,7 @@ class CastlingSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
         $board->placePieceAtCoordinates($rook, $rookInitialPosition)->shouldBeCalled();
 
-        $this->shouldThrow(new Prevented($this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
 
     function it_is_prevented_if_king_may_not_do_it(Board $board, Piece $king)
@@ -148,14 +148,14 @@ class CastlingSpec extends ObjectBehavior
 
         $king->color()->willReturn(Color::white());
         $king->__toString()->willReturn('king');
-        $king->mayMove($this->getWrappedObject(), $board)->willThrow(new NotAllowedForPiece($king->getWrappedObject(), $this->getWrappedObject()));
+        $king->mayMove($this->getWrappedObject(), $board)->willThrow(new MoveNotAllowedForPiece($king->getWrappedObject(), $this->getWrappedObject()));
 
         $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
         $board->pickPieceFromCoordinates($rookInitialPosition)->willReturn($rook);
         $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
         $board->placePieceAtCoordinates($rook, $rookInitialPosition)->shouldBeCalled();
 
-        $this->shouldThrow(new Prevented($this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
 
     function it_is_prevented_if_rook_may_not_do_it(Board $board, Piece $rook)
@@ -172,14 +172,14 @@ class CastlingSpec extends ObjectBehavior
 
         $rook->color()->willReturn(Color::white());
         $rook->__toString()->willReturn('rook');
-        $rook->mayMove($this->getWrappedObject(), $board)->willThrow(new NotAllowedForPiece($rook->getWrappedObject(), $this->getWrappedObject()));
+        $rook->mayMove($this->getWrappedObject(), $board)->willThrow(new MoveNotAllowedForPiece($rook->getWrappedObject(), $this->getWrappedObject()));
 
         $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
         $board->pickPieceFromCoordinates($rookInitialPosition)->willReturn($rook);
         $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
         $board->placePieceAtCoordinates($rook, $rookInitialPosition)->shouldBeCalled();
 
-        $this->shouldThrow(new Prevented($this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
 
     function it_cannot_be_done_if_there_is_no_king_at_source_position(Board $board)
@@ -194,7 +194,7 @@ class CastlingSpec extends ObjectBehavior
 
         $board->hasPieceAtCoordinates(King::forColor(Color::white()), $kingInitialPosition)->willReturn(false);
 
-        $this->shouldThrow(new Prevented($this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
 
     function it_cannot_be_done_if_there_is_no_rook_at_expected_position(Board $board)
@@ -211,6 +211,6 @@ class CastlingSpec extends ObjectBehavior
         $board->hasPieceAtCoordinates(King::forColor(Color::black()), $kingInitialPosition)->willReturn(true);
         $board->hasPieceAtCoordinates(Rook::forColor(Color::black()), $rookInitialPosition)->willReturn(false);
 
-        $this->shouldThrow(new Prevented($this->getWrappedObject()))->during('play', [$board,]);
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
 }
