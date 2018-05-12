@@ -50,4 +50,12 @@ class AlongFileSpec extends ObjectBehavior
     {
         $this->inSameDirectionAs(new AlongDiagonal())->shouldBe(false);
     }
+
+    function it_calculates_rank_distance_between_two_coordinates_on_same_file()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 4);
+        $to = CoordinatePair::fromFileAndRank('a', 2);
+
+        $this->distanceBetween($from, $to)->shouldBe(2);
+    }
 }

@@ -9,6 +9,7 @@ use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
 use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
@@ -59,6 +60,15 @@ final class King extends Piece
     public function intentMoveTo(Board\Coordinates $destination): Move
     {
         try {
+            $alongRank = new AlongRank();
+            if (!$this->hasMoved && $alongRank->areOnSame($this->position, $destination) && $this->position->distanceTo($destination, $alongRank) === 2) {
+                return new Castling(
+                    $this->color(),
+                    $this->position,
+                    $destination
+                );
+            }
+
             return new ToAdjoiningSquare(
                 $this->position,
                 $destination,

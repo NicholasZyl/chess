@@ -67,6 +67,18 @@ final class LShaped implements Direction
     /**
      * {@inheritdoc}
      */
+    public function distanceBetween(Coordinates $from, Coordinates $to): int
+    {
+        if (!$this->areOnSame($from, $to)) {
+            throw new InvalidDirection($from, $to, $this);
+        }
+
+        return self::DISTANCE_TO_THE_NEAREST_COORDINATES;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function inSameDirectionAs(Direction $direction): bool
     {
         return $direction instanceof self;

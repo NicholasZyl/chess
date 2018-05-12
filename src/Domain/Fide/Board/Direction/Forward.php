@@ -52,6 +52,14 @@ final class Forward implements Direction
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function distanceBetween(Coordinates $from, Coordinates $to): int
+    {
+        return $this->direction->distanceBetween($from, $to);
+    }
+
+    /**
      * Is direction from source coordinates to destination made forward.
      *
      * @param Coordinates $from

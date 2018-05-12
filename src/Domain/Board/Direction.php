@@ -30,6 +30,18 @@ interface Direction
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates;
 
     /**
+     * Calculates distance between two coordinates along this direction.
+     *
+     * @param Coordinates $from
+     * @param Coordinates $to
+     *
+     * @throws InvalidDirection
+     *
+     * @return int
+     */
+    public function distanceBetween(Coordinates $from, Coordinates $to): int;
+
+    /**
      * Check if is in same direction as another.
      *
      * @param Direction $direction

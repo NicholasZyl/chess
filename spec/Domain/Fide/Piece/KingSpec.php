@@ -171,4 +171,31 @@ class KingSpec extends ObjectBehavior
 
         $this->shouldThrow(new ToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
     }
+
+    function it_may_intent_castling_move()
+    {
+        $source = CoordinatePair::fromFileAndRank('e', 1);
+        $destination = CoordinatePair::fromFileAndRank('c', 1);
+
+        $this->placeAt($source);
+        $this->intentMoveTo($destination)->shouldBeLike(
+            new Castling(
+                Piece\Color::white(),
+                $source,
+                $destination
+            )
+        );
+    }
+
+    function it_may_not_intent_castling_if_has_already_moved()
+    {
+        $source = CoordinatePair::fromFileAndRank('e', 1);
+        $destination = CoordinatePair::fromFileAndRank('g', 1);
+
+        $this->placeAt($source);
+        $this->placeAt(CoordinatePair::fromFileAndRank('g', 1));
+        $this->placeAt($source);
+
+        $this->shouldThrow(new ToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
+    }
 }

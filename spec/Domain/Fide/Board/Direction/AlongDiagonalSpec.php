@@ -79,4 +79,12 @@ class AlongDiagonalSpec extends ObjectBehavior
     {
         $this->inSameDirectionAs(new AlongFile())->shouldBe(false);
     }
+
+    function it_calculates_distance_between_two_coordinates_on_same_diagonal()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->distanceBetween($from, $to)->shouldBe(4);
+    }
 }

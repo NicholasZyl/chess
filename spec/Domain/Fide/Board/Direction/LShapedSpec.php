@@ -74,4 +74,12 @@ class LShapedSpec extends ObjectBehavior
     {
         $this->inSameDirectionAs(new AlongFile())->shouldBe(false);
     }
+
+    function it_has_always_same_distance_if_coordinates_are_nearest()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('b', 3);
+
+        $this->distanceBetween($from, $to)->shouldBe(2);
+    }
 }

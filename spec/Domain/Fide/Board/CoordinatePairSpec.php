@@ -135,4 +135,12 @@ class CoordinatePairSpec extends ObjectBehavior
 
         $this->shouldThrow(new UnknownDirection($this->getWrappedObject(), $coordinates))->during('directionTo', [$coordinates,]);
     }
+
+    function it_knows_distance_along_direction()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['a', 1]);
+        $destination = CoordinatePair::fromFileAndRank('d', 1);
+
+        $this->distanceTo($destination, new AlongRank())->shouldBe(3);
+    }
 }

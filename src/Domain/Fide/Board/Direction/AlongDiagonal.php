@@ -39,6 +39,18 @@ final class AlongDiagonal implements Direction
     /**
      * {@inheritdoc}
      */
+    public function distanceBetween(Coordinates $from, Coordinates $to): int
+    {
+        if (!$this->areOnSame($from, $to)) {
+            throw new InvalidDirection($from, $to, $this);
+        }
+
+        return abs($to->rank() - $from->rank());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function inSameDirectionAs(Direction $direction): bool
     {
         return $direction instanceof self;

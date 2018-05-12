@@ -38,6 +38,18 @@ final class AlongRank implements Direction
     /**
      * {@inheritdoc}
      */
+    public function distanceBetween(Coordinates $from, Coordinates $to): int
+    {
+        if (!$this->areOnSame($from, $to)) {
+            throw new InvalidDirection($from, $to, $this);
+        }
+
+        return abs(ord($to->file()) - ord($from->file()));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function inSameDirectionAs(Direction $direction): bool
     {
         return $direction instanceof self;

@@ -89,4 +89,14 @@ class ForwardSpec extends ObjectBehavior
 
         $this->inSameDirectionAs(new Forward(Color::black(), new AlongFile()))->shouldBe(false);
     }
+
+    function it_calculates_distance_between_two_coordinates_along_same_direction()
+    {
+        $this->beConstructedWith(Color::white(), new AlongFile());
+
+        $from = CoordinatePair::fromFileAndRank('a', 1);
+        $to = CoordinatePair::fromFileAndRank('a', 2);
+
+        $this->distanceBetween($from, $to)->shouldBe(1);
+    }
 }

@@ -177,6 +177,14 @@ final class CoordinatePair implements Coordinates
     /**
      * {@inheritdoc}
      */
+    public function distanceTo(Coordinates $coordinates, Direction $direction): int
+    {
+        return $direction->distanceBetween($this, $coordinates);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function equals(Coordinates $other): bool
     {
         if (!$other instanceof self) {
