@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
@@ -113,6 +114,37 @@ class KingSpec extends ObjectBehavior
         );
 
         $this->mayMove($move, $board);
+    }
+
+    function it_may_move_by_castling(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('f', 1);
+        $destination = CoordinatePair::fromFileAndRank('d', 1);
+        $move = new Castling(
+            Piece\Color::white(),
+            $source,
+            $destination
+        );
+
+        $this->placeAt($source);
+        $this->mayMove($move, $board);
+    }
+
+    function it_may_not_move_by_castling_when_has_already_moved(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('f', 1);
+        $destination = CoordinatePair::fromFileAndRank('d', 1);
+        $move = new Castling(
+            Piece\Color::white(),
+            $source,
+            $destination
+        );
+
+        $this->placeAt($source);
+        $this->placeAt(CoordinatePair::fromFileAndRank('g', 1));
+        $this->placeAt($source);
+
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
     function it_intents_move_to_adjoining_square()

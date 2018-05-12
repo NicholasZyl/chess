@@ -10,6 +10,7 @@ use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Move;
 
@@ -19,6 +20,11 @@ final class Rook extends Piece
      * @var Board\Coordinates
      */
     private $position;
+
+    /**
+     * @var bool
+     */
+    private $hasMoved;
 
     /**
      * {@inheritdoc}
@@ -33,7 +39,7 @@ final class Rook extends Piece
      */
     public function mayMove(Move $move, Board $board): void
     {
-        if (!$move instanceof NotIntervened || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
+        if (!$move instanceof NotIntervened && (!$move instanceof Castling || $this->hasMoved) || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
             throw new NotAllowedForPiece($this, $move);
         }
     }
@@ -43,6 +49,7 @@ final class Rook extends Piece
      */
     public function placeAt(Board\Coordinates $coordinates): void
     {
+        $this->hasMoved = !is_null($this->position);
         $this->position = $coordinates;
     }
 

@@ -12,6 +12,7 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
@@ -95,6 +96,37 @@ class RookSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 4),
             new LShaped()
         );
+
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
+    }
+
+    function it_may_move_by_castling(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('f', 1);
+        $destination = CoordinatePair::fromFileAndRank('d', 1);
+        $move = new Castling(
+            Piece\Color::white(),
+            $source,
+            $destination
+        );
+
+        $this->placeAt(CoordinatePair::fromFileAndRank('a', 1));
+        $this->mayMove($move, $board);
+    }
+
+    function it_may_not_move_by_castling_when_has_already_moved(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('f', 1);
+        $destination = CoordinatePair::fromFileAndRank('d', 1);
+        $move = new Castling(
+            Piece\Color::white(),
+            $source,
+            $destination
+        );
+
+        $this->placeAt(CoordinatePair::fromFileAndRank('a', 1));
+        $this->placeAt(CoordinatePair::fromFileAndRank('b', 1));
+        $this->placeAt(CoordinatePair::fromFileAndRank('a', 1));
 
         $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
