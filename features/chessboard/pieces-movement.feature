@@ -135,6 +135,28 @@ Feature: The moves of the pieces
     Then white king should be placed on c1
     And white rook should be placed on d1
 
+  Scenario: Castling is prevented temporarily if the square on which the king stands, or the square which it must cross, or the square which it is to occupy, is attacked by one or more of the opponent's pieces
+    Given there is a chessboard
+    And following pieces are placed on it
+      | piece       | location |
+      | white king  | e1       |
+      | white rook  | a1       |
+      | black queen | d8       |
+    When I move piece from e1 to c1
+    Then the move is illegal
+    And white king should still be placed on e1
+
+  Scenario: Castling is prevented temporarily if there is any piece between the king and the rook with which castling is to be effected
+    Given there is a chessboard
+    And following pieces are placed on it
+      | piece        | location |
+      | white king   | e1       |
+      | white rook   | a1       |
+      | white bishop | b1       |
+    When I move piece from e1 to c1
+    Then the move is illegal
+    And white king should still be placed on e1
+
   Scenario: It is not permitted to move a piece to a square occupied by a piece of the same colour
     Given there is a chessboard with white pawn placed on d5
     And white bishop is placed on b3
