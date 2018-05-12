@@ -24,11 +24,13 @@ interface Move
     public function destination(): Coordinates;
 
     /**
-     * Get string representation of the move.
+     * Check if move is made in same direction.
      *
-     * @return string
+     * @param Direction $direction
+     *
+     * @return bool
      */
-    public function __toString(): string;
+    public function inDirection(Direction $direction): bool;
 
     /**
      * Play the move on the board.
@@ -42,20 +44,9 @@ interface Move
     public function play(Board $board): void;
 
     /**
-     * Check if move is done same way as provided.
+     * Get string representation of the move.
      *
-     * @param string $moveType
-     *
-     * @return bool
+     * @return string
      */
-    public function is(string $moveType): bool;
-
-    /**
-     * Check if move is made in same direction.
-     *
-     * @param Direction $direction
-     *
-     * @return bool
-     */
-    public function inDirection(Direction $direction): bool;
+    public function __toString(): string;
 }

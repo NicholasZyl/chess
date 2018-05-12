@@ -29,9 +29,9 @@ final class Bishop extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move->is(NotIntervened::class) || !$move->inDirection(new AlongDiagonal())) {
+        if (!$move instanceof NotIntervened || !$move->inDirection(new AlongDiagonal())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

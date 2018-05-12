@@ -31,9 +31,9 @@ final class King extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move->is(ToAdjoiningSquare::class) || $move->inDirection(new LShaped())) {
+        if (!$move instanceof ToAdjoiningSquare || $move->inDirection(new LShaped())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

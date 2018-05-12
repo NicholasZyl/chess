@@ -5,9 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\OutOfBoardCoordinates;
-use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -57,12 +55,7 @@ final class Chessboard implements Board
         $from = $this->getSquareAt($source);
         $piece = $from->peek();
         $move = $piece->intentMoveTo($destination);
-
-        try {
-            $move->play($this);
-        } catch (SquareIsOccupied $squareIsOccupied) {
-            throw new MoveToOccupiedPosition($destination);
-        }
+        $move->play($this);
     }
 
     /**

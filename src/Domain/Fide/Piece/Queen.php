@@ -30,9 +30,9 @@ final class Queen extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move->is(NotIntervened::class) || $move->inDirection(new LShaped())) {
+        if (!$move instanceof NotIntervened || $move->inDirection(new LShaped())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

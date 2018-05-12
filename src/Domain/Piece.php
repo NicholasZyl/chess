@@ -54,12 +54,13 @@ interface Piece
      * Validate if given move is legal for this piece.
      *
      * @param Move $move
+     * @param Board $board
      *
      * @throws NotAllowedForPiece
      *
      * @return void
      */
-    public function mayMove(Move $move): void;
+    public function mayMove(Move $move, Board $board): void;
 
     /**
      * Place piece at given coordinates.

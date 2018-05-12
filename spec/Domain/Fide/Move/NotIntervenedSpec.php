@@ -7,14 +7,14 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -119,21 +119,17 @@ class NotIntervenedSpec extends ObjectBehavior
         $this->shouldThrow(new NotAllowedForPiece($pawn, $this->getWrappedObject()))->during('play', [$board,]);
     }
 
-    function it_is_same_as_other_not_intervened_move()
+    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)
     {
+        $rook = Rook::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
         $this->beConstructedWith($source, $destination, new AlongFile());
 
-        $this->is(NotIntervened::class)->shouldBe(true);
-    }
+        $board->pickPieceFromCoordinates($source)->willReturn($rook);
+        $board->placePieceAtCoordinates($rook, $destination)->willThrow(new SquareIsOccupied($destination));
+        $board->placePieceAtCoordinates($rook, $source)->shouldBeCalled();
 
-    function it_is_not_different_move()
-    {
-        $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('a', 1);
-        $this->beConstructedWith($source, $destination, new AlongFile());
-
-        $this->is(OverOtherPieces::class)->shouldBe(false);
+        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
     }
 }

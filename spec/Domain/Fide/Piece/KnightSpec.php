@@ -3,15 +3,11 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
-use NicholasZyl\Chess\Domain\Fide\Move\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Fide\Move\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Move\AlongRank;
-use NicholasZyl\Chess\Domain\Fide\Move\NearestNotSameFileRankOrDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
@@ -43,7 +39,7 @@ class KnightSpec extends ObjectBehavior
         $this->isSameAs($pawn)->shouldBe(true);
     }
 
-    function it_may_move_to_one_of_the_squares_nearest_to_that_on_which_it_stands_but_not_on_same_rank_file_or_diagonal()
+    function it_may_move_to_one_of_the_squares_nearest_to_that_on_which_it_stands_but_not_on_same_rank_file_or_diagonal(Board $board)
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -51,10 +47,10 @@ class KnightSpec extends ObjectBehavior
             new LShaped()
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_may_not_move_to_adjoining_square()
+    function it_may_not_move_to_adjoining_square(Board $board)
     {
         $move = new ToAdjoiningSquare(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -62,10 +58,10 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_not_move_along_file()
+    function it_may_not_move_along_file(Board $board)
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -73,10 +69,10 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_not_move_along_rank()
+    function it_may_not_move_along_rank(Board $board)
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 5),
@@ -84,10 +80,10 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_not_move_along_diagonal()
+    function it_may_not_move_along_diagonal(Board $board)
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('h', 8),
@@ -95,10 +91,10 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_not_be_blocked_by_intervening_pieces()
+    function it_may_not_be_blocked_by_intervening_pieces(Board $board)
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('h', 8),
@@ -106,10 +102,10 @@ class KnightSpec extends ObjectBehavior
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_capture_the_same_way_it_moves()
+    function it_may_capture_the_same_way_it_moves(Board $board)
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -117,7 +113,7 @@ class KnightSpec extends ObjectBehavior
             new LShaped()
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
     function it_intents_move_to_adjoining_square()

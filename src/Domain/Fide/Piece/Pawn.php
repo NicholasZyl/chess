@@ -8,6 +8,7 @@ use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
@@ -41,61 +42,32 @@ final class Pawn extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if ($move->is(Capturing::class)) {
-            $this->validateCapturingMove($move);
-
+        if ($move instanceof AdvancingTwoSquares && !$this->hasMoved && $move->inDirection(new Forward($this->color(), new AlongFile()))) {
+            try {
+                $board->verifyThatPositionIsUnoccupied($move->destination());
+            } catch (SquareIsOccupied $squareIsOccupied) {
+                throw new NotAllowedForPiece($this, $move);
+            }
             return;
         }
 
-        if ($move->is(ToUnoccupiedSquare::class)) {
-            $this->validateMoveToUnoccupiedSquare($move);
-
-            return;
+        if ($move instanceof ToAdjoiningSquare) {
+            if ($move->inDirection(new Forward($this->color(), new AlongDiagonal())) && $board->hasOpponentsPieceAt($move->destination(), $this->color())) {
+                return;
+            }
+            if ($move->inDirection(new Forward($this->color(), new AlongFile()))) {
+                try {
+                    $board->verifyThatPositionIsUnoccupied($move->destination());
+                } catch (SquareIsOccupied $squareIsOccupied) {
+                    throw new NotAllowedForPiece($this, $move);
+                }
+                return;
+            }
         }
 
         throw new NotAllowedForPiece($this, $move);
-    }
-
-    /**
-     * Validate if capturing move is legal.
-     *
-     * @param Move $move
-     *
-     * @return void
-     */
-    private function validateCapturingMove(Move $move): void
-    {
-        if (!$move->is(ToAdjoiningSquare::class)) {
-            throw new NotAllowedForPiece($this, $move);
-        }
-
-        if (!$move->inDirection(new Forward($this->color(), new AlongDiagonal()))) {
-            throw new NotAllowedForPiece($this, $move);
-        }
-    }
-
-    /**
-     * Validate if move to unoccupied square is legal.
-     *
-     * @param Move $move
-     *
-     * @return void
-     */
-    private function validateMoveToUnoccupiedSquare(Move $move): void
-    {
-        if (!$move->inDirection(new Forward($this->color(), new AlongFile()))) {
-            throw new NotAllowedForPiece($this, $move);
-        }
-
-        if ($this->hasMoved && !$move->is(ToAdjoiningSquare::class)) {
-            throw new NotAllowedForPiece($this, $move);
-        }
-
-        if (!$this->hasMoved && !$move->is(AdvancingTwoSquares::class) && !$move->is(ToAdjoiningSquare::class)) {
-            throw new NotAllowedForPiece($this, $move);
-        }
     }
 
     /**
@@ -115,13 +87,10 @@ final class Pawn extends Piece
         try {
             $direction = $this->position->directionTo($destination);
             if ($direction instanceof AlongDiagonal) {
-                return new Capturing(
-                    $this->color(),
-                    new ToAdjoiningSquare(
-                        $this->position,
-                        $destination,
-                        new Forward($this->color(), $direction)
-                    )
+                return new ToAdjoiningSquare(
+                    $this->position,
+                    $destination,
+                    new Forward($this->color(), $direction)
                 );
             }
 
@@ -144,9 +113,9 @@ final class Pawn extends Piece
      * @throws InvalidDirection
      * @throws TooDistant
      *
-     * @return ToUnoccupiedSquare
+     * @return Move
      */
-    private function intentMoveToUnoccupiedSquare(Board\Coordinates $destination, Board\Direction $direction): ToUnoccupiedSquare
+    private function intentMoveToUnoccupiedSquare(Board\Coordinates $destination, Board\Direction $direction): Move
     {
         if ($this->hasMoved) {
             $move = new ToAdjoiningSquare(
@@ -162,8 +131,6 @@ final class Pawn extends Piece
             );
         }
 
-        return new ToUnoccupiedSquare(
-            $move
-        );
+        return $move;
     }
 }

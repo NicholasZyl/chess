@@ -29,9 +29,9 @@ final class Knight extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move->is(OverOtherPieces::class) || !$move->inDirection(new LShaped())) {
+        if (!$move instanceof OverOtherPieces || !$move->inDirection(new LShaped())) {
             throw new NotAllowedForPiece($this, $move);
         }
     }

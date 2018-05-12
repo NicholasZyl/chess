@@ -5,10 +5,10 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Move\TooDistant;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Move\AdvancingTwoSquares;
-use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -51,28 +51,25 @@ class AdvancingTwoSquaresSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('a', 4);
         $this->beConstructedWith($source, $destination, new AlongFile());
 
-        $board->pickPieceFromCoordinates($source)->willReturn($rook);
         $board->verifyThatPositionIsUnoccupied(CoordinatePair::fromFileAndRank('a', 3))->willReturn();
+        $board->pickPieceFromCoordinates($source)->willReturn($rook);
         $board->placePieceAtCoordinates($rook, $destination)->shouldBeCalled();
 
         $this->play($board);
     }
 
-    function it_is_same_as_other_move_limited_to_two_squares_distance()
+    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)
     {
+        $rook = Rook::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('a', 4);
         $this->beConstructedWith($source, $destination, new AlongFile());
 
-        $this->is(AdvancingTwoSquares::class)->shouldBe(true);
-    }
+        $board->verifyThatPositionIsUnoccupied(CoordinatePair::fromFileAndRank('a', 3))->willReturn();
+        $board->pickPieceFromCoordinates($source)->willReturn($rook);
+        $board->placePieceAtCoordinates($rook, $destination)->willThrow(new SquareIsOccupied($destination));
+        $board->placePieceAtCoordinates($rook, $source)->shouldBeCalled();
 
-    function it_is_not_different_move()
-    {
-        $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('a', 1);
-        $this->beConstructedWith($source, $destination, new AlongFile());
-
-        $this->is(OverOtherPieces::class)->shouldBe(false);
+        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
     }
 }

@@ -5,11 +5,11 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -87,21 +87,17 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $this->play($board);
     }
 
-    function it_is_same_as_other_over_other_pieces_move()
+    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)
     {
+        $knight = Knight::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('c', 1);
+        $destination = CoordinatePair::fromFileAndRank('c', 3);
         $this->beConstructedWith($source, $destination, new LShaped());
 
-        $this->is(OverOtherPieces::class)->shouldBe(true);
-    }
+        $board->pickPieceFromCoordinates($source)->willReturn($knight);
+        $board->placePieceAtCoordinates($knight, $destination)->willThrow(new SquareIsOccupied($destination));
+        $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
-    function it_is_not_different_move()
-    {
-        $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('c', 1);
-        $this->beConstructedWith($source, $destination, new LShaped());
-
-        $this->is(NotIntervened::class)->shouldBe(false);
+        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
     }
 }

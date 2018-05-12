@@ -6,6 +6,8 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Move;
 
 final class OverOtherPieces implements Move
@@ -64,9 +66,9 @@ final class OverOtherPieces implements Move
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
+    public function inDirection(Board\Direction $direction): bool
     {
-        return "move over other pieces";
+        return $this->direction->inSameDirectionAs($direction);
     }
 
     /**
@@ -75,23 +77,20 @@ final class OverOtherPieces implements Move
     public function play(Board $board): void
     {
         $piece = $board->pickPieceFromCoordinates($this->source);
-        $piece->mayMove($this);
-        $board->placePieceAtCoordinates($piece, $this->destination);
+        $piece->mayMove($this, $board);
+        try {
+            $board->placePieceAtCoordinates($piece, $this->destination);
+        } catch (SquareIsOccupied $squareIsOccupied) {
+            $board->placePieceAtCoordinates($piece, $this->source);
+            throw new MoveToOccupiedPosition($squareIsOccupied->coordinates());
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function is(string $moveType): bool
+    public function __toString(): string
     {
-        return $this instanceof $moveType ;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function inDirection(Board\Direction $direction): bool
-    {
-        return $this->direction->inSameDirectionAs($direction);
+        return "move over other pieces";
     }
 }

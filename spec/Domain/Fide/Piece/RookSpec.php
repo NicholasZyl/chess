@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\Move\ToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\MoveNotAllowedForPiece;
@@ -43,69 +44,59 @@ class RookSpec extends ObjectBehavior
         $this->isSameAs($pawn)->shouldBe(true);
     }
 
-    function it_may_move_to_any_square_along_file()
+    function it_may_move_to_any_square_along_file(Board $board)
     {
-        $move = new ToUnoccupiedSquare(
-            new NotIntervened(
-                CoordinatePair::fromFileAndRank('a', 1),
-                CoordinatePair::fromFileAndRank('a', 5),
-                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
-            )
+        $move = new NotIntervened(
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 5),
+            new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_may_move_to_any_square_along_rank()
+    function it_may_move_to_any_square_along_rank(Board $board)
     {
-        $move = new ToUnoccupiedSquare(
-            new NotIntervened(
-                CoordinatePair::fromFileAndRank('g', 2),
-                CoordinatePair::fromFileAndRank('d', 2),
-                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
-            )
+        $move = new NotIntervened(
+            CoordinatePair::fromFileAndRank('g', 2),
+            CoordinatePair::fromFileAndRank('d', 2),
+            new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
         );
 
-        $this->mayMove($move);
+        $this->mayMove($move, $board);
     }
 
-    function it_may_not_move_to_any_square_along_diagonal()
+    function it_may_not_move_to_any_square_along_diagonal(Board $board)
     {
-        $move = new ToUnoccupiedSquare(
-            new NotIntervened(
-                CoordinatePair::fromFileAndRank('d', 6),
-                CoordinatePair::fromFileAndRank('a', 3),
-                new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
-            )
+        $move = new NotIntervened(
+            CoordinatePair::fromFileAndRank('d', 6),
+            CoordinatePair::fromFileAndRank('a', 3),
+            new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_not_move_to_square_not_on_same_file_or_rank_or_diagonal()
+    function it_may_not_move_to_square_not_on_same_file_or_rank_or_diagonal(Board $board)
     {
-        $move = new ToUnoccupiedSquare(
-            new NotIntervened(
-                CoordinatePair::fromFileAndRank('d', 6),
-                CoordinatePair::fromFileAndRank('c', 4),
-                new LShaped()
-            )
+        $move = new NotIntervened(
+            CoordinatePair::fromFileAndRank('d', 6),
+            CoordinatePair::fromFileAndRank('c', 4),
+            new LShaped()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
-    function it_may_not_move_over_intervening_pieces()
+    function it_may_not_move_over_intervening_pieces(Board $board)
     {
-        $move = new ToUnoccupiedSquare(
-            new OverOtherPieces(
-                CoordinatePair::fromFileAndRank('d', 6),
-                CoordinatePair::fromFileAndRank('c', 4),
-                new LShaped()
-            )
+        $move = new OverOtherPieces(
+            CoordinatePair::fromFileAndRank('d', 6),
+            CoordinatePair::fromFileAndRank('c', 4),
+            new LShaped()
         );
 
-        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move,]);
+        $this->shouldThrow(new NotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
 
     function it_intents_not_intervened_move_to_any_square()

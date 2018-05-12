@@ -31,9 +31,9 @@ final class Rook extends Piece
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Move $move): void
+    public function mayMove(Move $move, Board $board): void
     {
-        if (!$move->is(NotIntervened::class) || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
+        if (!$move instanceof NotIntervened || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
             throw new NotAllowedForPiece($this, $move);
         }
     }
