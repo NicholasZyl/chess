@@ -115,6 +115,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $this->beConstructedWith($source, $destination, new AlongFile());
 
         $board->pickPieceFromCoordinates($source)->willReturn($pawn);
+        $board->placePieceAtCoordinates($pawn, $source)->shouldBeCalled();
 
         $this->shouldThrow(new NotAllowedForPiece($pawn, $this->getWrappedObject()))->during('play', [$board,]);
     }

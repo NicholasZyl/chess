@@ -5,10 +5,12 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Move;
@@ -99,5 +101,18 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
+    }
+
+    function it_does_not_allow_move_that_is_not_possible_for_given_piece(Board $board)
+    {
+        $knight = Knight::forColor(Color::white());
+        $source = CoordinatePair::fromFileAndRank('a', 2);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $this->beConstructedWith($source, $destination, new AlongFile());
+
+        $board->pickPieceFromCoordinates($source)->willReturn($knight);
+        $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
+
+        $this->shouldThrow(new NotAllowedForPiece($knight, $this->getWrappedObject()))->during('play', [$board,]);
     }
 }

@@ -6,6 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Move\NotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\SquareIsOccupied;
@@ -113,9 +114,12 @@ class NotIntervened implements Move
         }
 
         $piece = $board->pickPieceFromCoordinates($this->source);
-        $piece->mayMove($this, $board);
         try {
+            $piece->mayMove($this, $board);
             $board->placePieceAtCoordinates($piece, $this->destination);
+        } catch (NotAllowedForPiece $notAllowedForPiece) {
+            $board->placePieceAtCoordinates($piece, $this->source);
+            throw $notAllowedForPiece;
         } catch (SquareIsOccupied $squareIsOccupied) {
             $board->placePieceAtCoordinates($piece, $this->source);
             throw new MoveToOccupiedPosition($squareIsOccupied->coordinates());

@@ -14,9 +14,7 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Move\AdvancingTwoSquares;
-use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
 use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
-use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Move;
 
 final class Pawn extends Piece
