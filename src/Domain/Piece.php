@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -65,20 +66,30 @@ interface Piece
     /**
      * Place piece at given coordinates.
      *
-     * @param Board\Coordinates $coordinates
+     * @param Coordinates $coordinates
      *
      * @return void
      */
-    public function placeAt(Board\Coordinates $coordinates): void;
+    public function placeAt(Coordinates $coordinates): void;
 
     /**
      * Intent move from piece's current position to the destination.
      *
-     * @param Board\Coordinates $destination
+     * @param Coordinates $destination
      *
      * @throws MoveToIllegalPosition
      *
      * @return Move
      */
-    public function intentMoveTo(Board\Coordinates $destination): Move;
+    public function intentMoveTo(Coordinates $destination): Move;
+
+    /**
+     * Check if piece is attacking passed position.
+     *
+     * @param Coordinates $coordinates
+     * @param Board $board
+     *
+     * @return bool
+     */
+    public function isAttacking(Coordinates $coordinates, Board $board): bool;
 }

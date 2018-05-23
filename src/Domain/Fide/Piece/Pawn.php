@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
@@ -130,5 +131,16 @@ final class Pawn extends Piece
         }
 
         return $move;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAttacking(Coordinates $coordinates, Board $board): bool
+    {
+        if (!$this->position->directionTo($coordinates) instanceof AlongDiagonal) {
+            return false;
+        }
+        return parent::isAttacking($coordinates, $board);
     }
 }

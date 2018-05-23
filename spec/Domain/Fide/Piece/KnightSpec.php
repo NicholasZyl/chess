@@ -140,4 +140,24 @@ class KnightSpec extends ObjectBehavior
 
         $this->shouldThrow(new MoveToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
     }
+
+    function it_is_attacking_same_way_as_moving(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+
+        $this->placeAt($source);
+
+        $this->isAttacking($destination, $board)->shouldBe(true);
+    }
+
+    function it_is_not_attacking_if_move_is_illegal_for_piece(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->placeAt($source);
+
+        $this->isAttacking($destination, $board)->shouldBe(false);
+    }
 }

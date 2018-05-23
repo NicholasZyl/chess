@@ -10,6 +10,7 @@ use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Fide\Square;
@@ -183,5 +184,22 @@ class ChessboardSpec extends ObjectBehavior
         $position = CoordinatePair::fromFileAndRank('c', 4);
 
         $this->hasOpponentsPieceAt($position, Piece\Color::black())->shouldBe(false);
+    }
+
+    function it_knows_when_square_is_attacked_by_opponents_piece()
+    {
+        $this->placePieceAtCoordinates(Pawn::forColor(Piece\Color::black()), CoordinatePair::fromFileAndRank('c', 4));
+        $this->placePieceAtCoordinates(Pawn::forColor(Piece\Color::white()), CoordinatePair::fromFileAndRank('b', 3));
+
+        $this->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('b', 3), Piece\Color::white())->shouldBe(true);
+    }
+
+    function it_knows_when_square_is_not_attacked_by_opponents_piece()
+    {
+        $this->placePieceAtCoordinates(Pawn::forColor(Piece\Color::black()), CoordinatePair::fromFileAndRank('a', 3));
+        $this->placePieceAtCoordinates(Rook::forColor(Piece\Color::black()), CoordinatePair::fromFileAndRank('a', 8));
+        $this->placePieceAtCoordinates(Bishop::forColor(Piece\Color::white()), CoordinatePair::fromFileAndRank('b', 3));
+
+        $this->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('a', 2), Piece\Color::white())->shouldBe(false);
     }
 }

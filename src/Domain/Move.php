@@ -33,6 +33,17 @@ interface Move
     public function inDirection(Direction $direction): bool;
 
     /**
+     * Validate if move is legal.
+     *
+     * @param Board $board
+     *
+     * @throws IllegalMove
+     *
+     * @return void
+     */
+    public function isLegal(Board $board): void;
+
+    /**
      * Play the move on the board.
      *
      * @param Board $board

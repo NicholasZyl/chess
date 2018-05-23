@@ -27,7 +27,7 @@ final class Chessboard implements Board
             throw new \InvalidArgumentException('The chessboard must be composed of an 8 x 8 grid of 64 equal squares.');
         }
         foreach ($grid as $square) {
-            $this->grid[(string) $square->coordinates()] = $square;
+            $this->grid[(string)$square->coordinates()] = $square;
         }
     }
 
@@ -91,10 +91,24 @@ final class Chessboard implements Board
      */
     private function getSquareAt(Coordinates $coordinates): Square
     {
-        if (!array_key_exists((string) $coordinates, $this->grid)) {
+        if (!array_key_exists((string)$coordinates, $this->grid)) {
             throw new OutOfBoardCoordinates($coordinates);
         }
 
         return $this->grid[(string)$coordinates];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool
+    {
+        foreach ($this->grid as $square) {
+            if ($square->hasPlacedOpponentsPiece($color) && $square->peek()->isAttacking($coordinates, $this)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -23,6 +23,7 @@ class CastlingSpec extends ObjectBehavior
     function let(Board $board)
     {
         $board->hasPieceAtCoordinates(Argument::cetera())->willReturn(true);
+        $board->isPositionAttackedByOpponentOf(Argument::cetera())->willReturn(false);
         $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
     }
 
@@ -114,22 +115,15 @@ class CastlingSpec extends ObjectBehavior
 
     function it_is_prevented_if_there_is_any_piece_between_the_king_and_the_rook(Board $board)
     {
-        $king = King::forColor(Color::white());
-        $rook = Rook::forColor(Color::white());
         $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
         $kingDestination = CoordinatePair::fromFileAndRank('g', 1);
-        $rookInitialPosition = CoordinatePair::fromFileAndRank('h', 1);
         $this->beConstructedWith(
             Color::white(),
             $kingInitialPosition,
             $kingDestination
         );
 
-        $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
-        $board->pickPieceFromCoordinates($rookInitialPosition)->willReturn($rook);
         $board->verifyThatPositionIsUnoccupied($kingDestination)->shouldBeCalled()->willThrow(new SquareIsOccupied($kingDestination));
-        $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
-        $board->placePieceAtCoordinates($rook, $rookInitialPosition)->shouldBeCalled();
 
         $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
@@ -210,6 +204,53 @@ class CastlingSpec extends ObjectBehavior
 
         $board->hasPieceAtCoordinates(King::forColor(Color::black()), $kingInitialPosition)->willReturn(true);
         $board->hasPieceAtCoordinates(Rook::forColor(Color::black()), $rookInitialPosition)->willReturn(false);
+
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_is_temporarily_prevented_if_the_square_on_which_king_stands_is_attacked_by_opponents_piece(Board $board)
+    {
+        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
+        $kingDestination = CoordinatePair::fromFileAndRank('g', 1);
+        $this->beConstructedWith(
+            Color::white(),
+            $kingInitialPosition,
+            $kingDestination
+        );
+
+        $board->isPositionAttackedByOpponentOf($kingInitialPosition, Color::white())->willReturn(true);
+
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_is_temporarily_prevented_if_the_square_which_king_must_cross_is_attacked_by_opponents_piece(Board $board)
+    {
+        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
+        $kingDestination = CoordinatePair::fromFileAndRank('c', 1);
+        $this->beConstructedWith(
+            Color::white(),
+            $kingInitialPosition,
+            $kingDestination
+        );
+
+        $board->isPositionAttackedByOpponentOf($kingInitialPosition, Color::white())->willReturn(false);
+        $board->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('d', 1), Color::white())->willReturn(true);
+
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_is_temporarily_prevented_if_the_square_which_king_is_to_occupy_is_attacked_by_opponents_piece(Board $board)
+    {
+        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
+        $kingDestination = CoordinatePair::fromFileAndRank('g', 1);
+        $this->beConstructedWith(
+            Color::white(),
+            $kingInitialPosition,
+            $kingDestination
+        );
+
+        $board->isPositionAttackedByOpponentOf($kingInitialPosition, Color::white())->willReturn(false);
+        $board->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('g', 1), Color::white())->willReturn(true);
 
         $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }

@@ -103,7 +103,7 @@ class NotIntervened implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): void
+    public function isLegal(Board $board): void
     {
         try {
             foreach ($this->steps as $step) {
@@ -112,6 +112,14 @@ class NotIntervened implements Move
         } catch (SquareIsOccupied $squareIsOccupied) {
             throw new MoveOverInterveningPiece($squareIsOccupied->coordinates());
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function play(Board $board): void
+    {
+        $this->isLegal($board);
 
         $piece = $board->pickPieceFromCoordinates($this->source);
         try {

@@ -99,27 +99,26 @@ final class Castling implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): void
+    public function isLegal(Board $board): void
     {
         if (!$board->hasPieceAtCoordinates(King::forColor($this->color), $this->kingPosition) || !$board->hasPieceAtCoordinates(Rook::forColor($this->color), $this->rookPosition)) {
             throw new MovePrevented($this);
         }
-
-        $king = $board->pickPieceFromCoordinates($this->kingPosition);
-        $rook = $board->pickPieceFromCoordinates($this->rookPosition);
-
         try {
-            $king->mayMove($this, $board);
-            $rook->mayMove($this, $board);
             $this->validateSquaresBetweenKingAndRookAreUnoccupied($board);
-        } catch (SquareIsOccupied | IllegalMove $squareIsOccupied) {
-            $board->placePieceAtCoordinates($king, $this->kingPosition);
-            $board->placePieceAtCoordinates($rook, $this->rookPosition);
+        } catch (SquareIsOccupied $squareIsOccupied) {
             throw new MovePrevented($this);
         }
-
-        $board->placePieceAtCoordinates($king, $this->kingDestination);
-        $board->placePieceAtCoordinates($rook, $this->kingDestination->nextTowards($this->kingPosition, $this->direction));
+        $step = $this->kingPosition;
+        if ($board->isPositionAttackedByOpponentOf($step, $this->color)) {
+            throw new MovePrevented($this);
+        }
+        while (!$step->equals($this->kingDestination)) {
+            $step = $step->nextTowards($this->kingDestination, $this->direction);
+            if ($board->isPositionAttackedByOpponentOf($step, $this->color)) {
+                throw new MovePrevented($this);
+            }
+        }
     }
 
     /**
@@ -136,6 +135,29 @@ final class Castling implements Move
             $board->verifyThatPositionIsUnoccupied($step);
             $step = $step->nextTowards($this->rookPosition, $this->direction);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function play(Board $board): void
+    {
+        $this->isLegal($board);
+
+        $king = $board->pickPieceFromCoordinates($this->kingPosition);
+        $rook = $board->pickPieceFromCoordinates($this->rookPosition);
+
+        try {
+            $king->mayMove($this, $board);
+            $rook->mayMove($this, $board);
+        } catch (IllegalMove $illegalMove) {
+            $board->placePieceAtCoordinates($king, $this->kingPosition);
+            $board->placePieceAtCoordinates($rook, $this->rookPosition);
+            throw new MovePrevented($this);
+        }
+
+        $board->placePieceAtCoordinates($king, $this->kingDestination);
+        $board->placePieceAtCoordinates($rook, $this->kingDestination->nextTowards($this->kingPosition, $this->direction));
     }
 
     /**

@@ -75,6 +75,14 @@ final class OverOtherPieces implements Move
     /**
      * {@inheritdoc}
      */
+    public function isLegal(Board $board): void
+    {
+        return; // There are no rules for move over other pieces.
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function play(Board $board): void
     {
         $piece = $board->pickPieceFromCoordinates($this->source);

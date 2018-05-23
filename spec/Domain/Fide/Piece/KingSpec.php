@@ -198,4 +198,24 @@ class KingSpec extends ObjectBehavior
 
         $this->shouldThrow(new MoveToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
     }
+
+    function it_is_attacking_along_valid_move(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('a', 2);
+
+        $this->placeAt($source);
+
+        $this->isAttacking($destination, $board)->shouldBe(true);
+    }
+
+    function it_is_not_attacking_if_move_is_illegal_for_piece(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('a', 3);
+
+        $this->placeAt($source);
+
+        $this->isAttacking($destination, $board)->shouldBe(false);
+    }
 }

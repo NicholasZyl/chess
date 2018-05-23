@@ -82,4 +82,14 @@ interface Board
      * @return bool
      */
     public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool;
+
+    /**
+     * Check if position is attacked by piece owned by opponent of passed color.
+     *
+     * @param Coordinates $coordinates
+     * @param Color $color
+     *
+     * @return bool
+     */
+    public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool;
 }

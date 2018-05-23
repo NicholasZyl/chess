@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -148,5 +149,38 @@ class RookSpec extends ObjectBehavior
         $this->placeAt($source);
 
         $this->shouldThrow(new MoveToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
+    }
+
+    function it_is_attacking_along_valid_move(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('g', 1);
+
+        $this->placeAt($source);
+
+        $this->isAttacking($destination, $board)->shouldBe(true);
+    }
+
+    function it_is_not_attacking_over_other_pieces(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('c', 3);
+
+        $this->placeAt($source);
+
+        $occupiedSquare = CoordinatePair::fromFileAndRank('b', 2);
+        $board->verifyThatPositionIsUnoccupied($occupiedSquare)->willThrow(new SquareIsOccupied($occupiedSquare));
+
+        $this->isAttacking($destination, $board)->shouldBe(false);
+    }
+
+    function it_is_not_attacking_if_move_is_illegal_for_piece(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $destination = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->placeAt($source);
+
+        $this->isAttacking($destination, $board)->shouldBe(false);
     }
 }
