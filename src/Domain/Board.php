@@ -92,4 +92,11 @@ interface Board
      * @return bool
      */
     public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool;
+
+    /**
+     * Get all events that occurred after last move.
+     *
+     * @return Event[]
+     */
+    public function occurredEvents(): array;
 }

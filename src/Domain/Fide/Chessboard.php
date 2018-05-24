@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
@@ -21,6 +22,11 @@ final class Chessboard implements Board
      * @var Square[]
      */
     private $grid = [];
+
+    /**
+     * @var Event[]
+     */
+    private $occurredEvents = [];
 
     /**
      * Build the chessboard as a 8 x 8 grid of 64 squares.
@@ -40,7 +46,7 @@ final class Chessboard implements Board
      */
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
-        $this->getSquareAt($coordinates)->place($piece);
+        $this->occurredEvents = $this->getSquareAt($coordinates)->place($piece);
     }
 
     /**
@@ -114,5 +120,13 @@ final class Chessboard implements Board
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function occurredEvents(): array
+    {
+        return $this->occurredEvents;
     }
 }

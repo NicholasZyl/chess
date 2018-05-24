@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -58,16 +59,25 @@ final class Square
      *
      * @param Piece $piece
      *
+     * @return Event[]
+     *
      * @throws SquareIsOccupied
      */
-    public function place(Piece $piece): void
+    public function place(Piece $piece): array
     {
         if ($this->placedPiece !== null && $this->placedPiece->isSameColorAs($piece)) {
             throw new SquareIsOccupied($this->coordinates);
         }
+        $events = [];
+        if ($this->hasPlacedOpponentsPiece($piece->color())) {
+            $events []= new Event\PieceWasCapturedAt($this->placedPiece, $this->coordinates);
+        }
 
         $this->placedPiece = $piece;
         $piece->placeAt($this->coordinates);
+        $events []= new Event\PieceWasPlacedAt($piece, $this->coordinates);
+
+        return $events;
     }
 
     /**

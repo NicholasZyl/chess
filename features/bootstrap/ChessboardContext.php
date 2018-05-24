@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Event\PieceWasCapturedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
@@ -12,7 +15,7 @@ use NicholasZyl\Chess\Domain\Piece\Color;
 /**
  * Defines application features from the specific context.
  */
-class ChessboardContext implements Context
+class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
 {
     /**
      * @var \Helper\PieceFactory
@@ -28,6 +31,11 @@ class ChessboardContext implements Context
      * @var \RuntimeException
      */
     private $caughtException;
+
+    /**
+     * @var Event[]
+     */
+    private $occurredEvents = [];
 
     /**
      * ChessboardContext constructor.
@@ -97,6 +105,7 @@ class ChessboardContext implements Context
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
         }
+        $this->occurredEvents = $this->chessboard->occurredEvents();
     }
 
     /**
@@ -107,7 +116,7 @@ class ChessboardContext implements Context
      */
     public function pieceShouldBePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->chessboard->hasPieceAtCoordinates($piece, $coordinates))->shouldBe(true);
+        expect($this->occurredEvents)->toOccur(new PieceWasPlacedAt($piece, $coordinates));
     }
 
     /**
@@ -126,7 +135,7 @@ class ChessboardContext implements Context
      */
     public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->chessboard->hasPieceAtCoordinates($piece, $coordinates))->shouldBe(false);
+        expect($this->occurredEvents)->toOccur(new PieceWasCapturedAt($piece, $coordinates));
     }
 
     /**
@@ -156,5 +165,25 @@ class ChessboardContext implements Context
     public function castToCoordinates(string $coordinates)
     {
         return CoordinatePair::fromString($coordinates);
+    }
+
+    /**
+     * Get helper matcher functions for `expect` function.
+     *
+     * @return array
+     */
+    public function getMatchers(): array
+    {
+        return [
+            'occur' => function (array $occurredEvents, Event $expectedEvent) {
+                foreach ($occurredEvents as $occurredEvent) {
+                    if ($expectedEvent->equals($occurredEvent)) {
+                        return true;
+                    }
+                }
+
+                throw new \PhpSpec\Exception\Example\FailureException(sprintf('Expected event %s to occur but it did not.', json_encode($expectedEvent)));
+            }
+        ];
     }
 }

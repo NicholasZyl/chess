@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Event\PieceWasCapturedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -21,6 +23,11 @@ class ChessboardSpec extends ObjectBehavior
     {
         $coordinates = CoordinatePair::fromFileAndRank('h', 8);
         $this->verifyThatPositionIsUnoccupied($coordinates);
+    }
+
+    function it_knows_when_no_events_occurred()
+    {
+        $this->occurredEvents()->shouldBe([]);
     }
 
     function it_does_not_allow_interacting_with_position_out_of_board()
@@ -51,6 +58,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->hasPieceAtCoordinates($whitePawn, $source)->shouldBe(false);
         $this->hasPieceAtCoordinates($whitePawn, $destination)->shouldBe(true);
+        $this->occurredEvents()->shouldBeLike([new PieceWasPlacedAt($whitePawn, $destination),]);
     }
 
     function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
@@ -127,6 +135,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->hasPieceAtCoordinates($blackPawn, $destination)->shouldBe(false);
         $this->hasPieceAtCoordinates($whiteRook, $destination)->shouldBe(true);
+        $this->occurredEvents()->shouldBeLike([new PieceWasCapturedAt($blackPawn, $destination), new PieceWasPlacedAt($whiteRook, $destination),]);
     }
 
     function it_does_not_allow_move_to_square_occupied_by_piece_of_same_color()

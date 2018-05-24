@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Event\PieceWasCapturedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -31,7 +33,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_place_piece_on_it()
     {
         $piece = Pawn::forColor(Piece\Color::white());
-        $this->place($piece);
+        $this->place($piece)->shouldBeLike([new PieceWasPlacedAt($piece, $this->coordinates),]);
     }
 
     function it_allows_to_peek_at_it_to_see_what_piece_is_placed()
@@ -49,6 +51,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_notifies_piece_that_it_was_placed(Piece $piece)
     {
+        $piece->color()->willReturn(Piece\Color::white());
         $piece->placeAt($this->coordinates)->shouldBeCalled();
 
         $this->place($piece);
@@ -114,7 +117,7 @@ class SquareSpec extends ObjectBehavior
 
         $piece = Knight::forColor(Piece\Color::white());
 
-        $this->place($piece);
+        $this->place($piece)->shouldBeLike([new PieceWasCapturedAt($opponentPiece, $this->coordinates), new PieceWasPlacedAt($piece, $this->coordinates),]);
         $this->hasPlacedPiece($piece)->shouldBe(true);
     }
 
