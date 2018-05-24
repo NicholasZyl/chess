@@ -6,7 +6,6 @@ use Behat\Gherkin\Node\TableNode;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
-use NicholasZyl\Chess\Domain\Fide\Grid;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -44,8 +43,7 @@ class ChessboardContext implements Context
      */
     public function thereIsAChessboard()
     {
-        $grid = new Grid();
-        $this->chessboard = new Chessboard($grid->squares());
+        $this->chessboard = new Chessboard();
     }
 
     /**

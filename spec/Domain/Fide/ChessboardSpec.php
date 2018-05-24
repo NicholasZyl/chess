@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -13,38 +12,22 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
-use NicholasZyl\Chess\Domain\Fide\Square;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
 
 class ChessboardSpec extends ObjectBehavior
 {
-    function let()
+    function it_is_composed_of_sixty_four_squares()
     {
-        $grid = [];
-        foreach (CoordinatePair::validFiles() as $file) {
-            foreach (CoordinatePair::validRanks() as $rank) {
-                $coordinates = CoordinatePair::fromFileAndRank($file, $rank);
-                $grid[] = Square::forCoordinates($coordinates);
-            }
-        }
-        $this->beConstructedWith($grid);
+        $coordinates = CoordinatePair::fromFileAndRank('h', 8);
+        $this->verifyThatPositionIsUnoccupied($coordinates);
     }
 
-    function it_must_be_composed_of_sixty_four_squares()
+    function it_does_not_allow_interacting_with_position_out_of_board()
     {
-        $this->beConstructedWith(
-            [Square::forCoordinates(CoordinatePair::fromFileAndRank('a', 1)),]
-        );
+        $coordinates = CoordinatePair::fromFileAndRank('i', 9);
 
-        $this->shouldThrow(new \InvalidArgumentException('The chessboard must be composed of an 8 x 8 grid of 64 equal squares.'))->duringInstantiation();
-    }
-
-    function it_does_not_allow_interacting_with_position_out_of_board(Coordinates $coordinates)
-    {
-        $coordinates->__toString()->willReturn('i1');
-
-        $this->shouldThrow(new OutOfBoardCoordinates($coordinates->getWrappedObject()))->during('verifyThatPositionIsUnoccupied', [$coordinates,]);
+        $this->shouldThrow(new OutOfBoardCoordinates($coordinates))->during('verifyThatPositionIsUnoccupied', [$coordinates,]);
     }
 
     function it_allows_placing_piece_at_given_coordinates()

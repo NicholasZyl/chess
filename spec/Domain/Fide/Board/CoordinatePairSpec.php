@@ -31,31 +31,17 @@ class CoordinatePairSpec extends ObjectBehavior
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_too_low_file()
+    function it_cannot_be_created_for_file_which_is_not_a_lowercase_character()
     {
         $this->beConstructedThrough('fromFileAndRank', ['Z', 1,]);
         $this->shouldThrow(new \InvalidArgumentException('"Z" is not a proper file.'))
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_too_high_file()
+    function it_cannot_be_created_for_negative_file()
     {
-        $this->beConstructedThrough('fromFileAndRank', ['i', 1,]);
-        $this->shouldThrow(new \InvalidArgumentException('"i" is not a proper file.'))
-            ->duringInstantiation();
-    }
-
-    function it_cannot_be_created_for_too_low_rank()
-    {
-        $this->beConstructedThrough('fromFileAndRank', ['d', 0,]);
-        $this->shouldThrow(new \InvalidArgumentException('"0" is not a proper rank.'))
-            ->duringInstantiation();
-    }
-
-    function it_cannot_be_created_for_too_high_rank()
-    {
-        $this->beConstructedThrough('fromFileAndRank', ['d', 9,]);
-        $this->shouldThrow(new \InvalidArgumentException('"9" is not a proper rank.'))
+        $this->beConstructedThrough('fromFileAndRank', ['a', -1,]);
+        $this->shouldThrow(new \InvalidArgumentException('"-1" is not a proper rank.'))
             ->duringInstantiation();
     }
 

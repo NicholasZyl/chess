@@ -12,11 +12,6 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 
 final class CoordinatePair implements Coordinates
 {
-    const LOWEST_FILE = 'a';
-    const HIGHEST_FILE = 'h';
-    const LOWEST_RANK = 1;
-    const HIGHEST_RANK = 8;
-
     /**
      * @var string
      */
@@ -63,37 +58,19 @@ final class CoordinatePair implements Coordinates
      *
      * @param string $file
      * @param int $rank
+     *
+     * @throws \InvalidArgumentException
      */
     private function __construct(string $file, int $rank)
     {
-        if (!in_array($file, self::validFiles(), true)) {
+        if (!in_array($file, range('a', 'z'), true)) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a proper file.', $file));
         }
-        if (!in_array($rank, self::validRanks(), true)) {
+        if ($rank < 0) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a proper rank.', $rank));
         }
         $this->file = $file;
         $this->rank = $rank;
-    }
-
-    /**
-     * Get all valid files.
-     *
-     * @return array
-     */
-    public static function validFiles(): array
-    {
-        return range(self::LOWEST_FILE, self::HIGHEST_FILE);
-    }
-
-    /**
-     * Get all valid ranks.
-     *
-     * @return array
-     */
-    public static function validRanks(): array
-    {
-        return range(self::LOWEST_RANK, self::HIGHEST_RANK);
     }
 
     /**

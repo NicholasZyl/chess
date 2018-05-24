@@ -6,28 +6,32 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Chessboard implements Board
 {
+    private const LOWEST_FILE = 'a';
+    private const HIGHEST_FILE = 'h';
+    private const LOWEST_RANK = 1;
+    private const HIGHEST_RANK = 8;
+
     /**
      * @var Square[]
      */
     private $grid = [];
 
     /**
-     * Build the chessboard from passed grid of squares.
-     *
-     * @param Square[] $grid
+     * Build the chessboard as a 8 x 8 grid of 64 squares.
      */
-    public function __construct(array $grid)
+    public function __construct()
     {
-        if (count($grid) !== 64) {
-            throw new \InvalidArgumentException('The chessboard must be composed of an 8 x 8 grid of 64 equal squares.');
-        }
-        foreach ($grid as $square) {
-            $this->grid[(string)$square->coordinates()] = $square;
+        foreach (range(self::LOWEST_FILE, self::HIGHEST_FILE) as $file) {
+            foreach (range(self::LOWEST_RANK, self::HIGHEST_RANK) as $rank) {
+                $square = Square::forCoordinates(CoordinatePair::fromFileAndRank($file, $rank));
+                $this->grid[(string)$square->coordinates()] = $square;
+            }
         }
     }
 
