@@ -10,7 +10,6 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
-use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -52,7 +51,7 @@ class KnightSpec extends ObjectBehavior
 
     function it_may_not_move_to_adjoining_square(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()

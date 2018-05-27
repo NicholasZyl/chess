@@ -8,15 +8,16 @@ use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveTooDistant;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\Castling;
-use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Move;
 
 final class King extends Piece
 {
+    private const MOVE_TO_ADJOINING_SQUARE = 1;
+
     /**
      * @var Board\Coordinates
      */
@@ -40,7 +41,7 @@ final class King extends Piece
      */
     public function mayMove(Move $move, Board $board): void
     {
-        if (!$move instanceof ToAdjoiningSquare && (!$move instanceof Castling || $this->hasMoved) || $move->inDirection(new LShaped())) {
+        if (!($move instanceof NotIntervened && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)) && (!$move instanceof Castling || $this->hasMoved) || $move->inDirection(new LShaped())) {
             throw new MoveNotAllowedForPiece($this, $move);
         }
     }
@@ -61,7 +62,7 @@ final class King extends Piece
     {
         try {
             $alongRank = new AlongRank();
-            if (!$this->hasMoved && $alongRank->areOnSame($this->position, $destination) && $this->position->distanceTo($destination, $alongRank) === 2) {
+            if ($alongRank->areOnSame($this->position, $destination) && $this->position->distanceTo($destination, $alongRank) === 2) {
                 return new Castling(
                     $this->color(),
                     $this->position,
@@ -69,12 +70,12 @@ final class King extends Piece
                 );
             }
 
-            return new ToAdjoiningSquare(
+            return new NotIntervened(
                 $this->position,
                 $destination,
                 $this->position->directionTo($destination)
             );
-        } catch (InvalidDirection | UnknownDirection | MoveTooDistant $exception) {
+        } catch (InvalidDirection | UnknownDirection $exception) {
             throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
     }

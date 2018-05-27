@@ -67,6 +67,14 @@ final class OverOtherPieces implements Move
     /**
      * {@inheritdoc}
      */
+    public function isOverDistanceOf(int $expectedDistance): bool
+    {
+        return $this->source->distanceTo($this->destination, $this->direction) === $expectedDistance;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function inDirection(Board\Direction $direction): bool
     {
         return $this->direction->inSameDirectionAs($direction);

@@ -47,6 +47,7 @@ final class Castling implements Move
      * @var CoordinatePair
      */
     private $rookPosition;
+
     /**
      * @var Color
      */
@@ -87,6 +88,14 @@ final class Castling implements Move
     public function destination(): Coordinates
     {
         return $this->kingDestination;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOverDistanceOf(int $expectedDistance): bool
+    {
+        return $this->kingPosition->distanceTo($this->kingDestination, $this->direction) === $expectedDistance;
     }
 
     /**

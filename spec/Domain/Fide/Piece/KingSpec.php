@@ -10,7 +10,6 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
-use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
@@ -41,7 +40,7 @@ class KingSpec extends ObjectBehavior
 
     function it_may_move_to_adjoining_square_along_file(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 2),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
@@ -52,7 +51,7 @@ class KingSpec extends ObjectBehavior
 
     function it_may_move_to_adjoining_square_along_rank(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 1),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
@@ -63,7 +62,7 @@ class KingSpec extends ObjectBehavior
 
     function it_may_move_to_adjoining_square_along_diagonal(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
@@ -107,7 +106,7 @@ class KingSpec extends ObjectBehavior
 
     function it_may_capture_at_any_square_along_a_diagonal_on_which_it_stands(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal()
@@ -154,7 +153,7 @@ class KingSpec extends ObjectBehavior
 
         $this->placeAt($source);
         $this->intentMoveTo($destination)->shouldBeLike(
-            new ToAdjoiningSquare(
+            new NotIntervened(
                 $source,
                 $destination,
                 new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
@@ -165,7 +164,7 @@ class KingSpec extends ObjectBehavior
     function it_may_not_intent_move_to_illegal_position()
     {
         $source = CoordinatePair::fromFileAndRank('a', 1);
-        $destination = CoordinatePair::fromFileAndRank('a', 3);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
 
         $this->placeAt($source);
 
@@ -185,18 +184,6 @@ class KingSpec extends ObjectBehavior
                 $destination
             )
         );
-    }
-
-    function it_may_not_intent_castling_if_has_already_moved()
-    {
-        $source = CoordinatePair::fromFileAndRank('e', 1);
-        $destination = CoordinatePair::fromFileAndRank('g', 1);
-
-        $this->placeAt($source);
-        $this->placeAt(CoordinatePair::fromFileAndRank('g', 1));
-        $this->placeAt($source);
-
-        $this->shouldThrow(new MoveToIllegalPosition($this->getWrappedObject(), $source, $destination))->during('intentMoveTo', [$destination,]);
     }
 
     function it_is_attacking_along_valid_move(Board $board)

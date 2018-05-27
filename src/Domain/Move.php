@@ -24,6 +24,15 @@ interface Move
     public function destination(): Coordinates;
 
     /**
+     * Check if move is made over expected distance.
+     *
+     * @param int $expectedDistance
+     *
+     * @return bool
+     */
+    public function isOverDistanceOf(int $expectedDistance): bool;
+
+    /**
      * Check if move is made in same direction.
      *
      * @param Direction $direction

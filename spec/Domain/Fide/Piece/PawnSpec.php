@@ -9,11 +9,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
-use NicholasZyl\Chess\Domain\Fide\Move\AdvancingTwoSquares;
-use NicholasZyl\Chess\Domain\Fide\Move\Capturing;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Move\ToAdjoiningSquare;
-use NicholasZyl\Chess\Domain\Fide\Move\ToUnoccupiedSquare;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -63,7 +59,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_move_forward_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 2),
             new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -74,7 +70,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_not_move_backward_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 2),
             CoordinatePair::fromFileAndRank('a', 1),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
@@ -85,7 +81,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_not_move_forward_for_another_color_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 2),
             CoordinatePair::fromFileAndRank('a', 1),
             new Forward(Piece\Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -96,7 +92,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_not_move_along_diagonal(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2),
             new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
@@ -107,7 +103,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_not_move_along_rank(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 1),
             new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
@@ -118,7 +114,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_not_capture_along_file(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 2),
             new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -130,7 +126,7 @@ class PawnSpec extends ObjectBehavior
 
     function it_may_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file(Board $board)
     {
-        $move = new ToAdjoiningSquare(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2),
             new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
@@ -145,7 +141,7 @@ class PawnSpec extends ObjectBehavior
     {
         $this->beConstructedThrough('forColor', [Piece\Color::black(),]);
 
-        $move = new AdvancingTwoSquares(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 7),
             CoordinatePair::fromFileAndRank('a', 5),
             new Forward(Piece\Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -159,7 +155,7 @@ class PawnSpec extends ObjectBehavior
         $this->placeAt(CoordinatePair::fromFileAndRank('a', 2));
         $this->placeAt(CoordinatePair::fromFileAndRank('a', 3));
 
-        $move = new AdvancingTwoSquares(
+        $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 3),
             CoordinatePair::fromFileAndRank('a', 5),
             new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -182,10 +178,12 @@ class PawnSpec extends ObjectBehavior
     function it_may_not_capture_opponents_piece_diagonally_not_directly_in_front_of_it(Board $board)
     {
         $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 3),
+            CoordinatePair::fromFileAndRank('a', 2),
+            CoordinatePair::fromFileAndRank('c', 4),
             new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
         );
+
+        $board->hasOpponentsPieceAt(CoordinatePair::fromFileAndRank('c', 4), Color::white())->willReturn(true);
 
         $this->shouldThrow(new MoveNotAllowedForPiece($this->getWrappedObject(), $move))->during('mayMove', [$move, $board,]);
     }
@@ -197,7 +195,7 @@ class PawnSpec extends ObjectBehavior
 
         $this->placeAt($source);
         $this->intentMoveTo($destination)->shouldBeLike(
-            new AdvancingTwoSquares(
+            new NotIntervened(
                 $source,
                 $destination,
                 new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
@@ -212,7 +210,7 @@ class PawnSpec extends ObjectBehavior
 
         $this->placeAt($source);
         $this->intentMoveTo($destination)->shouldBeLike(
-            new ToAdjoiningSquare(
+            new NotIntervened(
                 $source,
                 $destination,
                 new Forward(Piece\Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
@@ -220,10 +218,10 @@ class PawnSpec extends ObjectBehavior
         );
     }
 
-    function it_may_not_intent_move_to_illegal_position()
+    function it_will_not_intent_move_to_illegal_position()
     {
         $source = CoordinatePair::fromFileAndRank('a', 2);
-        $destination = CoordinatePair::fromFileAndRank('a', 6);
+        $destination = CoordinatePair::fromFileAndRank('b', 6);
 
         $this->placeAt($source);
 
