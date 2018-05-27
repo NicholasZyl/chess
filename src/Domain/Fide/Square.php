@@ -70,7 +70,7 @@ final class Square
         }
         $events = [];
         if ($this->hasPlacedOpponentsPiece($piece->color())) {
-            $events []= new Event\PieceWasCapturedAt($this->placedPiece, $this->coordinates);
+            $events []= new Event\PieceWasCaptured($this->placedPiece, $this->coordinates);
         }
 
         $this->placedPiece = $piece;

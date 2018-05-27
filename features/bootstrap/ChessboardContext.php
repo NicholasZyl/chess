@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Event\PieceWasCapturedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -135,7 +135,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->occurredEvents)->toOccur(new PieceWasCapturedAt($piece, $coordinates));
+        expect($this->occurredEvents)->toOccur(new PieceWasCaptured($piece, $coordinates));
     }
 
     /**

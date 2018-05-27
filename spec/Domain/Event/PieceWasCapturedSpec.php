@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Event;
 
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Event\PieceWasCapturedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
-class PieceWasCapturedAtSpec extends ObjectBehavior
+class PieceWasCapturedSpec extends ObjectBehavior
 {
     function let()
     {
@@ -19,7 +19,7 @@ class PieceWasCapturedAtSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(PieceWasCapturedAt::class);
+        $this->shouldHaveType(PieceWasCaptured::class);
     }
 
     function it_is_event()

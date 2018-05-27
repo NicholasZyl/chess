@@ -7,7 +7,7 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Piece;
 
-final class PieceWasCapturedAt implements Event
+final class PieceWasCaptured implements Event
 {
     /**
      * @var Piece

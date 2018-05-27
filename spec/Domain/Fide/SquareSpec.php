@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Event\PieceWasCapturedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -117,7 +117,7 @@ class SquareSpec extends ObjectBehavior
 
         $piece = Knight::forColor(Piece\Color::white());
 
-        $this->place($piece)->shouldBeLike([new PieceWasCapturedAt($opponentPiece, $this->coordinates), new PieceWasPlacedAt($piece, $this->coordinates),]);
+        $this->place($piece)->shouldBeLike([new PieceWasCaptured($opponentPiece, $this->coordinates), new PieceWasPlacedAt($piece, $this->coordinates),]);
         $this->hasPlacedPiece($piece)->shouldBe(true);
     }
 
