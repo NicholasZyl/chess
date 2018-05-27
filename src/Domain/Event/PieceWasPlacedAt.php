@@ -65,6 +65,7 @@ final class PieceWasPlacedAt implements Event
     public function jsonSerialize()
     {
         return [
+            'event' => 'placed',
             'piece' => $this->piece,
             'placed_at' => $this->at,
         ];

@@ -36,4 +36,14 @@ class PieceWasPlacedAtSpec extends ObjectBehavior
     {
         $this->placedAt()->shouldBeLike(CoordinatePair::fromFileAndRank('a', 3));
     }
+
+    function it_is_same_as_other_event()
+    {
+        $this->equals(new PieceWasPlacedAt(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 3)))->shouldBe(true);
+    }
+
+    function it_is_not_the_same_as_other_event()
+    {
+        $this->equals(new Event\PieceWasCaptured(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 3)))->shouldBe(false);
+    }
 }
