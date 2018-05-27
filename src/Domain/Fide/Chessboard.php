@@ -85,14 +85,6 @@ final class Chessboard implements Board
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool
-    {
-        return $this->getSquareAt($coordinates)->hasPlacedPiece($piece);
-    }
-
-    /**
      * Get square at given coordinates.
      *
      * @param Coordinates $coordinates

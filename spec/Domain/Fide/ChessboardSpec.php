@@ -56,8 +56,6 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->movePiece($source, $destination);
 
-        $this->hasPieceAtCoordinates($whitePawn, $source)->shouldBe(false);
-        $this->hasPieceAtCoordinates($whitePawn, $destination)->shouldBe(true);
         $this->occurredEvents()->shouldBeLike([new PieceWasPlacedAt($whitePawn, $destination),]);
     }
 
@@ -67,8 +65,6 @@ class ChessboardSpec extends ObjectBehavior
 
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
         $this->placePieceAtCoordinates($whitePawn, $coordinates);
-
-        $this->hasPieceAtCoordinates($whitePawn, $coordinates)->shouldBe(true);
     }
 
     function it_knows_when_square_at_given_coordinates_is_unoccupied()
@@ -94,7 +90,6 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($pawn, $position);
 
         $this->pickPieceFromCoordinates($position)->shouldBe($pawn);
-        $this->hasPieceAtCoordinates($pawn, $position)->shouldBe(false);
     }
 
     function it_fails_if_trying_to_pick_piece_from_unoccupied_position()
@@ -115,9 +110,6 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $source);
 
         $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
-
-        $this->hasPieceAtCoordinates($whitePawn, $source)->shouldBe(true);
-        $this->hasPieceAtCoordinates($whitePawn, $destination)->shouldBe(false);
     }
 
     function it_allows_capturing_opponents_piece()
@@ -133,8 +125,6 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->movePiece($source, $destination);
 
-        $this->hasPieceAtCoordinates($blackPawn, $destination)->shouldBe(false);
-        $this->hasPieceAtCoordinates($whiteRook, $destination)->shouldBe(true);
         $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $destination), new PieceWasPlacedAt($whiteRook, $destination),]);
     }
 
@@ -150,7 +140,6 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $destination);
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('movePiece', [$source, $destination,]);
-        $this->hasPieceAtCoordinates($whiteRook, $source)->shouldBe(true);
     }
 
     function it_knows_when_square_at_coordinates_is_occupied_by_opponent_if_piece_has_different_color()

@@ -6,10 +6,12 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MovePrevented;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Move;
@@ -22,7 +24,6 @@ class CastlingSpec extends ObjectBehavior
 {
     function let(Board $board)
     {
-        $board->hasPieceAtCoordinates(Argument::cetera())->willReturn(true);
         $board->isPositionAttackedByOpponentOf(Argument::cetera())->willReturn(false);
         $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
     }
@@ -142,6 +143,7 @@ class CastlingSpec extends ObjectBehavior
 
         $king->color()->willReturn(Color::white());
         $king->__toString()->willReturn('king');
+        $king->isSameAs(Argument::cetera())->willReturn(true);
         $king->mayMove($this->getWrappedObject(), $board)->willThrow(new MoveNotAllowedForPiece($king->getWrappedObject(), $this->getWrappedObject()));
 
         $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
@@ -166,44 +168,13 @@ class CastlingSpec extends ObjectBehavior
 
         $rook->color()->willReturn(Color::white());
         $rook->__toString()->willReturn('rook');
+        $rook->isSameAs(Argument::cetera())->willReturn(true);
         $rook->mayMove($this->getWrappedObject(), $board)->willThrow(new MoveNotAllowedForPiece($rook->getWrappedObject(), $this->getWrappedObject()));
 
         $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
         $board->pickPieceFromCoordinates($rookInitialPosition)->willReturn($rook);
         $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
         $board->placePieceAtCoordinates($rook, $rookInitialPosition)->shouldBeCalled();
-
-        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
-    }
-
-    function it_cannot_be_done_if_there_is_no_king_at_source_position(Board $board)
-    {
-        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
-        $kingDestination = CoordinatePair::fromFileAndRank('g', 1);
-        $this->beConstructedWith(
-            Color::white(),
-            $kingInitialPosition,
-            $kingDestination
-        );
-
-        $board->hasPieceAtCoordinates(King::forColor(Color::white()), $kingInitialPosition)->willReturn(false);
-
-        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
-    }
-
-    function it_cannot_be_done_if_there_is_no_rook_at_expected_position(Board $board)
-    {
-        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 8);
-        $kingDestination = CoordinatePair::fromFileAndRank('g', 8);
-        $rookInitialPosition = CoordinatePair::fromFileAndRank('h', 8);
-        $this->beConstructedWith(
-            Color::black(),
-            $kingInitialPosition,
-            $kingDestination
-        );
-
-        $board->hasPieceAtCoordinates(King::forColor(Color::black()), $kingInitialPosition)->willReturn(true);
-        $board->hasPieceAtCoordinates(Rook::forColor(Color::black()), $rookInitialPosition)->willReturn(false);
 
         $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }
@@ -251,6 +222,58 @@ class CastlingSpec extends ObjectBehavior
 
         $board->isPositionAttackedByOpponentOf($kingInitialPosition, Color::white())->willReturn(false);
         $board->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('g', 1), Color::white())->willReturn(true);
+
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_cannot_be_made_if_no_piece_is_placed_at_kings_square(Board $board)
+    {
+        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
+        $this->beConstructedWith(
+            Color::white(),
+            $kingInitialPosition,
+            CoordinatePair::fromFileAndRank('g', 1)
+        );
+        $board->pickPieceFromCoordinates($kingInitialPosition)->willThrow(new SquareIsUnoccupied($kingInitialPosition));
+        $board->pickPieceFromCoordinates(CoordinatePair::fromFileAndRank('h', 1))->shouldNotBeCalled();
+
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_cannot_be_made_if_no_piece_is_placed_at_rooks_square(Board $board)
+    {
+        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
+        $rookInitialPosition = CoordinatePair::fromFileAndRank('h', 1);
+        $this->beConstructedWith(
+            Color::white(),
+            $kingInitialPosition,
+            CoordinatePair::fromFileAndRank('g', 1)
+        );
+
+        $king = King::forColor(Color::white());
+        $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
+        $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
+        $board->pickPieceFromCoordinates($rookInitialPosition)->willThrow(new SquareIsUnoccupied($rookInitialPosition));
+
+        $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
+    }
+
+    function it_cannot_be_made_if_other_piece_is_placed_at_rooks_square(Board $board)
+    {
+        $kingInitialPosition = CoordinatePair::fromFileAndRank('e', 1);
+        $rookInitialPosition = CoordinatePair::fromFileAndRank('a', 1);
+        $this->beConstructedWith(
+            Color::white(),
+            $kingInitialPosition,
+            CoordinatePair::fromFileAndRank('c', 1)
+        );
+
+        $king = King::forColor(Color::white());
+        $board->pickPieceFromCoordinates($kingInitialPosition)->willReturn($king);
+        $otherPiece = Bishop::forColor(Color::white());
+        $board->pickPieceFromCoordinates($rookInitialPosition)->willReturn($otherPiece);
+        $board->placePieceAtCoordinates($king, $kingInitialPosition)->shouldBeCalled();
+        $board->placePieceAtCoordinates($otherPiece, $rookInitialPosition)->shouldBeCalled();
 
         $this->shouldThrow(new MovePrevented($this->getWrappedObject()))->during('play', [$board,]);
     }

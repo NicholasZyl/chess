@@ -72,18 +72,6 @@ interface Board
     public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool;
 
     /**
-     * Check if same piece is already placed on square at given coordinates.
-     *
-     * @param Piece $piece
-     * @param Coordinates $coordinates
-     *
-     * @throws OutOfBoardCoordinates
-     *
-     * @return bool
-     */
-    public function hasPieceAtCoordinates(Piece $piece, Coordinates $coordinates): bool;
-
-    /**
      * Check if position is attacked by piece owned by opponent of passed color.
      *
      * @param Coordinates $coordinates

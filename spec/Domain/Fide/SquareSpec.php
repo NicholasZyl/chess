@@ -41,7 +41,6 @@ class SquareSpec extends ObjectBehavior
         $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
         $this->peek()->shouldBe($piece);
-        $this->hasPlacedPiece($piece)->shouldBe(true);
     }
 
     function it_knows_when_peeking_at_unoccupied_square()
@@ -62,7 +61,6 @@ class SquareSpec extends ObjectBehavior
         $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
         $this->pick()->shouldBe($piece);
-        $this->hasPlacedPiece($piece)->shouldBe(false);
     }
 
     function it_does_not_allow_to_pick_a_piece_if_none_is_placed()
@@ -77,14 +75,6 @@ class SquareSpec extends ObjectBehavior
         $this->pick();
 
         $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('pick');
-    }
-
-    function it_allows_to_check_if_given_piece_is_placed_on_it()
-    {
-        $piece = Pawn::forColor(Piece\Color::white());
-        $this->place($piece);
-
-        $this->hasPlacedPiece($piece)->shouldBe(true);
     }
 
     function it_disallows_placing_piece_on_square_occupied_with_same_color()
@@ -118,7 +108,6 @@ class SquareSpec extends ObjectBehavior
         $piece = Knight::forColor(Piece\Color::white());
 
         $this->place($piece)->shouldBeLike([new PieceWasCaptured($opponentPiece, $this->coordinates), new PieceWasPlacedAt($piece, $this->coordinates),]);
-        $this->hasPlacedPiece($piece)->shouldBe(true);
     }
 
     function it_knows_that_it_has_placed_opponents_piece_on_it()

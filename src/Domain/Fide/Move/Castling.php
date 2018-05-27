@@ -8,6 +8,7 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MovePrevented;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -101,14 +102,12 @@ final class Castling implements Move
      */
     public function isLegal(Board $board): void
     {
-        if (!$board->hasPieceAtCoordinates(King::forColor($this->color), $this->kingPosition) || !$board->hasPieceAtCoordinates(Rook::forColor($this->color), $this->rookPosition)) {
-            throw new MovePrevented($this);
-        }
         try {
             $this->validateSquaresBetweenKingAndRookAreUnoccupied($board);
         } catch (SquareIsOccupied $squareIsOccupied) {
             throw new MovePrevented($this);
         }
+
         $step = $this->kingPosition;
         if ($board->isPositionAttackedByOpponentOf($step, $this->color)) {
             throw new MovePrevented($this);
@@ -144,15 +143,35 @@ final class Castling implements Move
     {
         $this->isLegal($board);
 
-        $king = $board->pickPieceFromCoordinates($this->kingPosition);
-        $rook = $board->pickPieceFromCoordinates($this->rookPosition);
+        try {
+            $king = $board->pickPieceFromCoordinates($this->kingPosition);
+            $rook = $board->pickPieceFromCoordinates($this->rookPosition);
+        } catch (SquareIsUnoccupied $exception) {
+            if (isset($king)) {
+                $board->placePieceAtCoordinates($king, $this->kingPosition);
+            }
+            if (isset($rook)) {
+                $board->placePieceAtCoordinates($rook, $this->rookPosition);
+            }
+            throw new MovePrevented($this);
+        }
+
+        if (!$king->isSameAs(King::forColor($this->color)) || !$rook->isSameAs(Rook::forColor($this->color))) {
+            $board->placePieceAtCoordinates($king, $this->kingPosition);
+            $board->placePieceAtCoordinates($rook, $this->rookPosition);
+            throw new MovePrevented($this);
+        }
 
         try {
             $king->mayMove($this, $board);
             $rook->mayMove($this, $board);
         } catch (IllegalMove $illegalMove) {
-            $board->placePieceAtCoordinates($king, $this->kingPosition);
-            $board->placePieceAtCoordinates($rook, $this->rookPosition);
+            if (isset($king)) {
+                $board->placePieceAtCoordinates($king, $this->kingPosition);
+            }
+            if (isset($rook)) {
+                $board->placePieceAtCoordinates($rook, $this->rookPosition);
+            }
             throw new MovePrevented($this);
         }
 

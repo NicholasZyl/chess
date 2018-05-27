@@ -81,18 +81,6 @@ final class Square
     }
 
     /**
-     * Check if same piece is already placed on the square.
-     *
-     * @param Piece $piece
-     *
-     * @return bool
-     */
-    public function hasPlacedPiece(Piece $piece): bool
-    {
-        return $this->placedPiece !== null && $this->placedPiece->isSameAs($piece);
-    }
-
-    /**
      * Pick a piece from the square.
      *
      * @throws SquareIsUnoccupied
