@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
@@ -55,7 +55,7 @@ final class Knight extends Piece
                 $destination,
                 new LShaped()
             );
-        } catch (InvalidDirection $exception) {
+        } catch (CoordinatesNotReachable $exception) {
             throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
@@ -67,7 +67,7 @@ class CastlingSpec extends ObjectBehavior
             $destination
         );
 
-        $this->shouldThrow(new InvalidDirection($source, $destination, new AlongRank()))->duringInstantiation();
+        $this->shouldThrow(new CoordinatesNotReachable($source, $destination, new AlongRank()))->duringInstantiation();
     }
 
     function it_moves_king_two_squares_towards_rook_and_that_rook_to_the_square_king_crossed_queenside(Board $board)

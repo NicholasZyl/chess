@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
@@ -64,7 +64,7 @@ final class Castling implements Move
     {
         $this->direction = new AlongRank();
         if (!$this->direction->areOnSame($source, $destination)) {
-            throw new InvalidDirection($source, $destination, $this->direction);
+            throw new CoordinatesNotReachable($source, $destination, $this->direction);
         }
 
         $this->color = $color;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
@@ -42,7 +42,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $direction = new LShaped();
         $this->beConstructedWith($source, $destination, $direction);
 
-        $this->shouldThrow(new InvalidDirection($source, $destination, $direction))->duringInstantiation();
+        $this->shouldThrow(new CoordinatesNotReachable($source, $destination, $direction))->duringInstantiation();
     }
 
     function it_knows_source_and_destination()

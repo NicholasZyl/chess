@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
@@ -35,12 +35,12 @@ final class OverOtherPieces implements Move
      * @param Coordinates $destination
      * @param Board\Direction $direction
      *
-     * @throws InvalidDirection
+     * @throws CoordinatesNotReachable
      */
     public function __construct(Coordinates $source, Coordinates $destination, Board\Direction $direction)
     {
         if (!$direction->areOnSame($source, $destination)) {
-            throw new InvalidDirection($source, $destination, $direction);
+            throw new CoordinatesNotReachable($source, $destination, $direction);
         }
 
         $this->source = $source;

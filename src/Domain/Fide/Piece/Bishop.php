@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -55,7 +55,7 @@ final class Bishop extends Piece
                 $destination,
                 new AlongDiagonal()
             );
-        } catch (InvalidDirection $invalidDirection) {
+        } catch (CoordinatesNotReachable $invalidDirection) {
             throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
 use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
@@ -39,7 +39,7 @@ class ForwardSpec extends ObjectBehavior
         $from = CoordinatePair::fromFileAndRank('a', 2);
         $to = CoordinatePair::fromFileAndRank('b', 1);
 
-        $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
+        $this->shouldThrow(new CoordinatesNotReachable($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
     }
 
     function it_calculates_coordinates_to_next_adjacent_lower_rank_for_black()
@@ -59,7 +59,7 @@ class ForwardSpec extends ObjectBehavior
         $from = CoordinatePair::fromFileAndRank('a', 1);
         $to = CoordinatePair::fromFileAndRank('a', 2);
 
-        $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
+        $this->shouldThrow(new CoordinatesNotReachable($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
     }
 
     function it_is_same_direction_if_forward_along_same_direction()

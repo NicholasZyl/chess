@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 
 final class AlongRank implements Direction
@@ -23,10 +23,9 @@ final class AlongRank implements Direction
      */
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
-        if (!$this->areOnSame($from, $to)) {
-            throw new InvalidDirection($from, $to, $this);
+        if ($this->distanceBetween($from, $to) === 0) {
+            throw new CoordinatesNotReachable($from, $to, $this);
         }
-
         $isTowardsKingside = ord($from->file()) < ord($to->file());
 
         return CoordinatePair::fromFileAndRank(
@@ -40,10 +39,6 @@ final class AlongRank implements Direction
      */
     public function distanceBetween(Coordinates $from, Coordinates $to): int
     {
-        if (!$this->areOnSame($from, $to)) {
-            throw new InvalidDirection($from, $to, $this);
-        }
-
         return abs(ord($to->file()) - ord($from->file()));
     }
 

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Board;
 
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 
 interface Direction
 {
@@ -23,7 +23,7 @@ interface Direction
      * @param Coordinates $from
      * @param Coordinates $to
      *
-     * @throws InvalidDirection
+     * @throws CoordinatesNotReachable
      *
      * @return Coordinates
      */
@@ -35,7 +35,7 @@ interface Direction
      * @param Coordinates $from
      * @param Coordinates $to
      *
-     * @throws InvalidDirection
+     * @throws CoordinatesNotReachable
      *
      * @return int
      */

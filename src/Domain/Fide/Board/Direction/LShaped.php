@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 
 final class LShaped implements Direction
 {
@@ -58,7 +58,7 @@ final class LShaped implements Direction
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
         if (!$this->areOnSame($from, $to)) {
-            throw new InvalidDirection($from, $to, $this);
+            throw new CoordinatesNotReachable($from, $to, $this);
         }
 
         return $to;
@@ -70,7 +70,7 @@ final class LShaped implements Direction
     public function distanceBetween(Coordinates $from, Coordinates $to): int
     {
         if (!$this->areOnSame($from, $to)) {
-            throw new InvalidDirection($from, $to, $this);
+            throw new CoordinatesNotReachable($from, $to, $this);
         }
 
         return self::DISTANCE_TO_THE_NEAREST_COORDINATES;

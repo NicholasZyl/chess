@@ -7,10 +7,10 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
 
-final class InvalidDirection extends BoardException
+final class CoordinatesNotReachable extends BoardException
 {
     /**
-     * Create exception for two coordinates not on same direction.
+     * Create exception for coordinates that are not reachable along given direction.
      *
      * @param Coordinates $from
      * @param Coordinates $to
@@ -18,6 +18,6 @@ final class InvalidDirection extends BoardException
      */
     public function __construct(Coordinates $from, Coordinates $to, Direction $direction)
     {
-        parent::__construct(sprintf('%s and %s are not %s.', $from, $to, $direction));
+        parent::__construct(sprintf('%s is not reachable from %s %s', $to, $from, $direction));
     }
 }

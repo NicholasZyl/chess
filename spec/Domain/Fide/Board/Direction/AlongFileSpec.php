@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
 use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
@@ -33,12 +33,20 @@ class AlongFileSpec extends ObjectBehavior
         $this->nextCoordinatesTowards($from, $to)->shouldBeLike(CoordinatePair::fromFileAndRank('a', 1));
     }
 
-    function it_cannot_calculate_next_coordinates_if_not_on_same_file()
+    function it_calculates_next_coordinates_even_if_not_on_same_file()
     {
         $from = CoordinatePair::fromFileAndRank('a', 2);
         $to = CoordinatePair::fromFileAndRank('b', 1);
 
-        $this->shouldThrow(new InvalidDirection($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
+        $this->nextCoordinatesTowards($from, $to)->shouldBeLike(CoordinatePair::fromFileAndRank('a', 1));
+    }
+
+    function it_cannot_calculate_next_coordinates_if_already_on_same_rank()
+    {
+        $from = CoordinatePair::fromFileAndRank('a', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 2);
+
+        $this->shouldThrow(new CoordinatesNotReachable($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
     }
 
     function it_is_same_direction_if_along_file()

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
@@ -75,7 +75,7 @@ final class King extends Piece
                 $destination,
                 $this->position->directionTo($destination)
             );
-        } catch (InvalidDirection | UnknownDirection $exception) {
+        } catch (CoordinatesNotReachable | UnknownDirection $exception) {
             throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
     }

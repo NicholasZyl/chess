@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Board\Direction;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Forward implements Direction
@@ -45,7 +45,7 @@ final class Forward implements Direction
     public function nextCoordinatesTowards(Coordinates $from, Coordinates $to): Coordinates
     {
         if (!$this->isForward($from, $to)) {
-            throw new InvalidDirection($from, $to, $this);
+            throw new CoordinatesNotReachable($from, $to, $this);
         }
 
         return $this->direction->nextCoordinatesTowards($from, $to);

@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\Board\InvalidDirection;
+use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
@@ -114,7 +114,7 @@ final class Pawn extends Piece
                     new Forward($this->color(), $direction)
                 );
             }
-        } catch (InvalidDirection | UnknownDirection $exception) {
+        } catch (CoordinatesNotReachable | UnknownDirection $exception) {
             throw new MoveToIllegalPosition($this, $this->position, $destination);
         }
 
