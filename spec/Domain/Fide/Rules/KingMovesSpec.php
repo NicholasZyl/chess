@@ -16,6 +16,7 @@ use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 use PhpSpec\ObjectBehavior;
 
 class KingMovesSpec extends ObjectBehavior
@@ -33,6 +34,11 @@ class KingMovesSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(KingMoves::class);
+    }
+
+    function it_is_piece_moves_rule()
+    {
+        $this->shouldBeAnInstanceOf(PieceMoves::class);
     }
 
     function it_is_applicable_for_king_piece()
