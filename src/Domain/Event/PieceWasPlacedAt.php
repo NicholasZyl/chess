@@ -62,7 +62,7 @@ final class PieceWasPlacedAt implements Event
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'event' => 'placed',

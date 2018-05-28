@@ -62,7 +62,7 @@ final class PieceWasCaptured implements Event
     /**
      * {@inheritdoc}
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'event' => 'captured',

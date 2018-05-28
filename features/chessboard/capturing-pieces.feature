@@ -29,3 +29,14 @@ Feature: The capture of opponent's piece
     When I move piece from d4 to e5
     Then black pawn on e5 should be captured
     And white pawn should be placed on e5
+
+  Scenario: A pawn occupying a square on the same rank as and on an adjacent file to an opponent’s pawn which has just advanced two squares in one move from its original square may capture this opponent’s pawn as though the latter had been moved only one square - such capture is called an 'en passant' capture
+    Given there is a chessboard
+    And following pieces are placed on it
+      | piece      | location |
+      | white pawn | d5       |
+      | black pawn | e7       |
+    And opponent moved piece from e7 to e5
+    When I move piece from d5 to e6
+    Then black pawn on e5 should be captured
+    And white pawn should be placed on e6
