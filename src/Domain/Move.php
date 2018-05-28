@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
 interface Move
@@ -57,6 +58,7 @@ interface Move
      *
      * @param Board $board
      *
+     * @throws SquareIsUnoccupied
      * @throws IllegalMove
      *
      * @return void

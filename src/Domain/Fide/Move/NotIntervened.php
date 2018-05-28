@@ -12,7 +12,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Move;
 
-class NotIntervened implements Move
+final class NotIntervened implements Move
 {
     /**
      * @var Coordinates
