@@ -5,33 +5,33 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
-use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
-use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
+use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
+use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 use PhpSpec\ObjectBehavior;
 
-class BishopMovesSpec extends ObjectBehavior
+class KnightMovesSpec extends ObjectBehavior
 {
     /**
-     * @var Bishop
+     * @var Knight
      */
-    private $bishop;
+    private $knight;
 
     function let()
     {
-        $this->bishop = Bishop::forColor(Color::white());
+        $this->knight = Knight::forColor(Color::white());
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(BishopMoves::class);
+        $this->shouldHaveType(KnightMoves::class);
     }
 
     function it_is_piece_moves_rule()
@@ -39,25 +39,25 @@ class BishopMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(PieceMoves::class);
     }
 
-    function it_is_applicable_for_bishop()
+    function it_is_applicable_for_knight()
     {
-        $this->areApplicableFor($this->bishop)->shouldBe(true);
+        $this->areApplicableFor($this->knight)->shouldBe(true);
     }
 
     function it_is_not_applicable_for_other_pieces()
     {
-        $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
+        $this->areApplicableFor(Queen::forColor(Color::white()))->shouldBe(false);
     }
 
-    function it_verifies_as_valid_move_to_any_square_along_a_diagonal()
+    function it_verifies_as_valid_move_to_the_nearest_square_over_other_pieces()
     {
-        $move = new NotIntervened(
+        $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 3),
-            new AlongDiagonal()
+            CoordinatePair::fromFileAndRank('b', 3),
+            new LShaped()
         );
 
-        $this->verify($this->bishop, $move);
+        $this->verify($this->knight, $move);
     }
 
     function it_verifies_as_invalid_move_along_rank()
@@ -68,7 +68,7 @@ class BishopMovesSpec extends ObjectBehavior
             new AlongRank()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('verify', [$this->bishop, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('verify', [$this->knight, $move,]);
     }
 
     function it_verifies_as_invalid_move_along_file()
@@ -79,17 +79,6 @@ class BishopMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('verify', [$this->bishop, $move,]);
-    }
-
-    function it_verifies_as_invalid_move_over_any_intervening_pieces()
-    {
-        $move = new OverOtherPieces(
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 2),
-            new AlongDiagonal()
-        );
-
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('verify', [$this->bishop, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('verify', [$this->knight, $move,]);
     }
 }

@@ -41,7 +41,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(PieceMoves::class);
     }
 
-    function it_is_applicable_for_king_piece()
+    function it_is_applicable_for_king()
     {
         $this->areApplicableFor($this->king)->shouldBe(true);
     }
