@@ -19,6 +19,7 @@ interface Board
      * @param Coordinates $coordinates
      *
      * @throws OutOfBoardCoordinates
+     * @throws SquareIsOccupied
      *
      * @return void
      */
@@ -29,8 +30,8 @@ interface Board
      *
      * @param Coordinates $coordinates
      *
-     * @throws SquareIsUnoccupied
      * @throws OutOfBoardCoordinates
+     * @throws SquareIsUnoccupied
      *
      * @return Piece
      */
@@ -42,8 +43,9 @@ interface Board
      * @param Coordinates $source
      * @param Coordinates $destination
      *
-     * @throws IllegalMove
      * @throws OutOfBoardCoordinates
+     * @throws SquareIsUnoccupied
+     * @throws IllegalMove
      *
      * @return void
      */
@@ -54,8 +56,8 @@ interface Board
      *
      * @param Coordinates $position
      *
-     * @throws SquareIsOccupied
      * @throws OutOfBoardCoordinates
+     * @throws SquareIsOccupied
      *
      * @return void
      */
@@ -67,6 +69,8 @@ interface Board
      * @param Coordinates $coordinates
      * @param Color $pieceColor
      *
+     * @throws OutOfBoardCoordinates
+     *
      * @return bool
      */
     public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool;
@@ -76,6 +80,8 @@ interface Board
      *
      * @param Coordinates $coordinates
      * @param Color $color
+     *
+     * @throws OutOfBoardCoordinates
      *
      * @return bool
      */

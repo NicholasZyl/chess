@@ -183,4 +183,11 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('a', 2), Piece\Color::white())->shouldBe(false);
     }
+
+    function it_cannot_check_if_square_out_of_borad_is_attacked()
+    {
+        $coordinates = CoordinatePair::fromFileAndRank('z', 9);
+
+        $this->shouldThrow(new OutOfBoardCoordinates($coordinates))->during('isPositionAttackedByOpponentOf', [$coordinates, Piece\Color::white()]);
+    }
 }

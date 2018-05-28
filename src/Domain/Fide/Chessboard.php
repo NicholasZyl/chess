@@ -85,6 +85,22 @@ final class Chessboard implements Board
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool
+    {
+        $this->areCoordinatesOnBoard($coordinates);
+
+        foreach ($this->grid as $square) {
+            if ($square->hasPlacedOpponentsPiece($color) && $square->peek()->isAttacking($coordinates, $this)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get square at given coordinates.
      *
      * @param Coordinates $coordinates
@@ -93,25 +109,25 @@ final class Chessboard implements Board
      */
     private function getSquareAt(Coordinates $coordinates): Square
     {
-        if (!array_key_exists((string)$coordinates, $this->grid)) {
-            throw new OutOfBoardCoordinates($coordinates);
-        }
+        $this->areCoordinatesOnBoard($coordinates);
 
         return $this->grid[(string)$coordinates];
     }
 
     /**
-     * {@inheritdoc}
+     * Check if coordinates are valid for the chessboard.
+     *
+     * @param Coordinates $coordinates
+     *
+     * @throws OutOfBoardCoordinates
+     *
+     * @return void
      */
-    public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool
+    private function areCoordinatesOnBoard(Coordinates $coordinates): void
     {
-        foreach ($this->grid as $square) {
-            if ($square->hasPlacedOpponentsPiece($color) && $square->peek()->isAttacking($coordinates, $this)) {
-                return true;
-            }
+        if (!array_key_exists((string)$coordinates, $this->grid)) {
+            throw new OutOfBoardCoordinates($coordinates);
         }
-
-        return false;
     }
 
     /**
