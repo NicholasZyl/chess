@@ -57,7 +57,7 @@ class KnightMovesSpec extends ObjectBehavior
             new LShaped()
         );
 
-        $this->verify($this->knight, $move);
+        $this->mayMove($this->knight, $move);
     }
 
     function it_verifies_as_invalid_move_along_rank()
@@ -68,7 +68,7 @@ class KnightMovesSpec extends ObjectBehavior
             new AlongRank()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('verify', [$this->knight, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('mayMove', [$this->knight, $move,]);
     }
 
     function it_verifies_as_invalid_move_along_file()
@@ -79,6 +79,6 @@ class KnightMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('verify', [$this->knight, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('mayMove', [$this->knight, $move,]);
     }
 }

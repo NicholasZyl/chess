@@ -59,7 +59,7 @@ class RookMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->verify($this->rook, $move);
+        $this->mayMove($this->rook, $move);
     }
 
     function it_verifies_as_valid_move_to_any_square_along_rank()
@@ -70,7 +70,7 @@ class RookMovesSpec extends ObjectBehavior
             new AlongRank()
         );
 
-        $this->verify($this->rook, $move);
+        $this->mayMove($this->rook, $move);
     }
 
     function it_verifies_as_invalid_move_to_adjoining_square_along_diagonal()
@@ -81,7 +81,7 @@ class RookMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->rook, $move))->during('verify', [$this->rook, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->rook, $move))->during('mayMove', [$this->rook, $move,]);
     }
 
     function it_verifies_as_invalid_move_over_any_intervening_pieces()
@@ -92,7 +92,7 @@ class RookMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->rook, $move))->during('verify', [$this->rook, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->rook, $move))->during('mayMove', [$this->rook, $move,]);
     }
 
     function it_verifies_as_valid_move_by_castling()
@@ -105,7 +105,7 @@ class RookMovesSpec extends ObjectBehavior
             $destination
         );
 
-        $this->verify($this->rook, $move);
+        $this->mayMove($this->rook, $move);
     }
 
     function it_verifies_as_invalid_move_by_castling_when_this_rook_has_already_moved()
@@ -125,7 +125,7 @@ class RookMovesSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->rook, $move))->during('verify', [$this->rook, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->rook, $move))->during('mayMove', [$this->rook, $move,]);
     }
 
     function it_verifies_as_valid_move_by_castling_if_another_rook_has_moved()
@@ -145,7 +145,7 @@ class RookMovesSpec extends ObjectBehavior
             )
         );
 
-        $this->verify($this->rook, $move);
+        $this->mayMove($this->rook, $move);
     }
 
     function it_verifies_as_valid_move_by_castling_if_opponents_rook_has_moved()
@@ -165,6 +165,6 @@ class RookMovesSpec extends ObjectBehavior
             )
         );
 
-        $this->verify($this->rook, $move);
+        $this->mayMove($this->rook, $move);
     }
 }

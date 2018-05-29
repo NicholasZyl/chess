@@ -59,7 +59,7 @@ class KingMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->verify($this->king, $move);
+        $this->mayMove($this->king, $move);
     }
 
     function it_verifies_as_valid_move_to_adjoining_square_along_rank()
@@ -70,7 +70,7 @@ class KingMovesSpec extends ObjectBehavior
             new AlongRank()
         );
 
-        $this->verify($this->king, $move);
+        $this->mayMove($this->king, $move);
     }
 
     function it_verifies_as_valid_move_to_adjoining_square_along_diagonal()
@@ -81,7 +81,7 @@ class KingMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->verify($this->king, $move);
+        $this->mayMove($this->king, $move);
     }
 
     function it_verifies_as_invalid_move_over_any_intervening_pieces()
@@ -92,7 +92,7 @@ class KingMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('verify', [$this->king, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
     }
 
     function it_verifies_as_invalid_move_further_than_to_adjoining_square()
@@ -103,7 +103,7 @@ class KingMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('verify', [$this->king, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
     }
 
     function it_verifies_as_valid_move_by_castling()
@@ -116,7 +116,7 @@ class KingMovesSpec extends ObjectBehavior
             $destination
         );
 
-        $this->verify($this->king, $move);
+        $this->mayMove($this->king, $move);
     }
 
     function it_verifies_as_invalid_move_by_castling_when_king_has_already_moved()
@@ -136,7 +136,7 @@ class KingMovesSpec extends ObjectBehavior
             )
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('verify', [$this->king, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
     }
 
     function it_verifies_as_valid_move_by_castling_if_opponents_king_has_moved()
@@ -156,6 +156,6 @@ class KingMovesSpec extends ObjectBehavior
             )
         );
 
-        $this->verify($this->king, $move);
+        $this->mayMove($this->king, $move);
     }
 }

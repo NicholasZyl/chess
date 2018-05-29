@@ -57,7 +57,7 @@ class BishopMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->verify($this->bishop, $move);
+        $this->mayMove($this->bishop, $move);
     }
 
     function it_verifies_as_invalid_move_along_rank()
@@ -68,7 +68,7 @@ class BishopMovesSpec extends ObjectBehavior
             new AlongRank()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('verify', [$this->bishop, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
     }
 
     function it_verifies_as_invalid_move_along_file()
@@ -79,7 +79,7 @@ class BishopMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('verify', [$this->bishop, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
     }
 
     function it_verifies_as_invalid_move_over_any_intervening_pieces()
@@ -90,6 +90,6 @@ class BishopMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('verify', [$this->bishop, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
     }
 }

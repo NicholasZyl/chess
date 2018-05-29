@@ -25,7 +25,7 @@ final class QueenMoves implements PieceMoves
     /**
      * {@inheritdoc}
      */
-    public function verify(Piece $piece, Move $move): void
+    public function mayMove(Piece $piece, Move $move): void
     {
         if (!$move instanceof NotIntervened || $move->inDirection(new LShaped())) {
             throw new MoveNotAllowedForPiece($piece, $move);

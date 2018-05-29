@@ -20,7 +20,7 @@ interface PieceMoves
     public function areApplicableFor(Piece $piece): bool;
 
     /**
-     * Verify that move for given piece is legal.
+     * Verify that piece may do given move.
      *
      * @param Piece $piece
      * @param Move $move
@@ -29,7 +29,7 @@ interface PieceMoves
      *
      * @return void
      */
-    public function verify(Piece $piece, Move $move): void;
+    public function mayMove(Piece $piece, Move $move): void;
 
     /**
      * Apply rule after event had happened.

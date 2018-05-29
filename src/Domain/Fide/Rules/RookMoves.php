@@ -37,7 +37,7 @@ final class RookMoves implements PieceMoves
     /**
      * {@inheritdoc}
      */
-    public function verify(Piece $piece, Move $move): void
+    public function mayMove(Piece $piece, Move $move): void
     {
         if (!$move instanceof NotIntervened && (!$move instanceof Castling || $this->movedRooks->contains($piece)) || !($move->inDirection(new AlongFile()) || $move->inDirection(new AlongRank()))) {
             throw new MoveNotAllowedForPiece($piece, $move);

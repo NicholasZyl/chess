@@ -57,7 +57,7 @@ class QueenMovesSpec extends ObjectBehavior
             new AlongFile()
         );
 
-        $this->verify($this->queen, $move);
+        $this->mayMove($this->queen, $move);
     }
 
     function it_verifies_as_valid_move_to_any_square_along_rank()
@@ -68,7 +68,7 @@ class QueenMovesSpec extends ObjectBehavior
             new AlongRank()
         );
 
-        $this->verify($this->queen, $move);
+        $this->mayMove($this->queen, $move);
     }
 
     function it_verifies_as_valid_move_to_any_square_along_diagonal()
@@ -79,7 +79,7 @@ class QueenMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->verify($this->queen, $move);
+        $this->mayMove($this->queen, $move);
     }
 
     function it_verifies_as_invalid_move_over_any_intervening_pieces()
@@ -90,6 +90,6 @@ class QueenMovesSpec extends ObjectBehavior
             new AlongDiagonal()
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->queen, $move))->during('verify', [$this->queen, $move,]);
+        $this->shouldThrow(new MoveNotAllowedForPiece($this->queen, $move))->during('mayMove', [$this->queen, $move,]);
     }
 }

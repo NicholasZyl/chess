@@ -25,7 +25,7 @@ final class KnightMoves implements PieceMoves
     /**
      * {@inheritdoc}
      */
-    public function verify(Piece $piece, Move $move): void
+    public function mayMove(Piece $piece, Move $move): void
     {
         if (!$move instanceof OverOtherPieces || !$move->inDirection(new LShaped())) {
             throw new MoveNotAllowedForPiece($piece, $move);

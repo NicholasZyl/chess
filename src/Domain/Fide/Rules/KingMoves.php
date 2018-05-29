@@ -33,7 +33,7 @@ final class KingMoves implements PieceMoves
     /**
      * {@inheritdoc}
      */
-    public function verify(Piece $piece, Move $move): void
+    public function mayMove(Piece $piece, Move $move): void
     {
         if (!($move instanceof NotIntervened && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)) && (!$move instanceof Castling || in_array($piece, $this->movedKings)) || $move->inDirection(new LShaped())) {
             throw new MoveNotAllowedForPiece($piece, $move);
