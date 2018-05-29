@@ -51,7 +51,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
-    function it_verifies_as_valid_move_to_adjoining_square_along_file()
+    function it_may_move_to_adjoining_square_along_file()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -62,7 +62,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->mayMove($this->king, $move);
     }
 
-    function it_verifies_as_valid_move_to_adjoining_square_along_rank()
+    function it_may_move_to_adjoining_square_along_rank()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -73,7 +73,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->mayMove($this->king, $move);
     }
 
-    function it_verifies_as_valid_move_to_adjoining_square_along_diagonal()
+    function it_may_move_to_adjoining_square_along_diagonal()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -84,7 +84,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->mayMove($this->king, $move);
     }
 
-    function it_verifies_as_invalid_move_over_any_intervening_pieces()
+    function it_may_not_move_over_any_intervening_pieces()
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -95,7 +95,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
     }
 
-    function it_verifies_as_invalid_move_further_than_to_adjoining_square()
+    function it_may_not_move_further_than_to_adjoining_square()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -106,7 +106,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
     }
 
-    function it_verifies_as_valid_move_by_castling()
+    function it_may_move_by_castling()
     {
         $source = CoordinatePair::fromFileAndRank('f', 1);
         $destination = CoordinatePair::fromFileAndRank('d', 1);
@@ -119,7 +119,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->mayMove($this->king, $move);
     }
 
-    function it_verifies_as_invalid_move_by_castling_when_king_has_already_moved()
+    function it_may_not_move_by_castling_when_king_has_already_moved()
     {
         $source = CoordinatePair::fromFileAndRank('f', 1);
         $destination = CoordinatePair::fromFileAndRank('d', 1);
@@ -139,7 +139,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
     }
 
-    function it_verifies_as_valid_move_by_castling_if_opponents_king_has_moved()
+    function it_may_move_by_castling_if_opponents_king_has_moved()
     {
         $source = CoordinatePair::fromFileAndRank('f', 1);
         $destination = CoordinatePair::fromFileAndRank('d', 1);

@@ -49,7 +49,7 @@ class QueenMovesSpec extends ObjectBehavior
         $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
-    function it_verifies_as_valid_move_to_any_square_along_file()
+    function it_may_move_to_any_square_along_file()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -60,7 +60,7 @@ class QueenMovesSpec extends ObjectBehavior
         $this->mayMove($this->queen, $move);
     }
 
-    function it_verifies_as_valid_move_to_any_square_along_rank()
+    function it_may_move_to_any_square_along_rank()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('g', 1),
@@ -71,7 +71,7 @@ class QueenMovesSpec extends ObjectBehavior
         $this->mayMove($this->queen, $move);
     }
 
-    function it_verifies_as_valid_move_to_any_square_along_diagonal()
+    function it_may_move_to_any_square_along_diagonal()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('d', 3),
@@ -82,7 +82,7 @@ class QueenMovesSpec extends ObjectBehavior
         $this->mayMove($this->queen, $move);
     }
 
-    function it_verifies_as_invalid_move_over_any_intervening_pieces()
+    function it_may_not_move_over_any_intervening_pieces()
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),

@@ -49,7 +49,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
-    function it_verifies_as_valid_move_to_any_square_along_a_diagonal()
+    function it_may_move_to_any_square_along_a_diagonal()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -60,7 +60,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->mayMove($this->bishop, $move);
     }
 
-    function it_verifies_as_invalid_move_along_rank()
+    function it_may_not_move_along_rank()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -71,7 +71,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
     }
 
-    function it_verifies_as_invalid_move_along_file()
+    function it_may_not_move_along_file()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('c', 1),
@@ -82,7 +82,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
     }
 
-    function it_verifies_as_invalid_move_over_any_intervening_pieces()
+    function it_may_not_move_over_any_intervening_pieces()
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),

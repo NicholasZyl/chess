@@ -49,7 +49,7 @@ class KnightMovesSpec extends ObjectBehavior
         $this->areApplicableFor(Queen::forColor(Color::white()))->shouldBe(false);
     }
 
-    function it_verifies_as_valid_move_to_the_nearest_square_over_other_pieces()
+    function it_may_move_to_the_nearest_square_over_other_pieces()
     {
         $move = new OverOtherPieces(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -60,7 +60,7 @@ class KnightMovesSpec extends ObjectBehavior
         $this->mayMove($this->knight, $move);
     }
 
-    function it_verifies_as_invalid_move_along_rank()
+    function it_may_not_move_along_rank()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('a', 1),
@@ -71,7 +71,7 @@ class KnightMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('mayMove', [$this->knight, $move,]);
     }
 
-    function it_verifies_as_invalid_move_along_file()
+    function it_may_not_move_along_file()
     {
         $move = new NotIntervened(
             CoordinatePair::fromFileAndRank('c', 1),
