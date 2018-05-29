@@ -18,9 +18,17 @@ final class KingMoves implements PieceMoves
     private const MOVE_TO_ADJOINING_SQUARE = 1;
 
     /**
-     * @var King[]
+     * @var \SplObjectStorage
      */
-    private $movedKings = [];
+    private $movedKings;
+
+    /**
+     * Create King Moves rules.
+     */
+    public function __construct()
+    {
+        $this->movedKings = new \SplObjectStorage();
+    }
 
     /**
      * {@inheritdoc}
@@ -35,7 +43,7 @@ final class KingMoves implements PieceMoves
      */
     public function mayMove(Piece $piece, Move $move): void
     {
-        if (!($move instanceof NotIntervened && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)) && (!$move instanceof Castling || in_array($piece, $this->movedKings)) || $move->inDirection(new LShaped())) {
+        if (!($move instanceof NotIntervened && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)) && (!$move instanceof Castling || $this->movedKings->contains($piece)) || $move->inDirection(new LShaped())) {
             throw new MoveNotAllowedForPiece($piece, $move);
         }
     }
@@ -46,7 +54,7 @@ final class KingMoves implements PieceMoves
     public function applyAfter(Event $event): void
     {
         if ($event instanceof Event\PieceWasPlacedAt && $event->piece() instanceof King) {
-            $this->movedKings []= $event->piece();
+            $this->movedKings->attach($event->piece());
         }
     }
 }

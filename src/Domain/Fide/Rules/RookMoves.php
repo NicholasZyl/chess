@@ -21,6 +21,9 @@ final class RookMoves implements PieceMoves
      */
     private $movedRooks;
 
+    /**
+     * Create Rook Moves rules.
+     */
     public function __construct()
     {
         $this->movedRooks = new \SplObjectStorage();
