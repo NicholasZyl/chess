@@ -50,7 +50,8 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function thereIsAChessboard()
     {
-        $this->chessboard = new Chessboard();
+        $laws = new \NicholasZyl\Chess\Domain\Fide\LawsOfChess();
+        $this->chessboard = new Chessboard($laws->rules());
     }
 
     /**

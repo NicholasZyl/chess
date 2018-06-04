@@ -54,16 +54,17 @@ interface Move
     public function isLegal(Board $board): void;
 
     /**
-     * Play the move on the board.
+     * Play the move on the board if allowed according to rules.
      *
      * @param Board $board
+     * @param Rules $rules
      *
      * @throws SquareIsUnoccupied
      * @throws IllegalMove
      *
      * @return Event[]
      */
-    public function play(Board $board): array;
+    public function play(Board $board, Rules $rules): array;
 
     /**
      * Get string representation of the move.

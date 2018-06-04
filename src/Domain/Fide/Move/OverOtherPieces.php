@@ -11,6 +11,7 @@ use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class OverOtherPieces implements Move
 {
@@ -92,11 +93,11 @@ final class OverOtherPieces implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): array
+    public function play(Board $board, Rules $rules): array
     {
         $piece = $board->pickPieceFromCoordinates($this->source);
         try {
-            $piece->mayMove($this, $board);
+            $rules->mayMove($piece, $this);
             $board->placePieceAtCoordinates($piece, $this->destination);
 
             return [new PieceWasMoved($piece, $this->source, $this->destination),];

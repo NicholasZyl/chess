@@ -8,8 +8,8 @@ use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
-use NicholasZyl\Chess\Domain\Fide\Piece\Piece;
 use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 
 final class BishopMoves implements PieceMoves

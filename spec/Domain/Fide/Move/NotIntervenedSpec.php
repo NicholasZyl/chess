@@ -18,14 +18,17 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules;
+use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class NotIntervenedSpec extends ObjectBehavior
 {
-    function let(Board $board)
+    function let(Board $board, PieceMoves $pieceMoves)
     {
         $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
+        $pieceMoves->areApplicableFor(Argument::any())->willReturn(true);
     }
 
     function it_is_chess_move()
@@ -79,7 +82,7 @@ class NotIntervenedSpec extends ObjectBehavior
         $this->inDirection(new AlongFile())->shouldBe(false);
     }
 
-    function it_moves_piece_from_one_square_to_another(Board $board)
+    function it_moves_piece_from_one_square_to_another(Board $board, PieceMoves $pieceMoves)
     {
         $bishop = Bishop::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -89,14 +92,16 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($bishop);
         $board->placePieceAtCoordinates($bishop, $destination)->shouldBeCalled();
 
-        $this->play($board)->shouldBeLike(
+        $pieceMoves->mayMove($bishop, $this->getWrappedObject())->shouldBeCalled();
+
+        $this->play($board, new Rules([$pieceMoves->getWrappedObject(),]))->shouldBeLike(
             [
                 new PieceWasMoved($bishop, $source, $destination),
             ]
         );
     }
 
-    function it_does_not_allow_moving_over_intervening_pieces(Board $board)
+    function it_does_not_allow_moving_over_intervening_pieces(Board $board, PieceMoves $pieceMoves)
     {
         $bishop = Bishop::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -108,10 +113,12 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->verifyThatPositionIsUnoccupied($interveningPiecePosition)->willThrow(new SquareIsOccupied($interveningPiecePosition));
         $board->placePieceAtCoordinates($bishop, $destination)->shouldNotBeCalled();
 
-        $this->shouldThrow(new MoveOverInterveningPiece($interveningPiecePosition))->during('play', [$board,]);
+        $pieceMoves->mayMove($bishop, $this->getWrappedObject())->shouldNotBeCalled();
+
+        $this->shouldThrow(new MoveOverInterveningPiece($interveningPiecePosition))->during('play', [$board, new Rules([$pieceMoves->getWrappedObject(),]),]);
     }
 
-    function it_does_not_allow_move_that_is_not_possible_for_given_piece(Board $board)
+    function it_does_not_allow_move_that_is_not_possible_for_given_piece(Board $board, PieceMoves $pieceMoves)
     {
         $pawn = Pawn::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -121,10 +128,13 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($pawn);
         $board->placePieceAtCoordinates($pawn, $source)->shouldBeCalled();
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($pawn, $this->getWrappedObject()))->during('play', [$board,]);
+        $moveNotAllowedForPiece = new MoveNotAllowedForPiece($pawn, $this->getWrappedObject());
+        $pieceMoves->mayMove($pawn, $this->getWrappedObject())->shouldBeCalled()->willThrow($moveNotAllowedForPiece);
+
+        $this->shouldThrow($moveNotAllowedForPiece)->during('play', [$board, new Rules([$pieceMoves->getWrappedObject(),]),]);
     }
 
-    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)
+    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board, PieceMoves $pieceMoves)
     {
         $rook = Rook::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -135,6 +145,8 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($rook, $destination)->willThrow(new SquareIsOccupied($destination));
         $board->placePieceAtCoordinates($rook, $source)->shouldBeCalled();
 
-        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
+        $pieceMoves->mayMove($rook, $this->getWrappedObject())->shouldBeCalled();
+
+        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board, new Rules([$pieceMoves->getWrappedObject(),]),]);
     }
 }

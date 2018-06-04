@@ -16,6 +16,8 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules;
+use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -77,7 +79,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $this->inDirection(new AlongDiagonal())->shouldBe(false);
     }
 
-    function it_moves_piece_from_one_square_to_another(Board $board)
+    function it_moves_piece_from_one_square_to_another(Board $board, PieceMoves $knightMoves)
     {
         $knight = Knight::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -87,14 +89,17 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($knight);
         $board->placePieceAtCoordinates($knight, $destination)->shouldBeCalled();
 
-        $this->play($board)->shouldBeLike(
+        $knightMoves->areApplicableFor($knight)->willReturn(true);
+        $knightMoves->mayMove($knight, $this->getWrappedObject())->shouldBeCalled();
+
+        $this->play($board, new Rules([$knightMoves->getWrappedObject(),]))->shouldBeLike(
             [
                 new PieceWasMoved($knight, $source, $destination),
             ]
         );
     }
 
-    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)
+    function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board, PieceMoves $knightMoves)
     {
         $knight = Knight::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -105,10 +110,13 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($knight, $destination)->willThrow(new SquareIsOccupied($destination));
         $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
-        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board,]);
+        $knightMoves->areApplicableFor($knight)->willReturn(true);
+        $knightMoves->mayMove($knight, $this->getWrappedObject())->shouldBeCalled();
+
+        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board, new Rules([$knightMoves->getWrappedObject(),]),]);
     }
 
-    function it_does_not_allow_move_that_is_not_possible_for_given_piece(Board $board)
+    function it_does_not_allow_move_that_is_not_possible_for_given_piece(Board $board, PieceMoves $knightMoves)
     {
         $knight = Knight::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
@@ -118,6 +126,10 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($knight);
         $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($knight, $this->getWrappedObject()))->during('play', [$board,]);
+        $moveNotAllowedForPiece = new MoveNotAllowedForPiece($knight, $this->getWrappedObject());
+        $knightMoves->areApplicableFor($knight)->willReturn(true);
+        $knightMoves->mayMove($knight, $this->getWrappedObject())->willThrow($moveNotAllowedForPiece);
+
+        $this->shouldThrow($moveNotAllowedForPiece)->during('play', [$board, new Rules([$knightMoves->getWrappedObject(),]),]);
     }
 }

@@ -9,8 +9,8 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
 use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
-use NicholasZyl\Chess\Domain\Fide\Piece\Piece;
 use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 
 final class KingMoves implements PieceMoves

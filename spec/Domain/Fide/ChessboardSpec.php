@@ -8,17 +8,28 @@ use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
+use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class ChessboardSpec extends ObjectBehavior
 {
+    function let(Rules\PieceMoves $pieceMoves)
+    {
+        $this->beConstructedWith(new Rules([$pieceMoves->getWrappedObject(),]));
+        $pieceMoves->areApplicableFor(Argument::any())->willReturn(true);
+    }
+
     function it_is_composed_of_sixty_four_squares()
     {
         $coordinates = CoordinatePair::fromFileAndRank('h', 8);
@@ -45,7 +56,48 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $coordinates);
     }
 
-    function it_allows_moving_piece_if_move_is_legal()
+    function it_knows_when_opponents_piece_was_captured()
+    {
+        $whiteRook = Rook::forColor(Piece\Color::white());
+        $blackPawn = Pawn::forColor(Piece\Color::black());
+
+        $coordinates = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->placePieceAtCoordinates($blackPawn, $coordinates);
+        $this->placePieceAtCoordinates($whiteRook, $coordinates);
+
+        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $coordinates),]);
+    }
+
+    function it_does_not_allow_placing_piece_on_coordinates_occupied_by_same_color()
+    {
+        $whiteRook = Rook::forColor(Piece\Color::white());
+        $whitePawn = Pawn::forColor(Piece\Color::white());
+
+        $coordinates = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->placePieceAtCoordinates($whiteRook, $coordinates);
+
+        $this->shouldThrow(SquareIsOccupied::class)->during('placePieceAtCoordinates', [$whitePawn, $coordinates,]);
+    }
+
+    function it_allows_picking_up_piece_from_coordinates()
+    {
+        $position = CoordinatePair::fromFileAndRank('a', 2);
+        $pawn = Pawn::forColor(Piece\Color::white());
+        $this->placePieceAtCoordinates($pawn, $position);
+
+        $this->pickPieceFromCoordinates($position)->shouldBe($pawn);
+    }
+
+    function it_does_not_allow_picking_a_piece_from_unoccupied_position()
+    {
+        $position = CoordinatePair::fromFileAndRank('a', 2);
+
+        $this->shouldThrow(new SquareIsUnoccupied($position))->during('pickPieceFromCoordinates', [$position,]);
+    }
+
+    function it_allows_moving_piece_if_move_is_legal(Rules\PieceMoves $pieceMoves)
     {
         $whitePawn = Pawn::forColor(Piece\Color::white());
 
@@ -54,9 +106,70 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->placePieceAtCoordinates($whitePawn, $source);
 
+        $pieceMoves->mayMove($whitePawn, new NotIntervened($source, $destination, new Forward(Piece\Color::white(), new AlongFile())))->shouldBeCalled();
+
         $this->movePiece($source, $destination);
 
         $this->occurredEvents()->shouldBeLike([new PieceWasMoved($whitePawn, $source, $destination),]);
+    }
+
+    function it_does_not_allow_move_to_illegal_position(Rules\PieceMoves $pieceMoves)
+    {
+        $whitePawn = Pawn::forColor(Piece\Color::white());
+
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 1);
+
+        $this->placePieceAtCoordinates($whitePawn, $source);
+
+        $pieceMoves->mayMove(Argument::cetera())->shouldNotBeCalled();
+
+        $this->shouldThrow(new MoveToIllegalPosition($whitePawn, $source, $destination))->during('movePiece', [$source, $destination,]);
+        $this->occurredEvents()->shouldBe([]);
+    }
+
+    function it_does_not_allow_illegal_move(Rules\PieceMoves $pieceMoves)
+    {
+        $whitePawn = Pawn::forColor(Piece\Color::white());
+
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 5);
+
+        $this->placePieceAtCoordinates($whitePawn, $source);
+
+        $move = new NotIntervened($source, $destination, new Forward(Piece\Color::white(), new AlongFile()));
+        $illegalMove = new MoveNotAllowedForPiece($whitePawn, $move);
+        $pieceMoves->mayMove($whitePawn, $move)->willThrow($illegalMove);
+
+        $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
+        $this->occurredEvents()->shouldBe([]);
+    }
+
+    function it_fails_when_trying_to_move_from_not_occupied_coordinates()
+    {
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 1);
+
+        $this->shouldThrow(new SquareIsUnoccupied($source))->during('movePiece', [$source, $destination,]);
+        $this->occurredEvents()->shouldBe([]);
+    }
+
+    function it_collects_all_events_happened_during_the_move(Rules\PieceMoves $pieceMoves)
+    {
+        $whiteRook = Rook::forColor(Piece\Color::white());
+        $blackPawn = Pawn::forColor(Piece\Color::black());
+
+        $source = CoordinatePair::fromFileAndRank('b', 2);
+        $destination = CoordinatePair::fromFileAndRank('b', 3);
+
+        $this->placePieceAtCoordinates($whiteRook, $source);
+        $this->placePieceAtCoordinates($blackPawn, $destination);
+
+        $pieceMoves->mayMove($whiteRook, new NotIntervened($source, $destination, new AlongFile()))->shouldBeCalled();
+
+        $this->movePiece($source, $destination);
+
+        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $destination), new PieceWasMoved($whiteRook, $source, $destination),]);
     }
 
     function it_knows_when_square_at_given_coordinates_is_unoccupied()
@@ -73,66 +186,6 @@ class ChessboardSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(SquareIsOccupied::class)->during('verifyThatPositionIsUnoccupied', [$position,]);
-    }
-
-    function it_allows_picking_up_piece_from_coordinates()
-    {
-        $position = CoordinatePair::fromFileAndRank('a', 2);
-        $pawn = Pawn::forColor(Piece\Color::white());
-        $this->placePieceAtCoordinates($pawn, $position);
-
-        $this->pickPieceFromCoordinates($position)->shouldBe($pawn);
-    }
-
-    function it_fails_if_trying_to_pick_piece_from_unoccupied_position()
-    {
-        $position = CoordinatePair::fromFileAndRank('a', 2);
-
-        $this->shouldThrow(new SquareIsUnoccupied($position))->during('pickPieceFromCoordinates', [$position,]);
-    }
-
-    function it_does_not_allow_illegal_move_for_piece()
-    {
-        $whitePawn = Pawn::forColor(Piece\Color::white());
-
-        $source = CoordinatePair::fromFileAndRank('b', 2);
-        $destination = CoordinatePair::fromFileAndRank('b', 1);
-
-        $illegalMove = new MoveToIllegalPosition($whitePawn, $source, $destination);
-        $this->placePieceAtCoordinates($whitePawn, $source);
-
-        $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
-        $this->occurredEvents()->shouldBe([]);
-    }
-
-    function it_allows_capturing_opponents_piece()
-    {
-        $whiteRook = Rook::forColor(Piece\Color::white());
-        $blackPawn = Pawn::forColor(Piece\Color::black());
-
-        $source = CoordinatePair::fromFileAndRank('b', 2);
-        $destination = CoordinatePair::fromFileAndRank('b', 3);
-
-        $this->placePieceAtCoordinates($whiteRook, $source);
-        $this->placePieceAtCoordinates($blackPawn, $destination);
-
-        $this->movePiece($source, $destination);
-
-        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $destination), new PieceWasMoved($whiteRook, $source, $destination),]);
-    }
-
-    function it_does_not_allow_move_to_square_occupied_by_piece_of_same_color()
-    {
-        $whiteRook = Rook::forColor(Piece\Color::white());
-        $whitePawn = Pawn::forColor(Piece\Color::white());
-
-        $source = CoordinatePair::fromFileAndRank('b', 2);
-        $destination = CoordinatePair::fromFileAndRank('b', 3);
-
-        $this->placePieceAtCoordinates($whiteRook, $source);
-        $this->placePieceAtCoordinates($whitePawn, $destination);
-
-        $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('movePiece', [$source, $destination,]);
     }
 
     function it_knows_when_square_at_coordinates_is_occupied_by_opponent_if_piece_has_different_color()
@@ -177,7 +230,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('a', 2), Piece\Color::white())->shouldBe(false);
     }
 
-    function it_cannot_check_if_square_out_of_borad_is_attacked()
+    function it_cannot_check_if_square_out_of_board_is_attacked()
     {
         $coordinates = CoordinatePair::fromFileAndRank('z', 9);
 

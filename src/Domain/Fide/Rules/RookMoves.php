@@ -9,9 +9,9 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Move\Castling;
 use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Piece\Piece;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Rules\PieceMoves;
 
 final class RookMoves implements PieceMoves

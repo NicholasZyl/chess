@@ -18,6 +18,7 @@ use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class Castling implements Move
 {
@@ -149,7 +150,7 @@ final class Castling implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): array
+    public function play(Board $board, Rules $rules): array
     {
         $this->isLegal($board);
 
@@ -173,8 +174,8 @@ final class Castling implements Move
         }
 
         try {
-            $king->mayMove($this, $board);
-            $rook->mayMove($this, $board);
+            $rules->mayMove($king, $this);
+            $rules->mayMove($rook, $this);
         } catch (IllegalMove $illegalMove) {
             if (isset($king)) {
                 $board->placePieceAtCoordinates($king, $this->kingPosition);

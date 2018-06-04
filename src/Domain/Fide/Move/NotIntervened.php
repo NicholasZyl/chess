@@ -12,6 +12,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class NotIntervened implements Move
 {
@@ -126,13 +127,13 @@ final class NotIntervened implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): array
+    public function play(Board $board, Rules $rules): array
     {
         $this->isLegal($board);
 
         $piece = $board->pickPieceFromCoordinates($this->source);
         try {
-            $piece->mayMove($this, $board);
+            $rules->mayMove($piece, $this);
             $board->placePieceAtCoordinates($piece, $this->destination);
 
             return [new PieceWasMoved($piece, $this->source, $this->destination),];

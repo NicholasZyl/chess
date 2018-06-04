@@ -5,8 +5,8 @@ namespace NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Fide\Piece\Piece;
 use NicholasZyl\Chess\Domain\Move;
+use NicholasZyl\Chess\Domain\Piece;
 
 interface PieceMoves
 {

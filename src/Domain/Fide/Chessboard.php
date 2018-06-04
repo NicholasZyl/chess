@@ -10,6 +10,7 @@ use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class Chessboard implements Board
 {
@@ -17,6 +18,11 @@ final class Chessboard implements Board
     private const HIGHEST_FILE = 'h';
     private const LOWEST_RANK = 1;
     private const HIGHEST_RANK = 8;
+
+    /**
+     * @var Rules
+     */
+    private $rules;
 
     /**
      * @var Square[]
@@ -30,8 +36,10 @@ final class Chessboard implements Board
 
     /**
      * Build the chessboard as a 8 x 8 grid of 64 squares.
+     *
+     * @param Rules $rules
      */
-    public function __construct()
+    public function __construct(Rules $rules)
     {
         foreach (range(self::LOWEST_FILE, self::HIGHEST_FILE) as $file) {
             foreach (range(self::LOWEST_RANK, self::HIGHEST_RANK) as $rank) {
@@ -39,6 +47,7 @@ final class Chessboard implements Board
                 $this->grid[(string)$square->coordinates()] = $square;
             }
         }
+        $this->rules = $rules;
     }
 
     /**
@@ -46,7 +55,8 @@ final class Chessboard implements Board
      */
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
-        $this->occurredEvents = array_merge($this->occurredEvents, $this->getSquareAt($coordinates)->place($piece));
+        $events = $this->getSquareAt($coordinates)->place($piece);
+        $this->occurredEvents = array_merge($this->occurredEvents, $events);
     }
 
     /**
@@ -65,7 +75,7 @@ final class Chessboard implements Board
         $from = $this->getSquareAt($source);
         $piece = $from->peek();
         $move = $piece->intentMoveTo($destination);
-        $events = $move->play($this);
+        $events = $move->play($this, $this->rules);
         $this->occurredEvents = array_merge($this->occurredEvents, $events);
     }
 
