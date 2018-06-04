@@ -49,4 +49,18 @@ class ColorSpec extends ObjectBehavior
 
         $this->is($anotherColor)->shouldBe(false);
     }
+
+    function it_has_black_as_opponent_of_white()
+    {
+        $this->beConstructedThrough('white');
+
+        $this->opponent()->shouldBeLike(Color::black());
+    }
+
+    function it_has_white_as_opponent_of_black()
+    {
+        $this->beConstructedThrough('black');
+
+        $this->opponent()->shouldBeLike(Color::white());
+    }
 }

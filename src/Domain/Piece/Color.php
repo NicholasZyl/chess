@@ -85,4 +85,14 @@ final class Color
     {
         return $this->colorName;
     }
+
+    /**
+     * Get opponents color.
+     *
+     * @return Color
+     */
+    public function opponent(): Color
+    {
+        return self::WHITE === $this->colorName ? Color::black() : Color::white();
+    }
 }
