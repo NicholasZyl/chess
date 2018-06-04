@@ -66,6 +66,7 @@ final class Chessboard implements Board
         $piece = $from->peek();
         $move = $piece->intentMoveTo($destination);
         $move->play($this);
+        $this->occurredEvents []= new Event\PieceWasMoved($piece, $source, $destination);
     }
 
     /**

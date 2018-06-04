@@ -71,14 +71,6 @@ final class PieceWasMoved implements Event
     /**
      * {@inheritdoc}
      */
-    public function equals(Event $event): bool
-    {
-        return json_encode($this) === json_encode($event);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize()
     {
         return [

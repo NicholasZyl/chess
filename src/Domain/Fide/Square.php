@@ -75,7 +75,6 @@ final class Square
 
         $this->placedPiece = $piece;
         $piece->placeAt($this->coordinates);
-        $events []= new Event\PieceWasPlacedAt($piece, $this->coordinates);
 
         return $events;
     }

@@ -54,14 +54,6 @@ final class PieceWasCaptured implements Event
     /**
      * {@inheritdoc}
      */
-    public function equals(Event $event): bool
-    {
-        return json_encode($event) === json_encode($this);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function jsonSerialize(): array
     {
         return [

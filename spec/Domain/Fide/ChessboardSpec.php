@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -56,7 +56,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->movePiece($source, $destination);
 
-        $this->occurredEvents()->shouldBeLike([new PieceWasPlacedAt($whitePawn, $destination),]);
+        $this->occurredEvents()->shouldBeLike([new PieceWasMoved($whitePawn, $source, $destination),]);
     }
 
     function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
@@ -125,7 +125,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->movePiece($source, $destination);
 
-        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $destination), new PieceWasPlacedAt($whiteRook, $destination),]);
+        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $destination), new PieceWasMoved($whiteRook, $source, $destination),]);
     }
 
     function it_does_not_allow_move_to_square_occupied_by_piece_of_same_color()

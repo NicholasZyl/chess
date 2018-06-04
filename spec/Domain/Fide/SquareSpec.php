@@ -5,7 +5,6 @@ namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -33,7 +32,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_place_piece_on_it()
     {
         $piece = Pawn::forColor(Piece\Color::white());
-        $this->place($piece)->shouldBeLike([new PieceWasPlacedAt($piece, $this->coordinates),]);
+        $this->place($piece)->shouldBeLike([]);
     }
 
     function it_allows_to_peek_at_it_to_see_what_piece_is_placed()
@@ -107,7 +106,7 @@ class SquareSpec extends ObjectBehavior
 
         $piece = Knight::forColor(Piece\Color::white());
 
-        $this->place($piece)->shouldBeLike([new PieceWasCaptured($opponentPiece, $this->coordinates), new PieceWasPlacedAt($piece, $this->coordinates),]);
+        $this->place($piece)->shouldBeLike([new PieceWasCaptured($opponentPiece, $this->coordinates),]);
     }
 
     function it_knows_that_it_has_placed_opponents_piece_on_it()
