@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
@@ -80,8 +81,7 @@ class NotIntervenedSpec extends ObjectBehavior
 
     function it_moves_piece_from_one_square_to_another(Board $board)
     {
-        $white = Color::white();
-        $bishop = Bishop::forColor($white);
+        $bishop = Bishop::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 2);
         $destination = CoordinatePair::fromFileAndRank('b', 3);
         $this->beConstructedWith($source, $destination, new AlongDiagonal());
@@ -89,7 +89,11 @@ class NotIntervenedSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($bishop);
         $board->placePieceAtCoordinates($bishop, $destination)->shouldBeCalled();
 
-        $this->play($board);
+        $this->play($board)->shouldBeLike(
+            [
+                new PieceWasMoved($bishop, $source, $destination),
+            ]
+        );
     }
 
     function it_does_not_allow_moving_over_intervening_pieces(Board $board)

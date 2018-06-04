@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
@@ -91,12 +92,14 @@ final class OverOtherPieces implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): void
+    public function play(Board $board): array
     {
         $piece = $board->pickPieceFromCoordinates($this->source);
         try {
             $piece->mayMove($this, $board);
             $board->placePieceAtCoordinates($piece, $this->destination);
+
+            return [new PieceWasMoved($piece, $this->source, $this->destination),];
         } catch (MoveNotAllowedForPiece $notAllowedForPiece) {
             $board->placePieceAtCoordinates($piece, $this->source);
             throw $notAllowedForPiece;

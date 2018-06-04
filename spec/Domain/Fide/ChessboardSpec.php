@@ -59,14 +59,6 @@ class ChessboardSpec extends ObjectBehavior
         $this->occurredEvents()->shouldBeLike([new PieceWasMoved($whitePawn, $source, $destination),]);
     }
 
-    function it_knows_what_piece_is_placed_on_square_at_given_coordinates()
-    {
-        $whitePawn = Pawn::forColor(Piece\Color::white());
-
-        $coordinates = CoordinatePair::fromFileAndRank('b', 2);
-        $this->placePieceAtCoordinates($whitePawn, $coordinates);
-    }
-
     function it_knows_when_square_at_given_coordinates_is_unoccupied()
     {
         $this->verifyThatPositionIsUnoccupied(CoordinatePair::fromFileAndRank('a', 1));
@@ -110,6 +102,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $source);
 
         $this->shouldThrow($illegalMove)->during('movePiece', [$source, $destination,]);
+        $this->occurredEvents()->shouldBe([]);
     }
 
     function it_allows_capturing_opponents_piece()

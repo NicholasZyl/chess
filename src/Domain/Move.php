@@ -61,9 +61,9 @@ interface Move
      * @throws SquareIsUnoccupied
      * @throws IllegalMove
      *
-     * @return void
+     * @return Event[]
      */
-    public function play(Board $board): void;
+    public function play(Board $board): array;
 
     /**
      * Get string representation of the move.

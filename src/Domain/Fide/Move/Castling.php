@@ -6,6 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -148,7 +149,7 @@ final class Castling implements Move
     /**
      * {@inheritdoc}
      */
-    public function play(Board $board): void
+    public function play(Board $board): array
     {
         $this->isLegal($board);
 
@@ -185,7 +186,13 @@ final class Castling implements Move
         }
 
         $board->placePieceAtCoordinates($king, $this->kingDestination);
-        $board->placePieceAtCoordinates($rook, $this->kingDestination->nextTowards($this->kingPosition, $this->direction));
+        $rookDestination = $this->kingDestination->nextTowards($this->kingPosition, $this->direction);
+        $board->placePieceAtCoordinates($rook, $rookDestination);
+
+        return [
+            new PieceWasMoved($king, $this->kingPosition, $this->kingDestination),
+            new PieceWasMoved($rook, $this->rookPosition, $rookDestination),
+        ];
     }
 
     /**

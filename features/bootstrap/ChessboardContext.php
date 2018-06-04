@@ -3,9 +3,8 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
@@ -109,14 +108,25 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should (still )?be placed on (?P<coordinates>[a-h][0-8])/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) should be moved to (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
      */
-    public function pieceShouldBePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
+    public function pieceShouldBeMovedTo(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->occurredEvents)->toOccur(new PieceWasPlacedAt($piece, $coordinates));
+        expect($this->occurredEvents)->toContainEventThatPieceMovedTo($piece, $coordinates);
+    }
+
+    /**
+     * @Then /(?P<piece>[a-z]+ [a-z]+) should not be moved from (?P<coordinates>[a-h][0-8])/
+     *
+     * @param Piece $piece
+     * @param CoordinatePair $coordinates
+     */
+    public function pieceShouldNotBeMovedFrom(Piece $piece, CoordinatePair $coordinates)
+    {
+        expect($this->occurredEvents)->toNotContainEventThatPieceMovedTo($piece, $coordinates);
     }
 
     /**
@@ -135,7 +145,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->occurredEvents)->toOccur(new PieceWasCaptured($piece, $coordinates));
+        expect($this->occurredEvents)->toContainEventThatPieceWasCaptured($piece, $coordinates);
     }
 
     /**
@@ -175,15 +185,26 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function getMatchers(): array
     {
         return [
-            'occur' => function (array $occurredEvents, Event $expectedEvent) {
+            'containEventThatPieceMovedTo' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
                 foreach ($occurredEvents as $occurredEvent) {
-                    if ($expectedEvent->equals($occurredEvent)) {
+                    if ($occurredEvent instanceof Event\PieceWasMoved && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->destination()->equals($coordinates)) {
                         return true;
                     }
                 }
 
-                throw new \PhpSpec\Exception\Example\FailureException(sprintf('Expected event %s to occur but it did not.', json_encode($expectedEvent)));
-            }
+                return false;
+                //throw new \PhpSpec\Exception\Example\FailureException(sprintf('Expected that %s moved to %s but it did not.', $piece, $coordinates));
+            },
+            'containEventThatPieceWasCaptured' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
+                foreach ($occurredEvents as $occurredEvent) {
+                    if ($occurredEvent instanceof Event\PieceWasCaptured && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->placedAt()->equals($coordinates)) {
+                        return true;
+                    }
+                }
+
+                return false;
+                //throw new \PhpSpec\Exception\Example\FailureException(sprintf('Expected that %s moved to %s but it did not.', $piece, $coordinates));
+            },
         ];
     }
 }

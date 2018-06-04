@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -89,7 +90,12 @@ class CastlingSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($king, $kingDestination)->shouldBeCalled();
         $board->placePieceAtCoordinates($rook, $rookDestination)->shouldBeCalled();
 
-        $this->play($board);
+        $this->play($board)->shouldBeLike(
+            [
+                new PieceWasMoved($king, $kingInitialPosition, $kingDestination),
+                new PieceWasMoved($rook, $rookInitialPosition, $rookDestination),
+            ]
+        );
     }
 
     function it_moves_king_two_squares_towards_rook_and_that_rook_to_the_square_king_crossed_kingside(Board $board)
@@ -111,7 +117,12 @@ class CastlingSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($king, $kingDestination)->shouldBeCalled();
         $board->placePieceAtCoordinates($rook, $rookDestination)->shouldBeCalled();
 
-        $this->play($board);
+        $this->play($board)->shouldBeLike(
+            [
+                new PieceWasMoved($king, $kingInitialPosition, $kingDestination),
+                new PieceWasMoved($rook, $rookInitialPosition, $rookDestination),
+            ]
+        );
     }
 
     function it_is_prevented_if_there_is_any_piece_between_the_king_and_the_rook(Board $board)

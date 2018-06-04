@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Move;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
@@ -86,7 +87,11 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($knight);
         $board->placePieceAtCoordinates($knight, $destination)->shouldBeCalled();
 
-        $this->play($board);
+        $this->play($board)->shouldBeLike(
+            [
+                new PieceWasMoved($knight, $source, $destination),
+            ]
+        );
     }
 
     function it_does_not_allow_moving_to_square_occupied_by_same_color(Board $board)

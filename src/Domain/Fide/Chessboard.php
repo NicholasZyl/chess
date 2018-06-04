@@ -46,7 +46,7 @@ final class Chessboard implements Board
      */
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
-        $this->occurredEvents = $this->getSquareAt($coordinates)->place($piece);
+        $this->occurredEvents = array_merge($this->occurredEvents, $this->getSquareAt($coordinates)->place($piece));
     }
 
     /**
@@ -65,8 +65,8 @@ final class Chessboard implements Board
         $from = $this->getSquareAt($source);
         $piece = $from->peek();
         $move = $piece->intentMoveTo($destination);
-        $move->play($this);
-        $this->occurredEvents []= new Event\PieceWasMoved($piece, $source, $destination);
+        $events = $move->play($this);
+        $this->occurredEvents = array_merge($this->occurredEvents, $events);
     }
 
     /**
