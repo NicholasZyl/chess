@@ -53,7 +53,7 @@ final class KingMoves implements PieceMoves
      */
     public function applyAfter(Event $event): void
     {
-        if ($event instanceof Event\PieceWasPlacedAt && $event->piece() instanceof King) {
+        if ($event instanceof Event\PieceWasMoved && $event->piece() instanceof King) {
             $this->movedKings->attach($event->piece());
         }
     }

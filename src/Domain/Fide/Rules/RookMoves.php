@@ -52,7 +52,7 @@ final class RookMoves implements PieceMoves
      */
     public function applyAfter(Event $event): void
     {
-        if ($event instanceof Event\PieceWasPlacedAt && $event->piece() instanceof Rook) {
+        if ($event instanceof Event\PieceWasMoved && $event->piece() instanceof Rook) {
             $this->movedRooks->attach($event->piece());
         }
     }

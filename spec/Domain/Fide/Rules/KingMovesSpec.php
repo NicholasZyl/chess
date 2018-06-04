@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
-use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -130,8 +130,9 @@ class KingMovesSpec extends ObjectBehavior
         );
 
         $this->applyAfter(
-            new PieceWasPlacedAt(
+            new PieceWasMoved(
                 $this->king,
+                CoordinatePair::fromFileAndRank('e', 1),
                 $source
             )
         );
@@ -150,9 +151,10 @@ class KingMovesSpec extends ObjectBehavior
         );
 
         $this->applyAfter(
-            new PieceWasPlacedAt(
+            new PieceWasMoved(
                 King::forColor(Color::black()),
-                $source
+                CoordinatePair::fromFileAndRank('e', 8),
+                CoordinatePair::fromFileAndRank('f', 8)
             )
         );
 

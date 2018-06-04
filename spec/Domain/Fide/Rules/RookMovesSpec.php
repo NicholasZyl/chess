@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
-use NicholasZyl\Chess\Domain\Event\PieceWasPlacedAt;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -119,9 +119,10 @@ class RookMovesSpec extends ObjectBehavior
         );
 
         $this->applyAfter(
-            new PieceWasPlacedAt(
+            new PieceWasMoved(
                 $this->rook,
-                $source
+                CoordinatePair::fromFileAndRank('a', 1),
+                CoordinatePair::fromFileAndRank('a', 3)
             )
         );
 
@@ -139,9 +140,10 @@ class RookMovesSpec extends ObjectBehavior
         );
 
         $this->applyAfter(
-            new PieceWasPlacedAt(
+            new PieceWasMoved(
                 Rook::forColor(Color::white()),
-                $source
+                CoordinatePair::fromFileAndRank('h', 1),
+                CoordinatePair::fromFileAndRank('g', 1)
             )
         );
 
@@ -159,9 +161,10 @@ class RookMovesSpec extends ObjectBehavior
         );
 
         $this->applyAfter(
-            new PieceWasPlacedAt(
+            new PieceWasMoved(
                 Rook::forColor(Color::black()),
-                $source
+                CoordinatePair::fromFileAndRank('h', 8),
+                CoordinatePair::fromFileAndRank('g', 8)
             )
         );
 
