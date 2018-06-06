@@ -17,7 +17,7 @@ final class KnightMoves implements PieceMoves
     /**
      * {@inheritdoc}
      */
-    public function areApplicableFor(Piece $piece): bool
+    public function isApplicableFor(Piece $piece): bool
     {
         return $piece instanceof Knight;
     }

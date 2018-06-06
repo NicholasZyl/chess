@@ -41,12 +41,12 @@ class BishopMovesSpec extends ObjectBehavior
 
     function it_is_applicable_for_bishop()
     {
-        $this->areApplicableFor($this->bishop)->shouldBe(true);
+        $this->isApplicableFor($this->bishop)->shouldBe(true);
     }
 
     function it_is_not_applicable_for_other_pieces()
     {
-        $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
+        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_any_square_along_a_diagonal()

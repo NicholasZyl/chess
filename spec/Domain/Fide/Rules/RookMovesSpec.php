@@ -43,12 +43,12 @@ class RookMovesSpec extends ObjectBehavior
 
     function it_is_applicable_for_king()
     {
-        $this->areApplicableFor($this->rook)->shouldBe(true);
+        $this->isApplicableFor($this->rook)->shouldBe(true);
     }
 
     function it_is_not_applicable_for_other_pieces()
     {
-        $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
+        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_any_square_along_file()

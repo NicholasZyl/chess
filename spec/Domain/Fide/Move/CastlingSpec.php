@@ -29,10 +29,10 @@ class CastlingSpec extends ObjectBehavior
         $board->isPositionAttackedByOpponentOf(Argument::cetera())->willReturn(false);
         $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
 
-        $kingMoves->areApplicableFor(Argument::type(King::class))->willReturn(true);
-        $kingMoves->areApplicableFor(Argument::type(Rook::class))->willReturn(false);
-        $rookMoves->areApplicableFor(Argument::type(Rook::class))->willReturn(true);
-        $rookMoves->areApplicableFor(Argument::type(King::class))->willReturn(false);
+        $kingMoves->isApplicableFor(Argument::type(King::class))->willReturn(true);
+        $kingMoves->isApplicableFor(Argument::type(Rook::class))->willReturn(false);
+        $rookMoves->isApplicableFor(Argument::type(Rook::class))->willReturn(true);
+        $rookMoves->isApplicableFor(Argument::type(King::class))->willReturn(false);
     }
 
     function it_is_chess_move()

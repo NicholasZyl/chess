@@ -45,12 +45,12 @@ class PawnMovesSpec extends ObjectBehavior
 
     function it_is_applicable_for_pawn()
     {
-        $this->areApplicableFor($this->whitePawn)->shouldBe(true);
+        $this->isApplicableFor($this->whitePawn)->shouldBe(true);
     }
 
     function it_is_not_applicable_for_other_pieces()
     {
-        $this->areApplicableFor(Rook::forColor(Color::white()))->shouldBe(false);
+        $this->isApplicableFor(Rook::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_forward_to_the_square_immediately_in_front_on_the_same_file()

@@ -11,16 +11,16 @@ final class Rules
     /**
      * @var PieceMoves[]
      */
-    private $pieceMoves;
+    private $rules;
 
     /**
      * Create set of rules.
      *
-     * @param array $pieceMoves
+     * @param array $rules
      */
-    public function __construct(array $pieceMoves)
+    public function __construct(array $rules)
     {
-        $this->pieceMoves = $pieceMoves;
+        $this->rules = $rules;
     }
 
     /**
@@ -35,10 +35,24 @@ final class Rules
      */
     public function mayMove(Piece $piece, Move $move): void
     {
-        foreach ($this->pieceMoves as $pieceMoveRules) {
-            if ($pieceMoveRules->areApplicableFor($piece)) {
-                $pieceMoveRules->mayMove($piece, $move);
+        foreach ($this->rules as $rule) {
+            if ($rule->isApplicableFor($piece)) {
+                $rule->mayMove($piece, $move);
             }
+        }
+    }
+
+    /**
+     * Apply all rules after event happened.
+     *
+     * @param Event $event
+     *
+     * @return void
+     */
+    public function applyAfter(Event $event): void
+    {
+        foreach ($this->rules as $rule) {
+            $rule->applyAfter($event);
         }
     }
 }

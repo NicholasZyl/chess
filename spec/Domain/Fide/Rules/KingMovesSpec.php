@@ -43,12 +43,12 @@ class KingMovesSpec extends ObjectBehavior
 
     function it_is_applicable_for_king()
     {
-        $this->areApplicableFor($this->king)->shouldBe(true);
+        $this->isApplicableFor($this->king)->shouldBe(true);
     }
 
     function it_is_not_applicable_for_other_pieces()
     {
-        $this->areApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
+        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_adjoining_square_along_file()

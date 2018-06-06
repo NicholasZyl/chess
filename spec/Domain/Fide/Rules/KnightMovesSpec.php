@@ -41,12 +41,12 @@ class KnightMovesSpec extends ObjectBehavior
 
     function it_is_applicable_for_knight()
     {
-        $this->areApplicableFor($this->knight)->shouldBe(true);
+        $this->isApplicableFor($this->knight)->shouldBe(true);
     }
 
     function it_is_not_applicable_for_other_pieces()
     {
-        $this->areApplicableFor(Queen::forColor(Color::white()))->shouldBe(false);
+        $this->isApplicableFor(Queen::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_the_nearest_square_over_other_pieces()

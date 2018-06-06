@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
@@ -31,9 +32,22 @@ class RulesSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new NotIntervened($source, $destination, new Forward(Color::white(), new AlongFile()));
 
-        $pieceMoves->areApplicableFor($pawn)->willReturn(true);
+        $pieceMoves->isApplicableFor($pawn)->willReturn(true);
         $pieceMoves->mayMove($pawn, $move)->shouldBeCalled();
 
         $this->mayMove($pawn, $move);
+    }
+
+    function it_applies_rules_after_event_happened(Rules\PieceMoves $pieceMoves)
+    {
+        $event = new PieceWasMoved(
+            Pawn::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('b', 2),
+            CoordinatePair::fromFileAndRank('b', 3)
+        );
+
+        $pieceMoves->applyAfter($event)->shouldBeCalled();
+
+        $this->applyAfter($event);
     }
 }

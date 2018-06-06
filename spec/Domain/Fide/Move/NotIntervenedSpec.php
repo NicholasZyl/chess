@@ -28,7 +28,7 @@ class NotIntervenedSpec extends ObjectBehavior
     function let(Board $board, PieceMoves $pieceMoves)
     {
         $board->verifyThatPositionIsUnoccupied(Argument::cetera())->willReturn();
-        $pieceMoves->areApplicableFor(Argument::any())->willReturn(true);
+        $pieceMoves->isApplicableFor(Argument::any())->willReturn(true);
     }
 
     function it_is_chess_move()

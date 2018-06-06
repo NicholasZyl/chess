@@ -89,7 +89,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->willReturn($knight);
         $board->placePieceAtCoordinates($knight, $destination)->shouldBeCalled();
 
-        $knightMoves->areApplicableFor($knight)->willReturn(true);
+        $knightMoves->isApplicableFor($knight)->willReturn(true);
         $knightMoves->mayMove($knight, $this->getWrappedObject())->shouldBeCalled();
 
         $this->play($board, new Rules([$knightMoves->getWrappedObject(),]))->shouldBeLike(
@@ -110,7 +110,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($knight, $destination)->willThrow(new SquareIsOccupied($destination));
         $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
-        $knightMoves->areApplicableFor($knight)->willReturn(true);
+        $knightMoves->isApplicableFor($knight)->willReturn(true);
         $knightMoves->mayMove($knight, $this->getWrappedObject())->shouldBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('play', [$board, new Rules([$knightMoves->getWrappedObject(),]),]);
@@ -127,7 +127,7 @@ class OverOtherPiecesSpec extends ObjectBehavior
         $board->placePieceAtCoordinates($knight, $source)->shouldBeCalled();
 
         $moveNotAllowedForPiece = new MoveNotAllowedForPiece($knight, $this->getWrappedObject());
-        $knightMoves->areApplicableFor($knight)->willReturn(true);
+        $knightMoves->isApplicableFor($knight)->willReturn(true);
         $knightMoves->mayMove($knight, $this->getWrappedObject())->willThrow($moveNotAllowedForPiece);
 
         $this->shouldThrow($moveNotAllowedForPiece)->during('play', [$board, new Rules([$knightMoves->getWrappedObject(),]),]);

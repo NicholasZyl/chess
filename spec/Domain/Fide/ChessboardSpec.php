@@ -27,7 +27,7 @@ class ChessboardSpec extends ObjectBehavior
     function let(Rules\PieceMoves $pieceMoves)
     {
         $this->beConstructedWith(new Rules([$pieceMoves->getWrappedObject(),]));
-        $pieceMoves->areApplicableFor(Argument::any())->willReturn(true);
+        $pieceMoves->isApplicableFor(Argument::any())->willReturn(true);
     }
 
     function it_is_composed_of_sixty_four_squares()
@@ -56,17 +56,20 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whitePawn, $coordinates);
     }
 
-    function it_knows_when_opponents_piece_was_captured()
+    function it_knows_when_opponents_piece_was_captured(Rules\PieceMoves $pieceMoves)
     {
         $whiteRook = Rook::forColor(Piece\Color::white());
         $blackPawn = Pawn::forColor(Piece\Color::black());
 
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
+        $pieceWasCaptured = new PieceWasCaptured($blackPawn, $coordinates);
+        $pieceMoves->applyAfter($pieceWasCaptured)->shouldBeCalled();
+
         $this->placePieceAtCoordinates($blackPawn, $coordinates);
         $this->placePieceAtCoordinates($whiteRook, $coordinates);
 
-        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $coordinates),]);
+        $this->occurredEvents()->shouldBeLike([$pieceWasCaptured,]);
     }
 
     function it_does_not_allow_placing_piece_on_coordinates_occupied_by_same_color()
@@ -108,9 +111,12 @@ class ChessboardSpec extends ObjectBehavior
 
         $pieceMoves->mayMove($whitePawn, new NotIntervened($source, $destination, new Forward(Piece\Color::white(), new AlongFile())))->shouldBeCalled();
 
+        $pieceWasMoved = new PieceWasMoved($whitePawn, $source, $destination);
+        $pieceMoves->applyAfter($pieceWasMoved)->shouldBeCalled();
+
         $this->movePiece($source, $destination);
 
-        $this->occurredEvents()->shouldBeLike([new PieceWasMoved($whitePawn, $source, $destination),]);
+        $this->occurredEvents()->shouldBeLike([$pieceWasMoved,]);
     }
 
     function it_does_not_allow_move_to_illegal_position(Rules\PieceMoves $pieceMoves)
@@ -165,11 +171,16 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAtCoordinates($whiteRook, $source);
         $this->placePieceAtCoordinates($blackPawn, $destination);
 
+        $pieceWasCaptured = new PieceWasCaptured($blackPawn, $destination);
+        $pieceWasMoved = new PieceWasMoved($whiteRook, $source, $destination);
+
+        $pieceMoves->applyAfter($pieceWasCaptured)->shouldBeCalled();
+        $pieceMoves->applyAfter($pieceWasMoved)->shouldBeCalled();
         $pieceMoves->mayMove($whiteRook, new NotIntervened($source, $destination, new AlongFile()))->shouldBeCalled();
 
         $this->movePiece($source, $destination);
 
-        $this->occurredEvents()->shouldBeLike([new PieceWasCaptured($blackPawn, $destination), new PieceWasMoved($whiteRook, $source, $destination),]);
+        $this->occurredEvents()->shouldBeLike([$pieceWasCaptured, $pieceWasMoved,]);
     }
 
     function it_knows_when_square_at_given_coordinates_is_unoccupied()

@@ -56,7 +56,7 @@ final class Chessboard implements Board
     public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
     {
         $events = $this->getSquareAt($coordinates)->place($piece);
-        $this->occurredEvents = array_merge($this->occurredEvents, $events);
+        $this->onEventsOccurred($events);
     }
 
     /**
@@ -76,7 +76,7 @@ final class Chessboard implements Board
         $piece = $from->peek();
         $move = $piece->intentMoveTo($destination);
         $events = $move->play($this, $this->rules);
-        $this->occurredEvents = array_merge($this->occurredEvents, $events);
+        $this->onEventsOccurred($events);
     }
 
     /**
@@ -138,6 +138,21 @@ final class Chessboard implements Board
     {
         if (!array_key_exists((string)$coordinates, $this->grid)) {
             throw new OutOfBoardCoordinates($coordinates);
+        }
+    }
+
+    /**
+     * Act on events that just occurred.
+     *
+     * @param array $events
+     *
+     * @return void
+     */
+    private function onEventsOccurred(array $events): void
+    {
+        foreach ($events as $event) {
+            $this->rules->applyAfter($event);
+            $this->occurredEvents[] = $event;
         }
     }
 

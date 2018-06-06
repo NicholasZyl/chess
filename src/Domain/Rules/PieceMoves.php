@@ -17,7 +17,7 @@ interface PieceMoves
      *
      * @return bool
      */
-    public function areApplicableFor(Piece $piece): bool;
+    public function isApplicableFor(Piece $piece): bool;
 
     /**
      * Verify that piece may do given move.
