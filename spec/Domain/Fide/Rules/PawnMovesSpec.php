@@ -4,15 +4,16 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
+use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
+use NicholasZyl\Chess\Domain\Game;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules\PieceMoves;
+use NicholasZyl\Chess\Domain\Rules\MoveRule;
 use PhpSpec\ObjectBehavior;
 
 class PawnMovesSpec extends ObjectBehavior
@@ -40,197 +41,199 @@ class PawnMovesSpec extends ObjectBehavior
 
     function it_is_piece_moves_rule()
     {
-        $this->shouldBeAnInstanceOf(PieceMoves::class);
+        $this->shouldBeAnInstanceOf(MoveRule::class);
     }
 
-    function it_is_applicable_for_pawn()
+    function it_has_standard_priority()
     {
-        $this->isApplicableFor($this->whitePawn)->shouldBe(true);
+        $this->priority()->shouldBe(10);
     }
 
-    function it_is_not_applicable_for_other_pieces()
+    function it_is_applicable_for_white_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file()
     {
-        $this->isApplicableFor(Rook::forColor(Color::white()))->shouldBe(false);
-    }
-
-    function it_may_move_forward_to_the_square_immediately_in_front_on_the_same_file()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('a', 3),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
-        );
-
-        $this->mayMove($this->whitePawn, $move);
-    }
-
-    function it_may_not_move_backward_to_the_square_immediately_in_front_on_the_same_file()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('a', 1),
-            new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile()
-        );
-
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
-    }
-
-    function it_may_not_move_forward_for_another_color_to_the_square_immediately_in_front_on_the_same_file()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 7),
-            CoordinatePair::fromFileAndRank('a', 8),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
-        );
-
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->blackPawn, $move))->during('mayMove', [$this->blackPawn, $move,]);
-    }
-
-    function it_may_not_move_along_diagonal()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('b', 3),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
-        );
-
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
-    }
-
-    function it_may_not_move_along_rank()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 2),
+        $move = new Move(
+            $this->whitePawn,
             CoordinatePair::fromFileAndRank('b', 2),
-            new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank()
+            CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
+        $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_may_not_capture_along_file()
+    function it_is_applicable_for_black_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file()
     {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->blackPawn,
+            CoordinatePair::fromFileAndRank('b', 7),
+            CoordinatePair::fromFileAndRank('b', 6)
+        );
+
+        $this->isApplicable($move)->shouldBe(true);
+    }
+
+    function it_is_not_applicable_for_pawn_move_along_rank()
+    {
+        $move = new Move(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_for_pawn_move_along_file_backward()
+    {
+        $move = new Move(
+            $this->blackPawn,
+            CoordinatePair::fromFileAndRank('c', 3),
+            CoordinatePair::fromFileAndRank('c', 4)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_applicable_for_pawn_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file()
+    {
+        $move = new Move(
+            $this->whitePawn,
             CoordinatePair::fromFileAndRank('a', 2),
+            CoordinatePair::fromFileAndRank('b', 3)
+        );
+
+        $this->isApplicable($move)->shouldBe(true);
+    }
+
+    function it_is_not_applicable_for_other_piece_move()
+    {
+        $move = new Move(
+            Queen::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 2)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_to_move_pawn_backward_along_file()
+    {
+        $move = new Move(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('b', 3),
+            CoordinatePair::fromFileAndRank('b', 2)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_for_move_pawn_further_than_to_adjoining_square()
+    {
+        $move = new Move(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('b', 2),
+            CoordinatePair::fromFileAndRank('b', 5)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_applicable_for_pawn_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied()
+    {
+        $move = new Move(
+            $this->blackPawn,
+            CoordinatePair::fromFileAndRank('b', 7),
+            CoordinatePair::fromFileAndRank('b', 5)
+        );
+
+        $this->isApplicable($move)->shouldBe(true);
+    }
+
+    function it_is_not_applicable_for_pawn_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Game $game)
+    {
+        $move = new Move(
+            $this->whitePawn,
             CoordinatePair::fromFileAndRank('a', 3),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+            CoordinatePair::fromFileAndRank('a', 5)
         );
 
         $this->applyAfter(
             new PieceWasMoved(
-                Rook::forColor(Color::black()),
-                CoordinatePair::fromFileAndRank('a', 4),
-                CoordinatePair::fromFileAndRank('a', 3)
-            )
+                new Move(
+                    $this->whitePawn,
+                    CoordinatePair::fromFileAndRank('a', 2),
+                    CoordinatePair::fromFileAndRank('a', 3)
+                )
+            ),
+            $game
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file()
+    function it_may_be_played_on_board_if_moving_along_file_and_destination_position_is_not_occupied(Game $game)
     {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 5),
-            CoordinatePair::fromFileAndRank('b', 4),
-            new Forward(Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
-        );
-
-        $this->applyAfter(
-            new PieceWasMoved(
-                Rook::forColor(Color::white()),
-                CoordinatePair::fromFileAndRank('b', 5),
-                CoordinatePair::fromFileAndRank('b', 4)
-            )
-        );
-
-        $this->mayMove($this->blackPawn, $move);
-    }
-
-    function it_may_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 7),
-            CoordinatePair::fromFileAndRank('a', 5),
-            new Forward(Color::black(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
-        );
-
-        $this->mayMove($this->blackPawn, $move);
-    }
-
-    function it_may_not_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves()
-    {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 3),
-            CoordinatePair::fromFileAndRank('a', 5),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
-        );
-
-        $this->applyAfter(
-            new PieceWasMoved(
-                $this->whitePawn,
-                CoordinatePair::fromFileAndRank('a', 2),
-                CoordinatePair::fromFileAndRank('a', 3)
-            )
-        );
-
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
-    }
-
-    function it_may_not_advance_more_than_two_squares_along_the_same_file_on_first_move()
-    {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->whitePawn,
             CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('a', 6),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+            CoordinatePair::fromFileAndRank('a', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
+        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('a', 3))->willReturn(false);
+
+        $this->apply($move, $game);
     }
 
-    function it_may_not_capture_opponents_piece_diagonally_not_directly_in_front_of_it()
+    function it_may_not_be_played_on_board_if_moving_along_file_and_destination_position_is_occupied(Game $game)
     {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('c', 4),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal())
+        $destination = CoordinatePair::fromFileAndRank('c', 3);
+        $move = new Move(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('c', 2),
+            $destination
         );
 
-        $this->applyAfter(
-            new PieceWasMoved(
-                Rook::forColor(Color::black()),
-                CoordinatePair::fromFileAndRank('c', 5),
-                CoordinatePair::fromFileAndRank('c', 4)
-            )
-        );
+        $game->isPositionOccupied($destination)->willReturn(true);
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->whitePawn, $move))->during('mayMove', [$this->whitePawn, $move,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
     }
 
-    function it_may_move_forward_if_destination_is_not_occupied_at_the_moment()
+    function it_may_be_played_on_board_if_capturing_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file(Game $game)
     {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->whitePawn,
             CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('a', 3),
-            new Forward(Color::white(), new \NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile())
+            CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $blackRook = Rook::forColor(Color::black());
-        $this->applyAfter(
-            new PieceWasMoved(
-                $blackRook,
-                CoordinatePair::fromFileAndRank('b', 3),
-                CoordinatePair::fromFileAndRank('a', 3)
-            )
+        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('b', 3), Color::white())->willReturn(true);
+
+        $this->apply($move, $game);
+    }
+
+    function it_may_not_be_played_on_board_if_moving_along_diagonal_in_front_of_it_on_an_adjacent_file(Game $game)
+    {
+        $move = new Move(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('a', 2),
+            CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $this->applyAfter(
-            new PieceWasMoved(
-                $blackRook,
-                CoordinatePair::fromFileAndRank('a', 3),
-                CoordinatePair::fromFileAndRank('d', 3)
-            )
+        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('b', 3), Color::white())->willReturn(false);
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+    }
+
+    function it_may_not_be_played_on_board_if_pawn_advance_two_squares_along_the_same_file_on_first_move_but_one_is_occupied(Game $game)
+    {
+        $move = new Move(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('b', 2),
+            CoordinatePair::fromFileAndRank('b', 4)
         );
 
-        $this->mayMove($this->whitePawn, $move);
+        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 4))->willReturn(false);
+        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(true);
+
+        $this->shouldThrow(new MoveOverInterveningPiece(CoordinatePair::fromFileAndRank('b', 3)))->during('apply', [$move, $game,]);
     }
 }

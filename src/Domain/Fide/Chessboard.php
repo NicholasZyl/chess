@@ -5,12 +5,13 @@ namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
+use NicholasZyl\Chess\Domain\Event\PieceWasPlaced;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules;
 
 final class Chessboard implements Board
 {
@@ -20,26 +21,19 @@ final class Chessboard implements Board
     private const HIGHEST_RANK = 8;
 
     /**
-     * @var Rules
-     */
-    private $rules;
-
-    /**
      * @var Square[]
      */
     private $grid = [];
 
     /**
-     * @var Event[]
+     * @var \SplObjectStorage[]|Piece[][]|Coordinates[][]
      */
-    private $occurredEvents = [];
+    private $pieces;
 
     /**
      * Build the chessboard as a 8 x 8 grid of 64 squares.
-     *
-     * @param Rules $rules
      */
-    public function __construct(Rules $rules)
+    public function __construct()
     {
         foreach (range(self::LOWEST_FILE, self::HIGHEST_FILE) as $file) {
             foreach (range(self::LOWEST_RANK, self::HIGHEST_RANK) as $rank) {
@@ -47,16 +41,27 @@ final class Chessboard implements Board
                 $this->grid[(string)$square->coordinates()] = $square;
             }
         }
-        $this->rules = $rules;
+        $this->pieces = [
+            (string) Color::white() => new \SplObjectStorage(),
+            (string) Color::black() => new \SplObjectStorage(),
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void
+    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): array
     {
-        $events = $this->getSquareAt($coordinates)->place($piece);
-        $this->onEventsOccurred($events);
+        $events = [];
+        $capturedPiece = $this->getSquareAt($coordinates)->place($piece);
+        $events[] = new PieceWasPlaced($piece, $coordinates);
+        $this->pieces[(string)$piece->color()]->attach($piece, $coordinates);
+        if ($capturedPiece) {
+            $this->pieces[(string)$capturedPiece->color()]->detach($capturedPiece);
+            $events[] = new PieceWasCaptured($capturedPiece, $coordinates);
+        }
+
+        return $events;
     }
 
     /**
@@ -70,27 +75,15 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function movePiece(Coordinates $source, Coordinates $destination): void
+    public function isPositionOccupied(Coordinates $position): bool
     {
-        $from = $this->getSquareAt($source);
-        $piece = $from->peek();
-        $move = $piece->intentMoveTo($destination);
-        $events = $move->play($this, $this->rules);
-        $this->onEventsOccurred($events);
+        return $this->getSquareAt($position)->isOccupied();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function verifyThatPositionIsUnoccupied(Coordinates $position)
-    {
-        $this->getSquareAt($position)->verifyThatUnoccupied();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool
+    public function isPositionOccupiedByOpponentOf(Coordinates $coordinates, Color $pieceColor): bool
     {
         return $this->getSquareAt($coordinates)->hasPlacedOpponentsPiece($pieceColor);
     }
@@ -98,17 +91,17 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool
+    public function isPositionAttackedBy(Coordinates $position, Color $color, Game $game): bool
     {
-        $this->areCoordinatesOnBoard($coordinates);
+        $this->areCoordinatesOnBoard($position);
 
-        foreach ($this->grid as $square) {
-            if ($square->hasPlacedOpponentsPiece($color) && $square->peek()->isAttacking($coordinates, $this)) {
-                return true;
-            }
+        $isAttacked = false;
+        $piecesSet = $this->pieces[(string)$color];
+        foreach ($piecesSet as $piece) {
+            $isAttacked = $isAttacked || $game->mayMove($piece, $piecesSet[$piece], $position);
         }
 
-        return false;
+        return $isAttacked;
     }
 
     /**
@@ -139,28 +132,5 @@ final class Chessboard implements Board
         if (!array_key_exists((string)$coordinates, $this->grid)) {
             throw new OutOfBoardCoordinates($coordinates);
         }
-    }
-
-    /**
-     * Act on events that just occurred.
-     *
-     * @param array $events
-     *
-     * @return void
-     */
-    private function onEventsOccurred(array $events): void
-    {
-        foreach ($events as $event) {
-            $this->rules->applyAfter($event);
-            $this->occurredEvents[] = $event;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function occurredEvents(): array
-    {
-        return $this->occurredEvents;
     }
 }

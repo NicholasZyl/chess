@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -59,24 +58,20 @@ final class Square
      *
      * @param Piece $piece
      *
-     * @return Event[]
+     * @return Piece|null Returns captured piece if was placed here.
      *
      * @throws SquareIsOccupied
      */
-    public function place(Piece $piece): array
+    public function place(Piece $piece): ?Piece
     {
-        if ($this->placedPiece !== null && $this->placedPiece->isSameColorAs($piece)) {
+        if ($this->isOccupied() && $this->placedPiece->isSameColorAs($piece)) {
             throw new SquareIsOccupied($this->coordinates);
         }
-        $events = [];
-        if ($this->hasPlacedOpponentsPiece($piece->color())) {
-            $events []= new Event\PieceWasCaptured($this->placedPiece, $this->coordinates);
-        }
 
+        $capturedPiece = $this->placedPiece;
         $this->placedPiece = $piece;
-        $piece->placeAt($this->coordinates);
 
-        return $events;
+        return $capturedPiece;
     }
 
     /**
@@ -103,25 +98,11 @@ final class Square
      */
     public function peek(): Piece
     {
-        if ($this->placedPiece === null) {
+        if (!$this->isOccupied()) {
             throw new SquareIsUnoccupied($this->coordinates);
         }
 
         return $this->placedPiece;
-    }
-
-    /**
-     * Verify that the position is unoccupied by any piece.
-     *
-     * @throws SquareIsOccupied
-     *
-     * @return void
-     */
-    public function verifyThatUnoccupied(): void
-    {
-        if ($this->placedPiece !== null) {
-            throw new SquareIsOccupied($this->coordinates);
-        }
     }
 
     /**
@@ -133,6 +114,16 @@ final class Square
      */
     public function hasPlacedOpponentsPiece(Piece\Color $color): bool
     {
-        return $this->placedPiece !== null && !$this->placedPiece->hasColor($color);
+        return $this->isOccupied() && !$this->placedPiece->hasColor($color);
+    }
+
+    /**
+     * Is square currently occupied by any piece.
+     *
+     * @return bool
+     */
+    public function isOccupied(): bool
+    {
+        return $this->placedPiece !== null;
     }
 }

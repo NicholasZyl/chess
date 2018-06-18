@@ -37,9 +37,10 @@ Feature: The moves of the pieces
     And black queen should not be moved from d4
 
   Scenario: When making moves, the bishop, rook or queen may not move over any intervening pieces
-    Given there is a chessboard
-    And black pawn is placed on f7
-    And white bishop is placed on d5
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | black pawn   | f7       |
+      | white bishop | d5       |
     When I move piece from d5 to g8
     Then the move is illegal
     And white bishop should not be moved from d5
@@ -57,8 +58,7 @@ Feature: The moves of the pieces
     And white knight should not be moved from d4
 
   Scenario: The knight may move over intervening pieces
-    Given there is a chessboard
-    And following pieces are placed on it
+    Given there is a chessboard with placed pieces
       | piece        | location |
       | black knight | g8       |
       | black rook   | h8       |
@@ -80,8 +80,7 @@ Feature: The moves of the pieces
     Then white pawn should be moved to b4
 
   Scenario: The pawn may not advance two squares along the same file, if any square is occupied
-    Given there is a chessboard
-    And following pieces are placed on it
+    Given there is a chessboard with placed pieces
       | piece        | location |
       | white pawn   | c2       |
       | white knight | c3       |
@@ -92,9 +91,10 @@ Feature: The moves of the pieces
     Then white pawn should be moved to c4
 
   Scenario: The pawn may not move forward if the square is occupied
-    Given there is a chessboard
-    And white pawn is placed on d4
-    And white knight is placed on d5
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | white pawn   | d4       |
+      | white knight | d5       |
     When I move piece from d4 to d5
     Then the move is illegal
     And white pawn should not be moved from d4
@@ -126,8 +126,7 @@ Feature: The moves of the pieces
     And white king should not be moved from d4
 
   Scenario: The king may move by 'castling'
-    Given there is a chessboard
-    And following pieces are placed on it
+    Given there is a chessboard with placed pieces
       | piece      | location |
       | white king | e1       |
       | white rook | a1       |
@@ -136,8 +135,7 @@ Feature: The moves of the pieces
     And white rook should be moved to d1
 
   Scenario: Castling is prevented temporarily if the square on which the king stands, or the square which it must cross, or the square which it is to occupy, is attacked by one or more of the opponent's pieces
-    Given there is a chessboard
-    And following pieces are placed on it
+    Given there is a chessboard with placed pieces
       | piece       | location |
       | white king  | e1       |
       | white rook  | a1       |
@@ -147,8 +145,7 @@ Feature: The moves of the pieces
     And white king should not be moved from e1
 
   Scenario: Castling is prevented temporarily if there is any piece between the king and the rook with which castling is to be effected
-    Given there is a chessboard
-    And following pieces are placed on it
+    Given there is a chessboard with placed pieces
       | piece        | location |
       | white king   | e1       |
       | white rook   | a1       |
@@ -158,8 +155,10 @@ Feature: The moves of the pieces
     And white king should not be moved from e1
 
   Scenario: It is not permitted to move a piece to a square occupied by a piece of the same colour
-    Given there is a chessboard with white pawn placed on d5
-    And white bishop is placed on b3
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | white pawn   | d5       |
+      | white bishop | b3       |
     When I move piece from b3 to d5
     Then the move is illegal
     And white bishop should not be moved from b3

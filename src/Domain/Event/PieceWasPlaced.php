@@ -7,7 +7,7 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Piece;
 
-final class PieceWasCaptured implements Event
+final class PieceWasPlaced implements Event
 {
     /**
      * @var Piece
@@ -20,7 +20,7 @@ final class PieceWasCaptured implements Event
     private $at;
 
     /**
-     * Create event that piece was captured at given coordinates.
+     * Create an event that piece was placed at given coordinates.
      *
      * @param Piece $piece
      * @param Coordinates $at
@@ -32,7 +32,7 @@ final class PieceWasCaptured implements Event
     }
 
     /**
-     * What piece was captured.
+     * What piece was placed.
      *
      * @return Piece
      */
@@ -42,11 +42,11 @@ final class PieceWasCaptured implements Event
     }
 
     /**
-     * Where piece was captured.
+     * Where piece was placed.
      *
      * @return Coordinates
      */
-    public function capturedAt(): Coordinates
+    public function placedAt(): Coordinates
     {
         return $this->at;
     }

@@ -3,20 +3,15 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
-use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
-use NicholasZyl\Chess\Domain\Fide\Move\Castling;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
+use NicholasZyl\Chess\Domain\Game;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules\PieceMoves;
+use NicholasZyl\Chess\Domain\Rules\MoveRule;
 use PhpSpec\ObjectBehavior;
 
 class KingMovesSpec extends ObjectBehavior
@@ -38,126 +33,99 @@ class KingMovesSpec extends ObjectBehavior
 
     function it_is_piece_moves_rule()
     {
-        $this->shouldBeAnInstanceOf(PieceMoves::class);
+        $this->shouldBeAnInstanceOf(MoveRule::class);
     }
 
-    function it_is_applicable_for_king()
+    function it_has_standard_priority()
     {
-        $this->isApplicableFor($this->king)->shouldBe(true);
+        $this->priority()->shouldBe(10);
     }
 
-    function it_is_not_applicable_for_other_pieces()
+    function it_is_applicable_for_king_move_along_diagonal()
     {
-        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
-    }
-
-    function it_may_move_to_adjoining_square_along_file()
-    {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->king,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('a', 2),
-            new AlongFile()
+            CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->mayMove($this->king, $move);
+        $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_may_move_to_adjoining_square_along_rank()
+    function it_is_applicable_for_king_move_along_file()
     {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->king,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 1),
-            new AlongRank()
+            CoordinatePair::fromFileAndRank('a', 2)
         );
 
-        $this->mayMove($this->king, $move);
+        $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_may_move_to_adjoining_square_along_diagonal()
+    function it_is_applicable_for_king_move_along_rank()
     {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 2),
-            new AlongDiagonal()
+        $move = new Move(
+            $this->king,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->mayMove($this->king, $move);
+        $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_may_not_move_over_any_intervening_pieces()
+    function it_is_not_applicable_for_king_move_not_along_known_direction()
     {
-        $move = new OverOtherPieces(
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 2),
-            new AlongDiagonal()
+        $move = new Move(
+            $this->king,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('c', 1)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_not_move_further_than_to_adjoining_square()
+    function it_is_not_applicable_for_king_move_further_than_to_adjoining_square()
     {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('a', 1),
+        $move = new Move(
+            $this->king,
             CoordinatePair::fromFileAndRank('a', 3),
-            new AlongFile()
+            CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_move_by_castling()
+    function it_is_not_applicable_for_other_piece_move()
     {
-        $source = CoordinatePair::fromFileAndRank('f', 1);
-        $destination = CoordinatePair::fromFileAndRank('d', 1);
-        $move = new Castling(
-            Color::white(),
-            $source,
-            $destination
+        $move = new Move(
+            Knight::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 2)
         );
 
-        $this->mayMove($this->king, $move);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_not_move_by_castling_when_king_has_already_moved()
+    function it_may_be_played_on_board(Game $game)
     {
-        $source = CoordinatePair::fromFileAndRank('f', 1);
-        $destination = CoordinatePair::fromFileAndRank('d', 1);
-        $move = new Castling(
-            Color::white(),
-            $source,
-            $destination
+        $move = new Move(
+            $this->king,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 2)
         );
 
-        $this->applyAfter(
-            new PieceWasMoved(
-                $this->king,
-                CoordinatePair::fromFileAndRank('e', 1),
-                $source
-            )
-        );
-
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->king, $move))->during('mayMove', [$this->king, $move,]);
+        $this->apply($move, $game);
     }
 
-    function it_may_move_by_castling_if_opponents_king_has_moved()
+    function it_may_not_be_played_if_not_applicable(Game $game)
     {
-        $source = CoordinatePair::fromFileAndRank('f', 1);
-        $destination = CoordinatePair::fromFileAndRank('d', 1);
-        $move = new Castling(
-            Color::white(),
-            $source,
-            $destination
+        $move = new Move(
+            $this->king,
+            CoordinatePair::fromFileAndRank('c', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->applyAfter(
-            new PieceWasMoved(
-                King::forColor(Color::black()),
-                CoordinatePair::fromFileAndRank('e', 8),
-                CoordinatePair::fromFileAndRank('f', 8)
-            )
-        );
-
-        $this->mayMove($this->king, $move);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
     }
 }

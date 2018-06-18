@@ -3,18 +3,15 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
+use NicholasZyl\Chess\Domain\Game;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules\PieceMoves;
+use NicholasZyl\Chess\Domain\Rules\MoveRule;
 use PhpSpec\ObjectBehavior;
 
 class KnightMovesSpec extends ObjectBehavior
@@ -36,49 +33,88 @@ class KnightMovesSpec extends ObjectBehavior
 
     function it_is_piece_moves_rule()
     {
-        $this->shouldBeAnInstanceOf(PieceMoves::class);
+        $this->shouldBeAnInstanceOf(MoveRule::class);
     }
 
-    function it_is_applicable_for_knight()
+    function it_has_standard_priority()
     {
-        $this->isApplicableFor($this->knight)->shouldBe(true);
+        $this->priority()->shouldBe(10);
     }
 
-    function it_is_not_applicable_for_other_pieces()
+    function it_is_applicable_for_knight_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal()
     {
-        $this->isApplicableFor(Queen::forColor(Color::white()))->shouldBe(false);
-    }
-
-    function it_may_move_to_the_nearest_square_over_other_pieces()
-    {
-        $move = new OverOtherPieces(
+        $move = new Move(
+            $this->knight,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 3),
-            new LShaped()
+            CoordinatePair::fromFileAndRank('c', 2)
         );
 
-        $this->mayMove($this->knight, $move);
+        $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_may_not_move_along_rank()
+    function it_is_not_applicable_for_knight_move_along_diagonal()
     {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->knight,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 1),
-            new AlongRank()
+            CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('mayMove', [$this->knight, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_not_move_along_file()
+    function it_is_not_applicable_for_knight_move_along_file()
     {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('c', 1),
-            CoordinatePair::fromFileAndRank('c', 2),
-            new AlongFile()
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->knight, $move))->during('mayMove', [$this->knight, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_for_rook_move_along_rank()
+    {
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_for_other_piece_move()
+    {
+        $move = new Move(
+            Queen::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_may_be_played_on_board_if_applicable(Game $game)
+    {
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 3)
+        );
+
+        $this->apply($move, $game);
+    }
+
+    function it_may_not_be_played_if_not_applicable(Game $game)
+    {
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('c', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
     }
 }

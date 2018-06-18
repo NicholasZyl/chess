@@ -6,6 +6,7 @@ namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -14,9 +15,11 @@ class MoveToIllegalPositionSpec extends ObjectBehavior
     function let()
     {
         $this->beConstructedWith(
-            Pawn::forColor(Color::white()),
-            CoordinatePair::fromFileAndRank('a', 2),
-            CoordinatePair::fromFileAndRank('b', 2)
+            new Move(
+                Pawn::forColor(Color::white()),
+                CoordinatePair::fromFileAndRank('a', 2),
+                CoordinatePair::fromFileAndRank('b', 2)
+            )
         );
     }
 

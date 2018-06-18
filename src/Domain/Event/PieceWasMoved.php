@@ -5,37 +5,24 @@ namespace NicholasZyl\Chess\Domain\Event;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class PieceWasMoved implements Event
 {
     /**
-     * @var Piece
+     * @var Move
      */
-    private $piece;
+    private $move;
 
     /**
-     * @var Coordinates
-     */
-    private $source;
-
-    /**
-     * @var Coordinates
-     */
-    private $destination;
-
-    /**
-     * Create event that piece moved from one coordinates to another.
+     * Create an event that piece was moved from one position to another.
      *
-     * @param Piece $piece
-     * @param Coordinates $source
-     * @param Coordinates $destination
+     * @param Move $move
      */
-    public function __construct(Piece $piece, Coordinates $source, Coordinates $destination)
+    public function __construct(Move $move)
     {
-        $this->piece = $piece;
-        $this->source = $source;
-        $this->destination = $destination;
+        $this->move = $move;
     }
 
     /**
@@ -45,7 +32,7 @@ final class PieceWasMoved implements Event
      */
     public function piece(): Piece
     {
-        return $this->piece;
+        return $this->move->piece();
     }
 
     /**
@@ -55,7 +42,7 @@ final class PieceWasMoved implements Event
      */
     public function source(): Coordinates
     {
-        return $this->source;
+        return $this->move->source();
     }
 
     /**
@@ -65,19 +52,18 @@ final class PieceWasMoved implements Event
      */
     public function destination(): Coordinates
     {
-        return $this->destination;
+        return $this->move->destination();
     }
 
     /**
-     * {@inheritdoc}
+     * Check if move was made over expected distance.
+     *
+     * @param int $expectedDistance
+     *
+     * @return bool
      */
-    public function jsonSerialize()
+    public function wasOverDistanceOf(int $expectedDistance): bool
     {
-        return [
-            'event' => 'moved',
-            'piece' => $this->piece,
-            'source' => $this->source,
-            'destination' => $this->destination,
-        ];
+        return $this->move->isOverDistanceOf($expectedDistance);
     }
 }

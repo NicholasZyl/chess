@@ -3,21 +3,18 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Exception\IllegalMove;
 
-use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Move;
 
 class MoveToIllegalPosition extends IllegalMove
 {
     /**
      * Create exception for move that would be made to an illegal position for given piece.
      *
-     * @param Piece $piece
-     * @param Coordinates $source
-     * @param Coordinates $destination
+     * @param Move $move
      */
-    public function __construct(Piece $piece, Coordinates $source, Coordinates $destination)
+    public function __construct(Move $move)
     {
-        parent::__construct(sprintf('%s is illegal position for %s standing at %s', $destination, $piece, $source));
+        parent::__construct(sprintf('%s is illegal position for %s standing at %s', $move->destination(), $move->piece(), $move->source()));
     }
 }

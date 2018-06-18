@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
-use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
@@ -67,21 +64,5 @@ abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
     public function isSameAs(\NicholasZyl\Chess\Domain\Piece $anotherPiece): bool
     {
         return $anotherPiece instanceof static && $this->isSameColorAs($anotherPiece);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAttacking(Coordinates $coordinates, Board $board): bool
-    {
-        try {
-            $move = $this->intentMoveTo($coordinates);
-            $this->mayMove($move, $board);
-            $move->isLegal($board);
-
-            return true;
-        } catch (IllegalMove $illegalMove) {
-            return false;
-        }
     }
 }

@@ -5,5 +5,4 @@ namespace NicholasZyl\Chess\Domain\Exception;
 
 abstract class BoardException extends \RuntimeException
 {
-
 }

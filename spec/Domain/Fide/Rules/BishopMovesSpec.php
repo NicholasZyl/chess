@@ -3,18 +3,15 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
-use NicholasZyl\Chess\Domain\Fide\Move\OverOtherPieces;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
+use NicholasZyl\Chess\Domain\Game;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules\PieceMoves;
+use NicholasZyl\Chess\Domain\Rules\MoveRule;
 use PhpSpec\ObjectBehavior;
 
 class BishopMovesSpec extends ObjectBehavior
@@ -36,60 +33,80 @@ class BishopMovesSpec extends ObjectBehavior
 
     function it_is_piece_moves_rule()
     {
-        $this->shouldBeAnInstanceOf(PieceMoves::class);
+        $this->shouldBeAnInstanceOf(MoveRule::class);
     }
 
-    function it_is_applicable_for_bishop()
+    function it_has_standard_priority()
     {
-        $this->isApplicableFor($this->bishop)->shouldBe(true);
+        $this->priority()->shouldBe(10);
     }
 
-    function it_is_not_applicable_for_other_pieces()
+    function it_is_applicable_for_bishop_move_along_diagonal()
     {
-        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
-    }
-
-    function it_may_move_to_any_square_along_a_diagonal()
-    {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->bishop,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 3),
-            new AlongDiagonal()
+            CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->mayMove($this->bishop, $move);
+        $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_may_not_move_along_rank()
+    function it_is_not_applicable_for_bishop_move_along_file()
     {
-        $move = new NotIntervened(
+        $move = new Move(
+            $this->bishop,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 1),
-            new AlongRank()
+            CoordinatePair::fromFileAndRank('a', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_not_move_along_file()
+    function it_is_not_applicable_for_bishop_move_along_rank()
     {
-        $move = new NotIntervened(
-            CoordinatePair::fromFileAndRank('c', 1),
-            CoordinatePair::fromFileAndRank('c', 2),
-            new AlongFile()
+        $move = new Move(
+            $this->bishop,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('a', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
     }
 
-    function it_may_not_move_over_any_intervening_pieces()
+    function it_is_not_applicable_for_other_piece_move()
     {
-        $move = new OverOtherPieces(
+        $move = new Move(
+            Knight::forColor(Color::white()),
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 2),
-            new AlongDiagonal()
+            CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->shouldThrow(new MoveNotAllowedForPiece($this->bishop, $move))->during('mayMove', [$this->bishop, $move,]);
+        $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_may_be_played_on_board_if_not_over_other_pieces(Game $game)
+    {
+        $move = new Move(
+            $this->bishop,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 2))->willReturn(false);
+
+        $this->apply($move, $game);
+    }
+
+    function it_may_not_be_played_over_intervening_pieces(Game $game)
+    {
+        $move = new Move(
+            $this->bishop,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+        $occupiedPosition = CoordinatePair::fromFileAndRank('b', 2);
+        $game->isPositionOccupied($occupiedPosition)->willReturn(true);
+
+        $this->shouldThrow(new MoveOverInterveningPiece($occupiedPosition))->during('apply', [$move, $game,]);
     }
 }

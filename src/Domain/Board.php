@@ -7,7 +7,6 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
 interface Board
@@ -21,9 +20,9 @@ interface Board
      * @throws OutOfBoardCoordinates
      * @throws SquareIsOccupied
      *
-     * @return void
+     * @return Event[]
      */
-    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): void;
+    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): array;
 
     /**
      * Pick a piece from given coordinates.
@@ -38,30 +37,15 @@ interface Board
     public function pickPieceFromCoordinates(Coordinates $coordinates): Piece;
 
     /**
-     * Move a piece from one position to another.
-     *
-     * @param Coordinates $source
-     * @param Coordinates $destination
-     *
-     * @throws OutOfBoardCoordinates
-     * @throws SquareIsUnoccupied
-     * @throws IllegalMove
-     *
-     * @return void
-     */
-    public function movePiece(Coordinates $source, Coordinates $destination): void;
-
-    /**
-     * Verify that given position is unoccupied.
+     * Check if given position is occupied.
      *
      * @param Coordinates $position
      *
      * @throws OutOfBoardCoordinates
-     * @throws SquareIsOccupied
      *
-     * @return void
+     * @return bool
      */
-    public function verifyThatPositionIsUnoccupied(Coordinates $position);
+    public function isPositionOccupied(Coordinates $position): bool;
 
     /**
      * Check if given position is occupied by piece of color different than passed one.
@@ -73,24 +57,18 @@ interface Board
      *
      * @return bool
      */
-    public function hasOpponentsPieceAt(Coordinates $coordinates, Color $pieceColor): bool;
+    public function isPositionOccupiedByOpponentOf(Coordinates $coordinates, Color $pieceColor): bool;
 
     /**
-     * Check if position is attacked by piece owned by opponent of passed color.
+     * Check if position is attacked by any piece of passed color according to the game and its rules.
      *
-     * @param Coordinates $coordinates
+     * @param Coordinates $position
      * @param Color $color
+     * @param Game $game
      *
      * @throws OutOfBoardCoordinates
      *
      * @return bool
      */
-    public function isPositionAttackedByOpponentOf(Coordinates $coordinates, Color $color): bool;
-
-    /**
-     * Get all events that occurred after last move.
-     *
-     * @return Event[]
-     */
-    public function occurredEvents(): array;
+    public function isPositionAttackedBy(Coordinates $position, Color $color, Game $game): bool;
 }

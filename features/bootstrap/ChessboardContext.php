@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
+use Helper\PieceFactory;
+use Helper\PieceTestPositions;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
+use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 
@@ -17,14 +20,14 @@ use NicholasZyl\Chess\Domain\Piece\Color;
 class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
 {
     /**
-     * @var \Helper\PieceFactory
+     * @var PieceFactory
      */
     private $pieceFactory;
 
     /**
-     * @var \NicholasZyl\Chess\Domain\Board
+     * @var Game
      */
-    private $chessboard;
+    private $game;
 
     /**
      * @var \RuntimeException
@@ -38,31 +41,29 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
 
     /**
      * ChessboardContext constructor.
-     * @param \Helper\PieceFactory $pieceFactory
+     * @param PieceFactory $pieceFactory
      */
-    public function __construct(\Helper\PieceFactory $pieceFactory)
+    public function __construct(PieceFactory $pieceFactory)
     {
         $this->pieceFactory = $pieceFactory;
     }
 
     /**
-     * @Given there is a chessboard
+     * @Given there is a chessboard with placed pieces
+     * @param TableNode $table
      */
-    public function thereIsAChessboard()
+    public function thereIsAChessboardWithPieces(TableNode $table)
     {
-        $laws = new \NicholasZyl\Chess\Domain\Fide\LawsOfChess();
-        $this->chessboard = new Chessboard($laws->rules());
-    }
+        $initialPositions = new PieceTestPositions();
 
-    /**
-     * @Given /(?P<piece>[a-z]+ [a-z]+) is placed on (?P<coordinates>[a-h][0-8])/
-     *
-     * @param Piece $piece
-     * @param CoordinatePair $coordinates
-     */
-    public function pieceIsPlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
-    {
-        $this->chessboard->placePieceAtCoordinates($piece, $coordinates);
+        foreach ($table->getHash() as $pieceAtLocation) {
+            $initialPositions->placePieceAt(
+                $this->castToPiece($pieceAtLocation['piece']),
+                $this->castToCoordinates($pieceAtLocation['location'])
+            );
+        }
+
+        $this->setupGame($initialPositions);
     }
 
     /**
@@ -73,23 +74,22 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
-        $this->thereIsAChessboard();
-        $this->pieceIsPlacedOnSquare($piece, $coordinates);
+        $initialPositions = new PieceTestPositions();
+        $initialPositions->placePieceAt($piece, $coordinates);
+        $this->setupGame($initialPositions);
     }
 
     /**
-     * @Given following pieces are placed on it
+     * Setup board with pieces at their initial positions.
      *
-     * @param TableNode $table
+     * @param Piece\InitialPositions $initialPositions
+     *
+     * @return void
      */
-    public function followingPiecesArePlacedOnIt(TableNode $table)
+    private function setupGame(Piece\InitialPositions $initialPositions): void
     {
-        foreach ($table->getHash() as $pieceAtLocation) {
-            $this->pieceIsPlacedOnSquare(
-                $this->castToPiece($pieceAtLocation['piece']),
-                $this->castToCoordinates($pieceAtLocation['location'])
-            );
-        }
+        $laws = new \NicholasZyl\Chess\Domain\Fide\LawsOfChess();
+        $this->game = new Game(new Chessboard(), $initialPositions, $laws->rules());
     }
 
     /**
@@ -101,11 +101,10 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function iMovePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
     {
         try {
-            $this->chessboard->movePiece($source, $destination);
+            $this->occurredEvents = $this->game->playMove($source, $destination);
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
         }
-        $this->occurredEvents = $this->chessboard->occurredEvents();
     }
 
     /**
@@ -194,17 +193,15 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
                 }
 
                 return false;
-                //throw new \PhpSpec\Exception\Example\FailureException(sprintf('Expected that %s moved to %s but it did not.', $piece, $coordinates));
             },
             'containEventThatPieceWasCaptured' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
                 foreach ($occurredEvents as $occurredEvent) {
-                    if ($occurredEvent instanceof Event\PieceWasCaptured && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->placedAt()->equals($coordinates)) {
+                    if ($occurredEvent instanceof Event\PieceWasCaptured && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->capturedAt()->equals($coordinates)) {
                         return true;
                     }
                 }
 
                 return false;
-                //throw new \PhpSpec\Exception\Example\FailureException(sprintf('Expected that %s moved to %s but it did not.', $piece, $coordinates));
             },
         ];
     }

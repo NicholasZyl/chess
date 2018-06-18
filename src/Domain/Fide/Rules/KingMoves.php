@@ -4,57 +4,48 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveNotAllowedForPiece;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\LShaped;
-use NicholasZyl\Chess\Domain\Fide\Move\Castling;
-use NicholasZyl\Chess\Domain\Fide\Move\NotIntervened;
+use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
+use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Move;
-use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Rules\PieceMoves;
+use NicholasZyl\Chess\Domain\Rules\MoveRule;
 
-final class KingMoves implements PieceMoves
+final class KingMoves implements MoveRule
 {
     private const MOVE_TO_ADJOINING_SQUARE = 1;
 
     /**
-     * @var \SplObjectStorage
+     * {@inheritdoc}
      */
-    private $movedKings;
-
-    /**
-     * Create King Moves rules.
-     */
-    public function __construct()
+    public function priority(): int
     {
-        $this->movedKings = new \SplObjectStorage();
+        return self::STANDARD_PRIORITY;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isApplicableFor(Piece $piece): bool
+    public function applyAfter(Event $event, Game $game): array
     {
-        return $piece instanceof King;
+        // No specific rules to apply.
+        return [];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function mayMove(Piece $piece, Move $move): void
+    public function isApplicable(Move $move): bool
     {
-        if (!($move instanceof NotIntervened && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)) && (!$move instanceof Castling || $this->movedKings->contains($piece)) || $move->inDirection(new LShaped())) {
-            throw new MoveNotAllowedForPiece($piece, $move);
-        }
+        return $move->piece() instanceof King && $move->inKnownDirection() && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function applyAfter(Event $event): void
+    public function apply(Move $move, Game $game): void
     {
-        if ($event instanceof Event\PieceWasMoved && $event->piece() instanceof King) {
-            $this->movedKings->attach($event->piece());
+        if (!$this->isApplicable($move)) {
+            throw new MoveToIllegalPosition($move);
         }
     }
 }

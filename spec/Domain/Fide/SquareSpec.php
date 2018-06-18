@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -32,7 +31,7 @@ class SquareSpec extends ObjectBehavior
     function it_allows_to_place_piece_on_it()
     {
         $piece = Pawn::forColor(Piece\Color::white());
-        $this->place($piece)->shouldBeLike([]);
+        $this->place($piece)->shouldBe(null);
     }
 
     function it_allows_to_peek_at_it_to_see_what_piece_is_placed()
@@ -45,14 +44,6 @@ class SquareSpec extends ObjectBehavior
     function it_knows_when_peeking_at_unoccupied_square()
     {
         $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('peek');
-    }
-
-    function it_notifies_piece_that_it_was_placed(Piece $piece)
-    {
-        $piece->color()->willReturn(Piece\Color::white());
-        $piece->placeAt($this->coordinates)->shouldBeCalled();
-
-        $this->place($piece);
     }
 
     function it_allows_to_pick_piece_placed_on_it()
@@ -86,17 +77,17 @@ class SquareSpec extends ObjectBehavior
         $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('place', [$movingPiece,]);
     }
 
-    function it_can_be_verified_as_unoccupied()
-    {
-        $this->verifyThatUnoccupied();
-    }
-
-    function it_can_not_be_verified_as_unoccupied_when_piece_is_placed()
+    function it_knows_when_is_occupied()
     {
         $piece = Pawn::forColor(Piece\Color::white());
         $this->place($piece);
 
-        $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('verifyThatUnoccupied');
+        $this->isOccupied()->shouldBe(true);
+    }
+
+    function it_knows_when_is_unoccupied()
+    {
+        $this->isOccupied()->shouldBe(false);
     }
 
     function it_captures_piece_when_placing_piece_with_another_color()
@@ -106,7 +97,7 @@ class SquareSpec extends ObjectBehavior
 
         $piece = Knight::forColor(Piece\Color::white());
 
-        $this->place($piece)->shouldBeLike([new PieceWasCaptured($opponentPiece, $this->coordinates),]);
+        $this->place($piece)->shouldBeLike($opponentPiece);
     }
 
     function it_knows_that_it_has_placed_opponents_piece_on_it()
