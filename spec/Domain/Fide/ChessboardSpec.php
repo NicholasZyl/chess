@@ -158,4 +158,22 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->shouldThrow(new OutOfBoardCoordinates($coordinates))->during('isPositionAttackedBy', [$coordinates, Piece\Color::white(), $game,]);
     }
+
+    function it_removes_piece_from_given_position()
+    {
+        $position = CoordinatePair::fromFileAndRank('b', 2);
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->placePieceAtCoordinates($piece, $position);
+
+        $this->removePieceFrom($position)->shouldBe($piece);
+
+        $this->isPositionOccupied($position)->shouldBe(false);
+    }
+
+    function it_cannot_remove_piece_from_unoccupied_square()
+    {
+        $position = CoordinatePair::fromFileAndRank('b', 2);
+
+        $this->shouldThrow(new SquareIsUnoccupied($position))->during('removePieceFrom', [$position,]);
+    }
 }

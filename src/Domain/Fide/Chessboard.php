@@ -133,4 +133,15 @@ final class Chessboard implements Board
             throw new OutOfBoardCoordinates($coordinates);
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removePieceFrom(Coordinates $position): Piece
+    {
+        $piece = $this->getSquareAt($position)->pick();
+        $this->pieces[(string)$piece->color()]->detach($piece);
+
+        return $piece;
+    }
 }

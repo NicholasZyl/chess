@@ -82,6 +82,13 @@ class CoordinatePairSpec extends ObjectBehavior
         $this->equals($other)->shouldBe(false);
     }
 
+    function it_does_not_equal_null()
+    {
+        $this->beConstructedThrough('fromFileAndRank', ['a', 1]);
+
+        $this->equals(null)->shouldBe(false);
+    }
+
     function it_calculates_next_coordinates_towards_destination_in_given_direction()
     {
         $this->beConstructedThrough('fromFileAndRank', ['a', 1]);

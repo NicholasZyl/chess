@@ -71,4 +71,16 @@ interface Board
      * @return bool
      */
     public function isPositionAttackedBy(Coordinates $position, Color $color, Game $game): bool;
+
+    /**
+     * Remove a piece from given position.
+     *
+     * @param Coordinates $position
+     *
+     * @throws OutOfBoardCoordinates
+     * @throws SquareIsUnoccupied
+     *
+     * @return Piece
+     */
+    public function removePieceFrom(Coordinates $position): Piece;
 }

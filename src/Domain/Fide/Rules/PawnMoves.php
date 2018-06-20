@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -34,6 +35,11 @@ final class PawnMoves implements MoveRule
     private $movedPawns;
 
     /**
+     * @var Coordinates|null
+     */
+    private $enPassantPossibileAt;
+
+    /**
      * Create Pawn Moves rules.
      */
     public function __construct()
@@ -48,7 +54,9 @@ final class PawnMoves implements MoveRule
     {
         if ($event instanceof Event\PieceWasMoved) {
             if ($event->piece() instanceof Pawn) {
-                $this->movedPawns->attach($event->piece());
+                return $this->onPawnMoved($event, $game);
+            } else {
+                $this->enPassantPossibileAt = null;
             }
         }
 
@@ -56,11 +64,67 @@ final class PawnMoves implements MoveRule
     }
 
     /**
+     * Handle event that pawn was moved.
+     *
+     * @param Event\PieceWasMoved $event
+     * @param Game $game
+     *
+     * @return Event[]
+     */
+    private function onPawnMoved(Event\PieceWasMoved $event, Game $game): array
+    {
+        $events = [];
+
+        $this->movedPawns->attach($event->piece());
+        if ($event->destination()->equals($this->enPassantPossibileAt)) {
+            $position = $this->enPassantPossibileAt->nextTowards($event->source(), new AlongFile());
+            $piece = $game->removePieceFromBoard($position);
+            $this->enPassantPossibileAt = null;
+
+            $events[] = new Event\PieceWasCaptured($piece, $position);
+        } elseif ($event->wasOverDistanceOf(self::MOVE_ADVANCING_TWO_SQUARES)) {
+            $this->enPassantPossibileAt = $event->destination()->nextTowards($event->source(), new AlongFile());
+        } else {
+            $this->enPassantPossibileAt = null;
+        }
+
+        return $events;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isApplicable(Move $move): bool
     {
-        return $move->piece() instanceof Pawn && ($this->isLegalMove($move) || $this->isLegalCapture($move));
+        return $move->piece() instanceof Pawn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function apply(Move $move, Game $game): void
+    {
+        if (!$this->isApplicable($move)) {
+            throw new MoveToIllegalPosition($move);
+        }
+        $isLegalMove = $this->isLegalMove($move);
+        $isLegalCapture = $this->isLegalCapture($move);
+
+        if (!$isLegalMove && !$isLegalCapture) {
+            throw new MoveToIllegalPosition($move);
+        }
+
+        if ($isLegalMove && $game->isPositionOccupied($move->destination())) {
+            throw new MoveToIllegalPosition($move);
+        }
+
+        if ($isLegalCapture
+            && !$game->isPositionOccupiedByOpponentOf($move->destination(), $move->piece()->color())
+            && !$move->destination()->equals($this->enPassantPossibileAt)) {
+            throw new MoveToIllegalPosition($move);
+        }
+
+        $this->validateNotIntervenedMove($move, $game);
     }
 
     /**
@@ -90,20 +154,5 @@ final class PawnMoves implements MoveRule
     {
         return $move->inDirection(new Forward($move->piece()->color(), new AlongDiagonal()))
             && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function apply(Move $move, Game $game): void
-    {
-        if (
-            $this->isLegalMove($move) && $game->isPositionOccupied($move->destination())
-            || $this->isLegalCapture($move) && !$game->isPositionOccupiedByOpponentOf($move->destination(), $move->piece()->color())
-        ) {
-            throw new MoveToIllegalPosition($move);
-        }
-
-        $this->validateNotIntervenedMove($move, $game);
     }
 }

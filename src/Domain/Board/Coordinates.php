@@ -60,11 +60,11 @@ interface Coordinates
     /**
      * Compare if is the same as other pair.
      *
-     * @param Coordinates $other
+     * @param Coordinates|null $other
      *
      * @return bool
      */
-    public function equals(Coordinates $other): bool;
+    public function equals(?Coordinates $other): bool;
 
     /**
      * Represent coordinates as string.

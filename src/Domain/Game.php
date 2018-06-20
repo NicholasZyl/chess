@@ -5,7 +5,9 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -72,13 +74,13 @@ class Game
     /**
      * Apply the most important applicable rule to the move.
      *
-     * @param $move
+     * @param Move $move
      *
      * @throws IllegalMove
      *
      * @return void
      */
-    private function applyRuleToMove($move): void
+    private function applyRuleToMove(Move $move): void
     {
         $rules = array_filter(
             $this->rules,
@@ -158,6 +160,8 @@ class Game
      *
      * @param Coordinates $position
      *
+     * @throws OutOfBoardCoordinates
+     *
      * @return bool
      */
     public function isPositionOccupied(Coordinates $position): bool
@@ -170,6 +174,8 @@ class Game
      *
      * @param Coordinates $position
      * @param Color $color
+     *
+     * @throws OutOfBoardCoordinates
      *
      * @return bool
      */
@@ -184,10 +190,27 @@ class Game
      * @param Coordinates $position
      * @param Color $color
      *
+     * @throws OutOfBoardCoordinates
+     *
      * @return bool
      */
     public function isPositionAttackedByOpponentOf(Coordinates $position, Color $color): bool
     {
         return $this->board->isPositionAttackedBy($position, $color->opponent(), $this);
+    }
+
+    /**
+     * Remove piece from the board at given position.
+     *
+     * @param Coordinates $position
+     *
+     * @throws OutOfBoardCoordinates
+     * @throws SquareIsUnoccupied
+     *
+     * @return Piece
+     */
+    public function removePieceFromBoard(Coordinates $position): Piece
+    {
+        return $this->board->removePieceFrom($position);
     }
 }

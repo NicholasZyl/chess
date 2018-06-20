@@ -129,7 +129,7 @@ final class CoordinatePair implements Coordinates
     /**
      * {@inheritdoc}
      */
-    public function equals(Coordinates $other): bool
+    public function equals(?Coordinates $other): bool
     {
         if (!$other instanceof self) {
             return false;

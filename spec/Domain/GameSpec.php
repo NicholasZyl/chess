@@ -216,4 +216,14 @@ class GameSpec extends ObjectBehavior
 
         $this->mayMove($pawn, $source, $destination)->shouldBe(false);
     }
+
+    function it_removes_piece_from_a_board_at_given_position(Board $board)
+    {
+        $piece = Pawn::forColor(Color::white());
+        $position = CoordinatePair::fromFileAndRank('a', 1);
+
+        $board->removePieceFrom($position)->shouldBeCalled()->willReturn($piece);
+
+        $this->removePieceFromBoard($position)->shouldBe($piece);
+    }
 }
