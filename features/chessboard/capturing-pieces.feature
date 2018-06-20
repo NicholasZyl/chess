@@ -17,7 +17,7 @@ Feature: The capture of opponent's piece
       | piece      | location |
       | white pawn | d4       |
       | black pawn | d5       |
-    When I move piece from d4 to d5
+    When I try to move piece from d4 to d5
     Then the move is illegal
     And white pawn should not be moved from d4
     And black pawn should not be moved from d5
@@ -40,3 +40,18 @@ Feature: The capture of opponent's piece
     When I move piece from d5 to e6
     Then black pawn on e5 should be captured
     And white pawn should be moved to e6
+
+  Scenario: En passant capture is not available if another moves were made
+    Given there is a chessboard with placed pieces
+      | piece      | location |
+      | white pawn | d5       |
+      | white pawn | a2       |
+      | black pawn | e7       |
+      | black pawn | f7       |
+    And opponent moved piece from e7 to e5
+    And I moved piece from a2 to a3
+    And opponent moved piece from f7 to f6
+    When I try to move piece from d5 to e6
+    Then the move is illegal
+    And white pawn should not be moved from d5
+    And black pawn on e5 should not be captured

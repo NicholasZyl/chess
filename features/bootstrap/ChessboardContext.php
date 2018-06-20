@@ -93,7 +93,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @When I/opponent (tried to) move(d) piece from :source to :destination
+     * @When I/opponent (tried to) (try to) move(d) piece from :source to :destination
      *
      * @param CoordinatePair $source
      * @param CoordinatePair $destination
@@ -104,6 +104,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
             $this->occurredEvents = $this->game->playMove($source, $destination);
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
+            $this->occurredEvents = [];
         }
     }
 
@@ -146,6 +147,17 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
     {
         expect($this->occurredEvents)->toContainEventThatPieceWasCaptured($piece, $coordinates);
+    }
+
+    /**
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should not be captured/
+     *
+     * @param Piece $piece
+     * @param CoordinatePair $coordinates
+     */
+    public function pieceOnSquareShouldNotBeCaptured(Piece $piece, CoordinatePair $coordinates)
+    {
+        expect($this->occurredEvents)->toNotContainEventThatPieceWasCaptured($piece, $coordinates);
     }
 
     /**

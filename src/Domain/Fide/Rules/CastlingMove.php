@@ -17,6 +17,12 @@ use NicholasZyl\Chess\Domain\Rules\MoveRule;
 final class CastlingMove implements MoveRule
 {
     private const CASTLING_MOVE_DISTANCE = 2;
+    private const INITIAL_ROOK_POSITIONS = [
+        'a1',
+        'h1',
+        'a8',
+        'h8',
+    ];
 
     /**
      * {@inheritdoc}
@@ -47,7 +53,7 @@ final class CastlingMove implements MoveRule
     public function __construct()
     {
         $this->movedKings = new \SplObjectStorage();
-        $this->rookPositionsAvailableForCastling = [];
+        $this->rookPositionsAvailableForCastling = array_flip(self::INITIAL_ROOK_POSITIONS);
     }
 
     /**
@@ -69,10 +75,6 @@ final class CastlingMove implements MoveRule
             } elseif ($event->piece() instanceof Rook) {
                 unset($this->rookPositionsAvailableForCastling[(string)$event->source()]);
                 $this->inCastling = false;
-            }
-        } elseif ($event instanceof Event\PieceWasPlaced) {
-            if ($event->piece() instanceof Rook) {
-                $this->rookPositionsAvailableForCastling[(string)$event->placedAt()] = true;
             }
         } elseif ($event instanceof Event\PieceWasCaptured) {
             if ($event->piece() instanceof Rook) {

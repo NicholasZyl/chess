@@ -37,7 +37,7 @@ class Game
     {
         $this->board = $board;
         $this->rules = $rules;
-        $this->onEventsOccurred($initialPositions->initialiseBoard($this->board));
+        $initialPositions->initialiseBoard($this->board);
     }
 
     /**

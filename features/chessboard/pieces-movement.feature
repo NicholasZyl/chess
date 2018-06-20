@@ -10,7 +10,7 @@ Feature: The moves of the pieces
 
   Scenario: The bishop may not move to a square along the file or the rank
     Given there is a chessboard with black bishop placed on d4
-    When I move piece from d4 to d5
+    When I try to move piece from d4 to d5
     Then the move is illegal
     And black bishop should not be moved from d4
 
@@ -21,7 +21,7 @@ Feature: The moves of the pieces
 
   Scenario: The rook may not move to a square along a diagonal
     Given there is a chessboard with white rook placed on d4
-    When I move piece from d4 to e5
+    When I try to move piece from d4 to e5
     Then the move is illegal
     And white rook should not be moved from d4
 
@@ -32,7 +32,7 @@ Feature: The moves of the pieces
 
   Scenario: The queen may not move in direction other than along the file, the rank or a diagonal
     Given there is a chessboard with black queen placed on d4
-    When I move piece from d4 to g2
+    When I try to move piece from d4 to g2
     Then the move is illegal
     And black queen should not be moved from d4
 
@@ -41,10 +41,9 @@ Feature: The moves of the pieces
       | piece        | location |
       | black pawn   | f7       |
       | white bishop | d5       |
-    When I move piece from d5 to g8
+    When I try to move piece from d5 to g8
     Then the move is illegal
     And white bishop should not be moved from d5
-    And black pawn should not be moved from f7
 
   Scenario: The knight may move to one of the squares nearest to that on which it stands but not on the same rank, file or diagonal
     Given there is a chessboard with white knight placed on d4
@@ -53,7 +52,7 @@ Feature: The moves of the pieces
 
   Scenario: The knight may not move to squares further from the square on which it stands
     Given there is a chessboard with white knight placed on d4
-    When I move piece from d4 to f6
+    When I try to move piece from d4 to f6
     Then the move is illegal
     And white knight should not be moved from d4
 
@@ -95,15 +94,15 @@ Feature: The moves of the pieces
       | piece        | location |
       | white pawn   | d4       |
       | white knight | d5       |
-    When I move piece from d4 to d5
+    When I try to move piece from d4 to d5
     Then the move is illegal
     And white pawn should not be moved from d4
     And white knight should not be moved from d5
 
   Scenario: The pawn may not advance more than one square forward if not on first move
     Given there is a chessboard with white pawn placed on d2
-    When I move piece from d2 to d4
-    When I move piece from d4 to d6
+    And I moved piece from d2 to d4
+    When I try to move piece from d4 to d6
     Then the move is illegal
     And white pawn should not be moved from d2
 
@@ -121,7 +120,7 @@ Feature: The moves of the pieces
 
   Scenario: The king may not move by more than one square
     Given there is a chessboard with white king placed on d4
-    When I move piece from d4 to f8
+    When I try to move piece from d4 to f8
     Then the move is illegal
     And white king should not be moved from d4
 
@@ -140,7 +139,7 @@ Feature: The moves of the pieces
       | white king  | e1       |
       | white rook  | a1       |
       | black queen | d8       |
-    When I move piece from e1 to c1
+    When I try to move piece from e1 to c1
     Then the move is illegal
     And white king should not be moved from e1
 
@@ -150,7 +149,41 @@ Feature: The moves of the pieces
       | white king   | e1       |
       | white rook   | a1       |
       | white bishop | b1       |
-    When I move piece from e1 to c1
+    When I try to move piece from e1 to c1
+    Then the move is illegal
+    And white king should not be moved from e1
+
+  Scenario: The right to castle has been lost if king has already moved
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | black king   | e8       |
+      | black rook   | h8       |
+    And I moved piece from e8 to e7
+    And I moved piece from e7 to e8
+    When I try to move piece from e8 to g8
+    Then the move is illegal
+    And black king should not be moved from e8
+
+  Scenario: The right to castle has been lost if rook has already moved
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | black king   | e8       |
+      | black rook   | a8       |
+    And I moved piece from a8 to b8
+    And I moved piece from b8 to a8
+    When I try to move piece from e8 to c8
+    Then the move is illegal
+    And black king should not be moved from e8
+
+  Scenario: The right to castle has been lost if rook was captured
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | white king   | e1       |
+      | white rook   | a1       |
+      | black queen  | a4       |
+    And opponent moved piece from a4 to a1
+    And opponent moved piece from a1 to a2
+    When I try to move piece from e1 to c1
     Then the move is illegal
     And white king should not be moved from e1
 
@@ -159,6 +192,6 @@ Feature: The moves of the pieces
       | piece        | location |
       | white pawn   | d5       |
       | white bishop | b3       |
-    When I move piece from b3 to d5
+    When I try to move piece from b3 to d5
     Then the move is illegal
     And white bishop should not be moved from b3

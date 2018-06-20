@@ -6,7 +6,6 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlaced;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Game;
@@ -54,7 +53,6 @@ final class Chessboard implements Board
     {
         $events = [];
         $capturedPiece = $this->getSquareAt($coordinates)->place($piece);
-        $events[] = new PieceWasPlaced($piece, $coordinates);
         $this->pieces[(string)$piece->color()]->attach($piece, $coordinates);
         if ($capturedPiece) {
             $this->pieces[(string)$capturedPiece->color()]->detach($capturedPiece);

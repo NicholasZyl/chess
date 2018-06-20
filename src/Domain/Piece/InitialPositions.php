@@ -3,7 +3,6 @@
 namespace NicholasZyl\Chess\Domain\Piece;
 
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlaced;
 
 interface InitialPositions
 {
@@ -12,7 +11,7 @@ interface InitialPositions
      *
      * @param Board $board
      *
-     * @return PieceWasPlaced[]
+     * @return void
      */
-    public function initialiseBoard(Board $board): array;
+    public function initialiseBoard(Board $board): void;
 }

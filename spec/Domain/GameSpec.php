@@ -5,7 +5,6 @@ namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlaced;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
@@ -26,15 +25,12 @@ class GameSpec extends ObjectBehavior
     function let(Board $board, InitialPositions $initialPositions, MoveRule $moveRule)
     {
         $this->beConstructedWith($board, $initialPositions, [$moveRule,]);
-        $initialPositions->initialiseBoard($board)->willReturn([]);
-        $moveRule->applyAfter(Argument::cetera())->willReturn([]);
+        $initialPositions->initialiseBoard($board);
     }
 
     function it_initialises_board_with_provided_initial_positions_of_pieces(Board $board, InitialPositions $initialPositions, MoveRule $moveRule)
     {
-        $pieceWasPlaced = new PieceWasPlaced(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 2));
-        $initialPositions->initialiseBoard($board)->shouldBeCalled()->willReturn([$pieceWasPlaced,]);
-        $moveRule->applyAfter($pieceWasPlaced, $this->getWrappedObject())->shouldBeCalled();
+        $initialPositions->initialiseBoard($board)->shouldBeCalled();
 
         $this->shouldHaveType(Game::class);
     }
@@ -49,12 +45,11 @@ class GameSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
         $moveRule->apply($move, $this->getWrappedObject())->shouldBeCalled();
-        $pieceWasPlaced = new PieceWasPlaced($pawn, $destination);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([$pieceWasPlaced,]);
-        $moveRule->applyAfter($pieceWasPlaced, $this->getWrappedObject())->shouldBeCalled();
+
+        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([]);
         $moveRule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled();
 
-        $this->playMove($source, $destination)->shouldBeLike([$pieceWasPlaced, new PieceWasMoved($move),]);
+        $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move),]);
     }
 
     function it_places_piece_back_if_move_is_illegal(Board $board, MoveRule $moveRule)
@@ -107,13 +102,12 @@ class GameSpec extends ObjectBehavior
         $rule->priority()->willReturn(50);
 
         $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
-        $pieceWasPlaced = new PieceWasPlaced($pawn, $destination);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([$pieceWasPlaced,]);
+        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([]);
 
         $rule->applyAfter(Argument::cetera())->shouldBeCalled();
         $lessImportantRule->applyAfter(Argument::cetera())->shouldBeCalled();
 
-        $this->playMove($source, $destination)->shouldBeLike([$pieceWasPlaced, new PieceWasMoved($move),]);
+        $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move),]);
     }
 
     function it_applies_events_happened_after_move(Board $board, MoveRule $moveRule)
@@ -126,13 +120,11 @@ class GameSpec extends ObjectBehavior
         $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
         $moveRule->apply($move, $this->getWrappedObject())->shouldBeCalled();
-        $pieceWasPlaced = new PieceWasPlaced($pawn, $destination);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([$pieceWasPlaced,]);
-        $moveRule->applyAfter($pieceWasPlaced, $this->getWrappedObject())->shouldBeCalled();
+        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([]);
         $anotherEvent = new PieceWasMoved(new Move(Rook::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 3), $source));
         $moveRule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled()->willReturn([$anotherEvent]);
 
-        $this->playMove($source, $destination)->shouldBeLike([$pieceWasPlaced, new PieceWasMoved($move), $anotherEvent,]);
+        $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move), $anotherEvent,]);
     }
 
     function it_fails_when_trying_to_move_piece_from_not_occupied_coordinates(Board $board)

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlaced;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -36,7 +35,7 @@ class ChessboardSpec extends ObjectBehavior
         $whitePawn = Pawn::forColor(Piece\Color::white());
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
-        $this->placePieceAtCoordinates($whitePawn, $coordinates)->shouldBeLike([new PieceWasPlaced($whitePawn, $coordinates),]);
+        $this->placePieceAtCoordinates($whitePawn, $coordinates)->shouldBeLike([]);
     }
 
     function it_knows_when_opponents_piece_was_captured()
@@ -48,7 +47,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $this->placePieceAtCoordinates($blackPawn, $coordinates);
         $this->placePieceAtCoordinates($whiteRook, $coordinates)->shouldBeLike(
-            [new PieceWasPlaced($whiteRook, $coordinates), new PieceWasCaptured($blackPawn, $coordinates),]
+            [new PieceWasCaptured($blackPawn, $coordinates),]
         );
     }
 

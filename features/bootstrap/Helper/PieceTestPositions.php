@@ -5,7 +5,6 @@ namespace Helper;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Event\PieceWasPlaced;
 use NicholasZyl\Chess\Domain\Piece;
 
 class PieceTestPositions implements Piece\InitialPositions
@@ -39,14 +38,10 @@ class PieceTestPositions implements Piece\InitialPositions
     /**
      * {@inheritdoc}
      */
-    public function initialiseBoard(Board $board): array
+    public function initialiseBoard(Board $board): void
     {
-        $placed = [];
         foreach ($this->initialPositions as $at) {
             $board->placePieceAtCoordinates($this->initialPositions[$at], $at);
-            $placed []= new PieceWasPlaced($this->initialPositions[$at], $at);
         }
-
-        return $placed;
     }
 }
