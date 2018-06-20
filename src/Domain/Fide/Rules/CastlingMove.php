@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\CastlingPrevented;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
+use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Game;
@@ -62,20 +64,7 @@ final class CastlingMove implements MoveRule
     public function applyAfter(Event $event, Game $game): array
     {
         if ($event instanceof Event\PieceWasMoved) {
-            if ($event->piece() instanceof King) {
-                $this->movedKings->attach($event->piece());
-                if ($event->wasOverDistanceOf(self::CASTLING_MOVE_DISTANCE)) {
-                    $rookPosition = CoordinatePair::fromFileAndRank($event->source()->file() < $event->destination()->file() ? 'h' : 'a', $event->source()->rank());
-                    $rookDestination = $event->destination()->nextTowards($event->source(), new AlongRank());
-
-                    $this->inCastling = true;
-
-                    return $game->playMove($rookPosition, $rookDestination);
-                }
-            } elseif ($event->piece() instanceof Rook) {
-                unset($this->rookPositionsAvailableForCastling[(string)$event->source()]);
-                $this->inCastling = false;
-            }
+            return $this->onPieceMoved($event, $game);
         } elseif ($event instanceof Event\PieceWasCaptured) {
             if ($event->piece() instanceof Rook) {
                 unset($this->rookPositionsAvailableForCastling[(string)$event->capturedAt()]);
@@ -83,6 +72,49 @@ final class CastlingMove implements MoveRule
         }
 
         return [];
+    }
+
+    /**
+     * Handle an event that piece has moved.
+     *
+     * @param Event\PieceWasMoved $event
+     * @param Game $game
+     *
+     * @return Event[]
+     */
+    private function onPieceMoved(Event\PieceWasMoved $event, Game $game)
+    {
+        $events = [];
+
+        if ($event->piece() instanceof King) {
+            $this->movedKings->attach($event->piece());
+            if ($event->wasOverDistanceOf(self::CASTLING_MOVE_DISTANCE)) {
+                $events = $this->onCastlingKingMoved($event, $game);
+            }
+        } elseif ($event->piece() instanceof Rook) {
+            unset($this->rookPositionsAvailableForCastling[(string)$event->source()]);
+            $this->inCastling = false;
+        }
+
+        return $events;
+    }
+
+    /**
+     * Handle an event that king just did his part of castling move.
+     *
+     * @param Event\PieceWasMoved $event
+     * @param Game $game
+     *
+     * @return Event[]
+     */
+    private function onCastlingKingMoved(Event\PieceWasMoved $event, Game $game)
+    {
+        $rookPosition = $this->getExpectedRookPosition($event->source(), $event->destination());
+        $rookDestination = $event->destination()->nextTowards($event->source(), new AlongRank());
+
+        $this->inCastling = true;
+
+        return $game->playMove($rookPosition, $rookDestination);
     }
 
     /**
@@ -123,7 +155,7 @@ final class CastlingMove implements MoveRule
             throw new CastlingPrevented($move);
         }
 
-        $rookPosition = CoordinatePair::fromFileAndRank($move->source()->file() < $move->destination()->file() ? 'h' : 'a', $move->source()->rank());
+        $rookPosition = $this->getExpectedRookPosition($move->source(), $move->destination());
         if (!array_key_exists((string)$rookPosition, $this->rookPositionsAvailableForCastling)) {
             throw new CastlingPrevented($move);
         }
@@ -148,5 +180,19 @@ final class CastlingMove implements MoveRule
         if ($game->isPositionAttackedByOpponentOf($step, $move->piece()->color())) {
             throw new CastlingPrevented($move);
         }
+    }
+
+    /**
+     * @param $source
+     * @param $destination
+     *
+     * @return CoordinatePair
+     */
+    private function getExpectedRookPosition(Coordinates $source, Coordinates $destination): CoordinatePair
+    {
+        return CoordinatePair::fromFileAndRank(
+            $source->file() < $destination->file() ? Chessboard::FILE_MOST_KINGSIDE : Chessboard::FILE_MOST_QUEENSIDE,
+            $source->rank()
+        );
     }
 }

@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
-use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
@@ -53,20 +53,20 @@ class Game
      */
     public function playMove(Coordinates $from, Coordinates $to): array
     {
-        $piece = $this->board->pickPieceFromCoordinates($from);
+        $piece = $this->board->pickPieceFrom($from);
         try {
             $move = new Move($piece, $from, $to);
             $this->applyRuleToMove($move);
-            $events = $this->board->placePieceAtCoordinates($piece, $to);
+            $events = $this->board->placePieceAt($piece, $to);
             $events[] = new PieceWasMoved($move);
             $events = array_merge($events, $this->onEventsOccurred($events));
 
             return $events;
         } catch (IllegalMove $illegalMove) {
-            $this->board->placePieceAtCoordinates($piece, $from);
+            $this->board->placePieceAt($piece, $from);
             throw $illegalMove;
         } catch (SquareIsOccupied $squareIsOccupied) {
-            $this->board->placePieceAtCoordinates($piece, $from);
+            $this->board->placePieceAt($piece, $from);
             throw new IllegalMove\MoveToOccupiedPosition($squareIsOccupied->coordinates());
         }
     }
@@ -160,7 +160,7 @@ class Game
      *
      * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return bool
      */
@@ -175,13 +175,13 @@ class Game
      * @param Coordinates $position
      * @param Color $color
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return bool
      */
     public function isPositionOccupiedByOpponentOf(Coordinates $position, Color $color): bool
     {
-        return $this->board->isPositionOccupiedByOpponentOf($position, $color);
+        return $this->board->isPositionOccupiedBy($position, $color->opponent());
     }
 
     /**
@@ -190,7 +190,7 @@ class Game
      * @param Coordinates $position
      * @param Color $color
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return bool
      */
@@ -204,7 +204,7 @@ class Game
      *
      * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      * @throws SquareIsUnoccupied
      *
      * @return Piece

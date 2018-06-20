@@ -41,7 +41,7 @@ class PieceTestPositions implements Piece\InitialPositions
     public function initialiseBoard(Board $board): void
     {
         foreach ($this->initialPositions as $at) {
-            $board->placePieceAtCoordinates($this->initialPositions[$at], $at);
+            $board->placePieceAt($this->initialPositions[$at], $at);
         }
     }
 }

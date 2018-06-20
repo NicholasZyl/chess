@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -27,7 +27,7 @@ class ChessboardSpec extends ObjectBehavior
     {
         $coordinates = CoordinatePair::fromFileAndRank('i', 9);
 
-        $this->shouldThrow(new OutOfBoardCoordinates($coordinates))->during('isPositionOccupied', [$coordinates,]);
+        $this->shouldThrow(new OutOfBoard($coordinates))->during('isPositionOccupied', [$coordinates,]);
     }
 
     function it_allows_placing_piece_at_given_coordinates()
@@ -35,7 +35,7 @@ class ChessboardSpec extends ObjectBehavior
         $whitePawn = Pawn::forColor(Piece\Color::white());
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
-        $this->placePieceAtCoordinates($whitePawn, $coordinates)->shouldBeLike([]);
+        $this->placePieceAt($whitePawn, $coordinates)->shouldBeLike([]);
     }
 
     function it_knows_when_opponents_piece_was_captured()
@@ -45,8 +45,8 @@ class ChessboardSpec extends ObjectBehavior
 
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
-        $this->placePieceAtCoordinates($blackPawn, $coordinates);
-        $this->placePieceAtCoordinates($whiteRook, $coordinates)->shouldBeLike(
+        $this->placePieceAt($blackPawn, $coordinates);
+        $this->placePieceAt($whiteRook, $coordinates)->shouldBeLike(
             [new PieceWasCaptured($blackPawn, $coordinates),]
         );
     }
@@ -58,25 +58,25 @@ class ChessboardSpec extends ObjectBehavior
 
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
-        $this->placePieceAtCoordinates($whiteRook, $coordinates);
+        $this->placePieceAt($whiteRook, $coordinates);
 
-        $this->shouldThrow(SquareIsOccupied::class)->during('placePieceAtCoordinates', [$whitePawn, $coordinates,]);
+        $this->shouldThrow(SquareIsOccupied::class)->during('placePieceAt', [$whitePawn, $coordinates,]);
     }
 
     function it_allows_picking_up_piece_from_coordinates()
     {
         $position = CoordinatePair::fromFileAndRank('a', 2);
         $pawn = Pawn::forColor(Piece\Color::white());
-        $this->placePieceAtCoordinates($pawn, $position);
+        $this->placePieceAt($pawn, $position);
 
-        $this->pickPieceFromCoordinates($position)->shouldBe($pawn);
+        $this->pickPieceFrom($position)->shouldBe($pawn);
     }
 
     function it_does_not_allow_picking_a_piece_from_unoccupied_position()
     {
         $position = CoordinatePair::fromFileAndRank('a', 2);
 
-        $this->shouldThrow(new SquareIsUnoccupied($position))->during('pickPieceFromCoordinates', [$position,]);
+        $this->shouldThrow(new SquareIsUnoccupied($position))->during('pickPieceFrom', [$position,]);
     }
 
     function it_knows_when_square_at_given_coordinates_is_unoccupied()
@@ -87,7 +87,7 @@ class ChessboardSpec extends ObjectBehavior
     function it_knows_when_square_at_given_coordinates_is_occupied()
     {
         $position = CoordinatePair::fromFileAndRank('a', 2);
-        $this->placePieceAtCoordinates(
+        $this->placePieceAt(
             Pawn::forColor(Piece\Color::white()),
             $position
         );
@@ -95,29 +95,29 @@ class ChessboardSpec extends ObjectBehavior
         $this->isPositionOccupied($position)->shouldBe(true);
     }
 
-    function it_knows_when_square_at_coordinates_is_occupied_by_opponent_if_piece_has_different_color()
+    function it_knows_when_position_is_occupied_by_piece_in_given_color()
     {
         $blackPawn = Pawn::forColor(Piece\Color::black());
         $position = CoordinatePair::fromFileAndRank('c', 4);
-        $this->placePieceAtCoordinates($blackPawn, $position);
+        $this->placePieceAt($blackPawn, $position);
 
-        $this->isPositionOccupiedByOpponentOf($position, Piece\Color::white())->shouldBe(true);
+        $this->isPositionOccupiedBy($position, Piece\Color::black())->shouldBe(true);
     }
 
-    function it_knows_when_square_at_coordinates_is_not_occupied_by_opponent_if_piece_has_same_color()
+    function it_knows_when_position_is_not_occupied_by_given_color_if_piece_has_same_color()
     {
         $blackPawn = Pawn::forColor(Piece\Color::black());
         $position = CoordinatePair::fromFileAndRank('c', 4);
-        $this->placePieceAtCoordinates($blackPawn, $position);
+        $this->placePieceAt($blackPawn, $position);
 
-        $this->isPositionOccupiedByOpponentOf($position, Piece\Color::black())->shouldBe(false);
+        $this->isPositionOccupiedBy($position, Piece\Color::white())->shouldBe(false);
     }
 
-    function it_knows_when_square_at_coordinates_is_not_occupied_by_opponent_if_piece_is_unoccupied()
+    function it_knows_when_position_is_not_occupied_by_color_if_piece_is_unoccupied()
     {
         $position = CoordinatePair::fromFileAndRank('c', 4);
 
-        $this->isPositionOccupiedByOpponentOf($position, Piece\Color::black())->shouldBe(false);
+        $this->isPositionOccupiedBy($position, Piece\Color::black())->shouldBe(false);
     }
 
     function it_knows_when_square_is_attacked_by_given_color(Game $game)
@@ -125,8 +125,8 @@ class ChessboardSpec extends ObjectBehavior
         $position = CoordinatePair::fromFileAndRank('b', 3);
         $opponentsPiece = Pawn::forColor(Piece\Color::black());
         $opponentsPiecePosition = CoordinatePair::fromFileAndRank('c', 4);
-        $this->placePieceAtCoordinates($opponentsPiece, $opponentsPiecePosition);
-        $this->placePieceAtCoordinates(Pawn::forColor(Piece\Color::white()), $position);
+        $this->placePieceAt($opponentsPiece, $opponentsPiecePosition);
+        $this->placePieceAt(Pawn::forColor(Piece\Color::white()), $position);
 
         $game->mayMove($opponentsPiece, $opponentsPiecePosition, $position)->shouldBeCalled()->willReturn(true);
 
@@ -137,11 +137,11 @@ class ChessboardSpec extends ObjectBehavior
     {
         $blackPawn = Pawn::forColor(Piece\Color::black());
         $blackPawnPosition = CoordinatePair::fromFileAndRank('a', 3);
-        $this->placePieceAtCoordinates($blackPawn, $blackPawnPosition);
+        $this->placePieceAt($blackPawn, $blackPawnPosition);
         $blackRook = Rook::forColor(Piece\Color::black());
         $blackRookPosition = CoordinatePair::fromFileAndRank('a', 8);
-        $this->placePieceAtCoordinates($blackRook, $blackRookPosition);
-        $this->placePieceAtCoordinates(Bishop::forColor(Piece\Color::white()), CoordinatePair::fromFileAndRank('b', 3));
+        $this->placePieceAt($blackRook, $blackRookPosition);
+        $this->placePieceAt(Bishop::forColor(Piece\Color::white()), CoordinatePair::fromFileAndRank('b', 3));
 
         $position = CoordinatePair::fromFileAndRank('a', 2);
 
@@ -155,14 +155,14 @@ class ChessboardSpec extends ObjectBehavior
     {
         $coordinates = CoordinatePair::fromFileAndRank('z', 9);
 
-        $this->shouldThrow(new OutOfBoardCoordinates($coordinates))->during('isPositionAttackedBy', [$coordinates, Piece\Color::white(), $game,]);
+        $this->shouldThrow(new OutOfBoard($coordinates))->during('isPositionAttackedBy', [$coordinates, Piece\Color::white(), $game,]);
     }
 
     function it_removes_piece_from_given_position()
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
         $piece = Pawn::forColor(Piece\Color::white());
-        $this->placePieceAtCoordinates($piece, $position);
+        $this->placePieceAt($piece, $position);
 
         $this->removePieceFrom($position)->shouldBe($piece);
 

@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Exception\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
 
-final class OutOfBoardCoordinates extends BoardException
+final class OutOfBoard extends BoardException
 {
     /**
      * Create exception for coordinates that are out of board.
@@ -15,6 +15,6 @@ final class OutOfBoardCoordinates extends BoardException
      */
     public function __construct(Coordinates $coordinates)
     {
-        parent::__construct(sprintf('Coordinates %s are out of board.', $coordinates));
+        parent::__construct(sprintf('Position %s is out of board.', $coordinates));
     }
 }

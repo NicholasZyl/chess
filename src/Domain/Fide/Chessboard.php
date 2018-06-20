@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
-use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
@@ -14,10 +14,10 @@ use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Chessboard implements Board
 {
-    private const LOWEST_FILE = 'a';
-    private const HIGHEST_FILE = 'h';
-    private const LOWEST_RANK = 1;
-    private const HIGHEST_RANK = 8;
+    public const FILE_MOST_QUEENSIDE = 'a';
+    public const FILE_MOST_KINGSIDE = 'h';
+    public const LOWEST_RANK = 1;
+    public const HIGHEST_RANK = 8;
 
     /**
      * @var Square[]
@@ -34,7 +34,7 @@ final class Chessboard implements Board
      */
     public function __construct()
     {
-        foreach (range(self::LOWEST_FILE, self::HIGHEST_FILE) as $file) {
+        foreach (range(self::FILE_MOST_QUEENSIDE, self::FILE_MOST_KINGSIDE) as $file) {
             foreach (range(self::LOWEST_RANK, self::HIGHEST_RANK) as $rank) {
                 $square = Square::forCoordinates(CoordinatePair::fromFileAndRank($file, $rank));
                 $this->grid[(string)$square->coordinates()] = $square;
@@ -49,14 +49,14 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): array
+    public function placePieceAt(Piece $piece, Coordinates $position): array
     {
         $events = [];
-        $capturedPiece = $this->getSquareAt($coordinates)->place($piece);
-        $this->pieces[(string)$piece->color()]->attach($piece, $coordinates);
+        $capturedPiece = $this->getSquareAt($position)->place($piece);
+        $this->pieces[(string)$piece->color()]->attach($piece, $position);
         if ($capturedPiece) {
             $this->pieces[(string)$capturedPiece->color()]->detach($capturedPiece);
-            $events[] = new PieceWasCaptured($capturedPiece, $coordinates);
+            $events[] = new PieceWasCaptured($capturedPiece, $position);
         }
 
         return $events;
@@ -65,9 +65,9 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function pickPieceFromCoordinates(Coordinates $coordinates): Piece
+    public function pickPieceFrom(Coordinates $position): Piece
     {
-        return $this->getSquareAt($coordinates)->pick();
+        return $this->getSquareAt($position)->pick();
     }
 
     /**
@@ -81,9 +81,9 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function isPositionOccupiedByOpponentOf(Coordinates $coordinates, Color $pieceColor): bool
+    public function isPositionOccupiedBy(Coordinates $position, Color $color): bool
     {
-        return $this->getSquareAt($coordinates)->hasPlacedOpponentsPiece($pieceColor);
+        return $this->getSquareAt($position)->isOccupiedBy($color);
     }
 
     /**
@@ -91,7 +91,7 @@ final class Chessboard implements Board
      */
     public function isPositionAttackedBy(Coordinates $position, Color $color, Game $game): bool
     {
-        $this->areCoordinatesOnBoard($position);
+        $this->isPositionOnBoard($position);
 
         $isAttacked = false;
         $piecesSet = $this->pieces[(string)$color];
@@ -103,32 +103,32 @@ final class Chessboard implements Board
     }
 
     /**
-     * Get square at given coordinates.
+     * Get square at given position.
      *
-     * @param Coordinates $coordinates
+     * @param Coordinates $position
      *
      * @return Square
      */
-    private function getSquareAt(Coordinates $coordinates): Square
+    private function getSquareAt(Coordinates $position): Square
     {
-        $this->areCoordinatesOnBoard($coordinates);
+        $this->isPositionOnBoard($position);
 
-        return $this->grid[(string)$coordinates];
+        return $this->grid[(string)$position];
     }
 
     /**
-     * Check if coordinates are valid for the chessboard.
+     * Check if position is valid for the chessboard.
      *
-     * @param Coordinates $coordinates
+     * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return void
      */
-    private function areCoordinatesOnBoard(Coordinates $coordinates): void
+    private function isPositionOnBoard(Coordinates $position): void
     {
-        if (!array_key_exists((string)$coordinates, $this->grid)) {
-            throw new OutOfBoardCoordinates($coordinates);
+        if (!array_key_exists((string)$position, $this->grid)) {
+            throw new OutOfBoard($position);
         }
     }
 

@@ -139,9 +139,7 @@ final class CoordinatePair implements Coordinates
     }
 
     /**
-     * Represent coordinates as string.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function __toString(): string
     {

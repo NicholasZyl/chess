@@ -83,38 +83,25 @@ final class Square
      */
     public function pick(): Piece
     {
-        $piece = $this->peek();
+        if (!$this->isOccupied()) {
+            throw new SquareIsUnoccupied($this->coordinates);
+        }
+        $piece = $this->placedPiece;
         $this->placedPiece = null;
 
         return $piece;
     }
 
     /**
-     * Peek what piece is placed on the square.
-     *
-     * @throws SquareIsUnoccupied
-     *
-     * @return Piece
-     */
-    public function peek(): Piece
-    {
-        if (!$this->isOccupied()) {
-            throw new SquareIsUnoccupied($this->coordinates);
-        }
-
-        return $this->placedPiece;
-    }
-
-    /**
-     * Check if there is a placed piece and the piece has different color.
+     * Check if there is a piece in given color placed on the square.
      *
      * @param Piece\Color $color
      *
      * @return bool
      */
-    public function hasPlacedOpponentsPiece(Piece\Color $color): bool
+    public function isOccupiedBy(Piece\Color $color): bool
     {
-        return $this->isOccupied() && !$this->placedPiece->hasColor($color);
+        return $this->isOccupied() && $this->placedPiece->hasColor($color);
     }
 
     /**

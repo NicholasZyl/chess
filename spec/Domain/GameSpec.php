@@ -42,11 +42,11 @@ class GameSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new Move($pawn, $source, $destination);
 
-        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
         $moveRule->apply($move, $this->getWrappedObject())->shouldBeCalled();
 
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([]);
+        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
         $moveRule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled();
 
         $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move),]);
@@ -59,12 +59,12 @@ class GameSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new Move($pawn, $source, $destination);
 
-        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
         $illegalMove = new MoveToIllegalPosition($move);
         $moveRule->apply($move, $this->getWrappedObject())->shouldBeCalled()->willThrow($illegalMove);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldNotBeCalled();
-        $board->placePieceAtCoordinates($pawn, $source)->shouldBeCalled();
+        $board->placePieceAt($pawn, $destination)->shouldNotBeCalled();
+        $board->placePieceAt($pawn, $source)->shouldBeCalled();
 
         $this->shouldThrow($illegalMove)->during('playMove', [$source, $destination,]);
     }
@@ -76,10 +76,10 @@ class GameSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new Move($pawn, $source, $destination);
 
-        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(false);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldNotBeCalled();
-        $board->placePieceAtCoordinates($pawn, $source)->shouldBeCalled();
+        $board->placePieceAt($pawn, $destination)->shouldNotBeCalled();
+        $board->placePieceAt($pawn, $source)->shouldBeCalled();
 
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('playMove', [$source, $destination,]);
     }
@@ -101,8 +101,8 @@ class GameSpec extends ObjectBehavior
         $rule->apply($move, $this->getWrappedObject())->shouldBeCalled();
         $rule->priority()->willReturn(50);
 
-        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([]);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
+        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
 
         $rule->applyAfter(Argument::cetera())->shouldBeCalled();
         $lessImportantRule->applyAfter(Argument::cetera())->shouldBeCalled();
@@ -117,10 +117,10 @@ class GameSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new Move($pawn, $source, $destination);
 
-        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
         $moveRule->apply($move, $this->getWrappedObject())->shouldBeCalled();
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willReturn([]);
+        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
         $anotherEvent = new PieceWasMoved(new Move(Rook::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 3), $source));
         $moveRule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled()->willReturn([$anotherEvent]);
 
@@ -133,7 +133,7 @@ class GameSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('b', 1);
 
         $unoccupiedSquare = new SquareIsUnoccupied($source);
-        $board->pickPieceFromCoordinates($source)->willThrow($unoccupiedSquare);
+        $board->pickPieceFrom($source)->willThrow($unoccupiedSquare);
 
         $this->shouldThrow($unoccupiedSquare)->during('playMove', [$source, $destination,]);
     }
@@ -145,11 +145,11 @@ class GameSpec extends ObjectBehavior
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new Move($pawn, $source, $destination);
 
-        $board->pickPieceFromCoordinates($source)->shouldBeCalled()->willReturn($pawn);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
         $moveRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
         $moveRule->apply($move, $this->getWrappedObject())->shouldBeCalled();
-        $board->placePieceAtCoordinates($pawn, $destination)->shouldBeCalled()->willThrow(new SquareIsOccupied($destination));
-        $board->placePieceAtCoordinates($pawn, $source)->shouldBeCalled();
+        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willThrow(new SquareIsOccupied($destination));
+        $board->placePieceAt($pawn, $source)->shouldBeCalled();
         $moveRule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldNotBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('playMove', [$source, $destination,]);
@@ -163,13 +163,13 @@ class GameSpec extends ObjectBehavior
         $this->isPositionOccupied($position)->shouldBe(true);
     }
 
-    function it_knows_if_given_piece_is_occupied_by_opponent(Board $board)
+    function it_knows_if_given_piece_is_occupied_by_opponent_color(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('a', 1);
         $color = Color::white();
-        $board->isPositionOccupiedByOpponentOf($position, $color)->shouldBeCalled()->willReturn(true);
+        $board->isPositionOccupiedBy($position, $color)->shouldBeCalled()->willReturn(true);
 
-        $this->isPositionOccupiedByOpponentOf($position, $color)->shouldBe(true);
+        $this->isPositionOccupiedByOpponentOf($position, Color::black())->shouldBe(true);
     }
 
     function it_knows_if_position_is_attacked(Board $board)

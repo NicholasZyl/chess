@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoardCoordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -12,52 +12,52 @@ use NicholasZyl\Chess\Domain\Piece\Color;
 interface Board
 {
     /**
-     * Place a piece at given coordinates.
+     * Place a piece at given position.
      *
      * @param Piece $piece
-     * @param Coordinates $coordinates
+     * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      * @throws SquareIsOccupied
      *
      * @return Event[]
      */
-    public function placePieceAtCoordinates(Piece $piece, Coordinates $coordinates): array;
+    public function placePieceAt(Piece $piece, Coordinates $position): array;
 
     /**
-     * Pick a piece from given coordinates.
+     * Pick a piece from given position.
      *
-     * @param Coordinates $coordinates
+     * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      * @throws SquareIsUnoccupied
      *
      * @return Piece
      */
-    public function pickPieceFromCoordinates(Coordinates $coordinates): Piece;
+    public function pickPieceFrom(Coordinates $position): Piece;
 
     /**
      * Check if given position is occupied.
      *
      * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return bool
      */
     public function isPositionOccupied(Coordinates $position): bool;
 
     /**
-     * Check if given position is occupied by piece of color different than passed one.
+     * Check if given position is occupied by piece of given color.
      *
-     * @param Coordinates $coordinates
-     * @param Color $pieceColor
+     * @param Coordinates $position
+     * @param Color $color
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return bool
      */
-    public function isPositionOccupiedByOpponentOf(Coordinates $coordinates, Color $pieceColor): bool;
+    public function isPositionOccupiedBy(Coordinates $position, Color $color): bool;
 
     /**
      * Check if position is attacked by any piece of passed color according to the game and its rules.
@@ -66,7 +66,7 @@ interface Board
      * @param Color $color
      * @param Game $game
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      *
      * @return bool
      */
@@ -77,7 +77,7 @@ interface Board
      *
      * @param Coordinates $position
      *
-     * @throws OutOfBoardCoordinates
+     * @throws OutOfBoard
      * @throws SquareIsUnoccupied
      *
      * @return Piece
