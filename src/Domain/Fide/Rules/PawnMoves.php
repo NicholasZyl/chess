@@ -203,7 +203,7 @@ final class PawnMoves implements Rule
      */
     private function applyToExchange(Exchange $exchange): void
     {
-        if (!$exchange->position()->equals($this->promotionPosition)) {
+        if (!$exchange->position()->equals($this->promotionPosition) || $exchange->pieceToExchangeWith() instanceof Pawn) {
             throw new ExchangeIsNotAllowed($exchange->position());
         }
         $this->promotionPosition = null;

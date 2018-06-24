@@ -439,4 +439,20 @@ class PawnMovesSpec extends ObjectBehavior
         $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $game);
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $game,]);
     }
+
+    function it_disallows_exchange_to_another_pawn(Game $game)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $game
+        );
+
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game,]);
+    }
 }
