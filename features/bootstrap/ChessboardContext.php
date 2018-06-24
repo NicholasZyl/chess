@@ -184,6 +184,16 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
+     * @Then /(?P<piece>[a-z]+ [a-z]+) is in check/
+     *
+     * @param Piece $piece
+     */
+    public function kingIsInCheck(Piece $piece)
+    {
+        expect($this->occurredEvents)->toContainEvent(new Event\InCheck($piece));
+    }
+
+    /**
      * @Transform :piece
      * @Transform :exchangedWithPiece
      *
