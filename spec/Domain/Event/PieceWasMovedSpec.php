@@ -58,4 +58,40 @@ class PieceWasMovedSpec extends ObjectBehavior
     {
         $this->wasOverDistanceOf(3)->shouldBe(false);
     }
+
+    function it_equals_another_event_if_for_same_move()
+    {
+        $another = new PieceWasMoved(
+            new Move(
+                Pawn::forColor(Color::white()),
+                CoordinatePair::fromFileAndRank('a', 2),
+                CoordinatePair::fromFileAndRank('a', 4)
+            )
+        );
+
+        $this->equals($another)->shouldBe(true);
+    }
+
+    function it_does_not_equal_another_event_if_for_different_move()
+    {
+        $another = new PieceWasMoved(
+            new Move(
+                Pawn::forColor(Color::white()),
+                CoordinatePair::fromFileAndRank('b', 3),
+                CoordinatePair::fromFileAndRank('b', 4)
+            )
+        );
+
+        $this->equals($another)->shouldBe(false);
+    }
+
+    function it_does_not_equal_another_event()
+    {
+        $another = new Event\PieceWasCaptured(
+            Pawn::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('a', 2)
+        );
+
+        $this->equals($another)->shouldBe(false);
+    }
 }

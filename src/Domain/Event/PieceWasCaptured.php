@@ -50,4 +50,14 @@ final class PieceWasCaptured implements Event
     {
         return $this->at;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function equals(?Event $anotherEvent): bool
+    {
+        return $anotherEvent instanceof self
+            && $anotherEvent->piece()->isSameAs($this->piece)
+            && $anotherEvent->capturedAt()->equals($this->at);
+    }
 }

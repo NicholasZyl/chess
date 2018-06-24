@@ -8,6 +8,7 @@ use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
+use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
@@ -45,5 +46,40 @@ class PieceWasExchangedSpec extends ObjectBehavior
     function it_knows_the_position_where_piece_was_exchanged()
     {
         $this->position()->shouldBeLike(CoordinatePair::fromFileAndRank('a', 8));
+    }
+
+    function it_equals_another_event_if_for_same_exchange()
+    {
+        $another = new PieceWasExchanged(
+            Pawn::forColor(Color::white()),
+            Queen::forColor(Color::white()),
+            CoordinatePair::fromFileAndRank('a', 8)
+        );
+
+        $this->equals($another)->shouldBe(true);
+    }
+
+    function it_does_not_equal_another_event_if_for_different_exchange()
+    {
+        $another = new PieceWasExchanged(
+            Pawn::forColor(Color::black()),
+            Queen::forColor(Color::black()),
+            CoordinatePair::fromFileAndRank('a', 1)
+        );
+
+        $this->equals($another)->shouldBe(false);
+    }
+
+    function it_does_not_equal_another_event()
+    {
+        $another = new Event\PieceWasMoved(
+            new Move(
+                Pawn::forColor(Color::white()),
+                CoordinatePair::fromFileAndRank('a', 2),
+                CoordinatePair::fromFileAndRank('a', 4)
+            )
+        );
+
+        $this->equals($another)->shouldBe(false);
     }
 }

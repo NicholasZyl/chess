@@ -66,4 +66,15 @@ final class PieceWasMoved implements Event
     {
         return $this->move->isOverDistanceOf($expectedDistance);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function equals(?Event $anotherEvent): bool
+    {
+        return $anotherEvent instanceof self
+            && $anotherEvent->piece()->isSameAs($this->piece())
+            && $anotherEvent->source()->equals($this->source())
+            && $anotherEvent->destination()->equals($this->destination());
+    }
 }

@@ -162,7 +162,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->occurredEvents)->toContainEventThatPieceWasCaptured($piece, $coordinates);
+        expect($this->occurredEvents)->toContainEvent(new Event\PieceWasCaptured($piece, $coordinates));
     }
 
     /**
@@ -173,7 +173,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function pieceOnSquareShouldNotBeCaptured(Piece $piece, CoordinatePair $coordinates)
     {
-        expect($this->occurredEvents)->toNotContainEventThatPieceWasCaptured($piece, $coordinates);
+        expect($this->occurredEvents)->toNotContainEvent(new Event\PieceWasCaptured($piece, $coordinates));
     }
 
     /**
@@ -185,7 +185,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function pieceShouldBeExchangedWith(Piece $piece, CoordinatePair $coordinates, Piece $exchangedWithPiece)
     {
-        expect($this->occurredEvents)->toContainEventThatPieceWasExchanged($piece, $coordinates, $exchangedWithPiece);
+        expect($this->occurredEvents)->toContainEvent(new Event\PieceWasExchanged($piece, $exchangedWithPiece, $coordinates));
     }
 
     /**
@@ -226,27 +226,19 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function getMatchers(): array
     {
         return [
+            'containEvent' => function (array $occurredEvents, Event $event) {
+                /** @var Event $occurredEvent */
+                foreach ($occurredEvents as $occurredEvent) {
+                    if ($occurredEvent->equals($event)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
             'containEventThatPieceMovedTo' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
                 foreach ($occurredEvents as $occurredEvent) {
                     if ($occurredEvent instanceof Event\PieceWasMoved && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->destination()->equals($coordinates)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            },
-            'containEventThatPieceWasCaptured' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
-                foreach ($occurredEvents as $occurredEvent) {
-                    if ($occurredEvent instanceof Event\PieceWasCaptured && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->capturedAt()->equals($coordinates)) {
-                        return true;
-                    }
-                }
-
-                return false;
-            },
-            'containEventThatPieceWasExchanged' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates, Piece $exchangedWithPiece) {
-                foreach ($occurredEvents as $occurredEvent) {
-                    if ($occurredEvent instanceof Event\PieceWasExchanged && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->position()->equals($coordinates) && $occurredEvent->exchangedWith()->isSameAs($exchangedWithPiece)) {
                         return true;
                     }
                 }
