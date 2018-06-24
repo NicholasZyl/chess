@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
@@ -12,9 +13,8 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
 use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules\MoveRule;
+use NicholasZyl\Chess\Domain\Rule;
 use PhpSpec\ObjectBehavior;
 
 class PawnMovesSpec extends ObjectBehavior
@@ -42,7 +42,7 @@ class PawnMovesSpec extends ObjectBehavior
 
     function it_is_piece_moves_rule()
     {
-        $this->shouldBeAnInstanceOf(MoveRule::class);
+        $this->shouldBeAnInstanceOf(Rule::class);
     }
 
     function it_has_standard_priority()

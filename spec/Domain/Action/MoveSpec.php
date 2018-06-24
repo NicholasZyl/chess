@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain;
+namespace spec\NicholasZyl\Chess\Domain\Action;
 
+use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
@@ -42,6 +43,11 @@ class MoveSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(Move::class);
+    }
+
+    function it_is_game_action()
+    {
+        $this->shouldBeAnInstanceOf(Action::class);
     }
 
     function it_is_for_piece()

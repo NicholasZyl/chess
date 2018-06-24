@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Move;
 
 trait NotIntervenedMove
 {

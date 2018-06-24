@@ -187,7 +187,7 @@ class ChessboardSpec extends ObjectBehavior
 
         $exchangedPiece = Queen::forColor(Piece\Color::white());
 
-        $this->exchangePieceOnTo($position, $exchangedPiece)->shouldBeLike([new PieceWasExchanged($piece, $exchangedPiece, $position),]);
+        $this->exchangePieceOnPositionTo($position, $exchangedPiece)->shouldBeLike([new PieceWasExchanged($piece, $exchangedPiece, $position),]);
 
         $this->pickPieceFrom($position)->shouldBe($exchangedPiece);
     }
@@ -197,7 +197,7 @@ class ChessboardSpec extends ObjectBehavior
         $invalidPosition = CoordinatePair::fromFileAndRank('r', 2);
         $exchangedPiece = Queen::forColor(Piece\Color::white());
 
-        $this->shouldThrow(new OutOfBoard($invalidPosition))->during('exchangePieceOnTo', [$invalidPosition, $exchangedPiece,]);
+        $this->shouldThrow(new OutOfBoard($invalidPosition))->during('exchangePieceOnPositionTo', [$invalidPosition, $exchangedPiece,]);
     }
 
     function it_fails_when_trying_to_exchange_on_unoccupied_position()
@@ -205,7 +205,7 @@ class ChessboardSpec extends ObjectBehavior
         $position = CoordinatePair::fromFileAndRank('b', 2);
         $exchangedPiece = Queen::forColor(Piece\Color::white());
 
-        $this->shouldThrow(new SquareIsUnoccupied($position))->during('exchangePieceOnTo', [$position, $exchangedPiece,]);
+        $this->shouldThrow(new SquareIsUnoccupied($position))->during('exchangePieceOnPositionTo', [$position, $exchangedPiece,]);
     }
 
     function it_fails_when_trying_to_exchange_with_another_color()
@@ -216,6 +216,6 @@ class ChessboardSpec extends ObjectBehavior
 
         $exchangedPiece = Queen::forColor(Piece\Color::black());
 
-        $this->shouldThrow(PositionOccupiedByAnotherColor::class)->during('exchangePieceOnTo', [$position, $exchangedPiece,]);
+        $this->shouldThrow(PositionOccupiedByAnotherColor::class)->during('exchangePieceOnPositionTo', [$position, $exchangedPiece,]);
     }
 }

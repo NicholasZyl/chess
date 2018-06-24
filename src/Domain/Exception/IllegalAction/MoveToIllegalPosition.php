@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
-use NicholasZyl\Chess\Domain\Move;
 
 class MoveToIllegalPosition extends IllegalAction
 {

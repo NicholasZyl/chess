@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Action\Exchange;
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
@@ -13,9 +15,9 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\InitialPositions;
-use NicholasZyl\Chess\Domain\Rules\MoveRule;
 
 class Game
 {
@@ -25,7 +27,7 @@ class Game
     private $board;
 
     /**
-     * @var MoveRule[]
+     * @var Rule[]
      */
     private $rules;
 
@@ -34,7 +36,7 @@ class Game
      *
      * @param Board $board
      * @param InitialPositions $initialPositions
-     * @param MoveRule[] $rules
+     * @param Rule[] $rules
      */
     public function __construct(Board $board, InitialPositions $initialPositions, array $rules)
     {
@@ -57,14 +59,17 @@ class Game
     public function playMove(Coordinates $from, Coordinates $to): array
     {
         $piece = $this->board->pickPieceFrom($from);
+        $move = new Move($piece, $from, $to);
         try {
-            $move = new Move($piece, $from, $to);
-            $this->applyRuleToMove($move);
+            $this->applyRuleToAction($move);
             $events = $this->board->placePieceAt($piece, $to);
             $events[] = new PieceWasMoved($move);
             $events = array_merge($events, $this->onEventsOccurred($events));
 
             return $events;
+        } catch (NoApplicableRule $noApplicableRule) {
+            $this->board->placePieceAt($piece, $from);
+            throw new MoveToIllegalPosition($move);
         } catch (IllegalAction $illegalMove) {
             $this->board->placePieceAt($piece, $from);
             throw $illegalMove;
@@ -72,35 +77,6 @@ class Game
             $this->board->placePieceAt($piece, $from);
             throw new MoveToOccupiedPosition($squareIsOccupied->coordinates());
         }
-    }
-
-    /**
-     * Apply the most important applicable rule to the move.
-     *
-     * @param Move $move
-     *
-     * @throws IllegalAction
-     *
-     * @return void
-     */
-    private function applyRuleToMove(Move $move): void
-    {
-        $rules = array_filter(
-            $this->rules,
-            function (MoveRule $rule) use ($move) {
-                return $rule->isApplicable($move);
-            }
-        );
-        if (empty($rules)) {
-            throw new MoveToIllegalPosition($move);
-        }
-        usort($rules, function (MoveRule $ruleA, MoveRule $ruleB) {
-            return $ruleB->priority() <=> $ruleA->priority();
-        });
-
-        /** @var MoveRule $rule */
-        $rule = reset($rules);
-        $rule->apply($move, $this);
     }
 
     /**
@@ -150,7 +126,7 @@ class Game
     {
         try {
             $move = new Move($piece, $from, $to);
-            $this->applyRuleToMove($move);
+            $this->applyRuleToAction($move);
 
             return true;
         } catch (IllegalAction $illegalMove) {
@@ -230,9 +206,42 @@ class Game
     public function exchangePieceOnBoardTo(Coordinates $position, Piece $exchangedPiece): array
     {
         try {
-            return $this->board->exchangePieceOnTo($position, $exchangedPiece);
-        } catch (BoardException $exception) {
+            $exchange = new Exchange($exchangedPiece, $position);
+            $this->applyRuleToAction($exchange);
+
+            return $this->board->exchangePieceOnPositionTo($position, $exchangedPiece);
+        } catch (IllegalAction | BoardException $exception) {
             throw new ExchangeIsNotAllowed($position);
         }
+    }
+
+    /**
+     * Find and apply the most appropriate, applicable rule to given action.
+     *
+     * @param Action $action
+     *
+     * @throws NoApplicableRule
+     * @throws IllegalAction
+     *
+     * @return void
+     */
+    private function applyRuleToAction(Action $action): void
+    {
+        $rules = array_filter(
+            $this->rules,
+            function (Rule $rule) use ($action) {
+                return $rule->isApplicable($action);
+            }
+        );
+        if (empty($rules)) {
+            throw new NoApplicableRule();
+        }
+        usort($rules, function (Rule $ruleA, Rule $ruleB) {
+            return $ruleB->priority() <=> $ruleA->priority();
+        });
+
+        /** @var Rule $rule */
+        $rule = reset($rules);
+        $rule->apply($action, $this);
     }
 }

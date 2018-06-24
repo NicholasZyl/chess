@@ -3,14 +3,16 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Move;
-use NicholasZyl\Chess\Domain\Rules\MoveRule;
+use NicholasZyl\Chess\Domain\Rule;
 
-final class QueenMoves implements MoveRule
+final class QueenMoves implements Rule
 {
     use NotIntervenedMove;
 
@@ -34,20 +36,24 @@ final class QueenMoves implements MoveRule
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(Move $move): bool
+    public function isApplicable(Action $action): bool
     {
-        return $move->piece() instanceof Queen && $move->inKnownDirection();
+        return $action instanceof Move && $action->piece() instanceof Queen && $action->inKnownDirection();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function apply(Move $move, Game $game): void
+    public function apply(Action $action, Game $game): void
     {
-        if (!$this->isApplicable($move)) {
-            throw new MoveToIllegalPosition($move);
+        if (!$action instanceof Move) {
+            throw new RuleIsNotApplicable();
         }
 
-        $this->validateNotIntervenedMove($move, $game);
+        if (!$this->isApplicable($action)) {
+            throw new MoveToIllegalPosition($action);
+        }
+
+        $this->validateNotIntervenedMove($action, $game);
     }
 }

@@ -1,14 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Rules;
+namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
-use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Move;
 
-interface MoveRule
+interface Rule
 {
     public const STANDARD_PRIORITY = 10;
     public const HIGH_PRIORITY = 50;
@@ -31,23 +28,23 @@ interface MoveRule
     public function applyAfter(Event $event, Game $game): array;
 
     /**
-     * Is rule applicable for given move.
+     * Is rule applicable for given action.
      *
-     * @param Move $move
+     * @param Action $action
      *
      * @return bool
      */
-    public function isApplicable(Move $move): bool;
+    public function isApplicable(Action $action): bool;
 
     /**
-     * Apply rules to the move.
+     * Apply rule to the action.
      *
-     * @param Move $move
+     * @param Action $action
      * @param Game $game
      *
      * @throws IllegalAction
      *
      * @return void
      */
-    public function apply(Move $move, Game $game): void;
+    public function apply(Action $action, Game $game): void;
 }

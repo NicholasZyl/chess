@@ -10,14 +10,14 @@ use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\QueenMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\RookMoves;
-use NicholasZyl\Chess\Domain\Rules\MoveRule;
+use NicholasZyl\Chess\Domain\Rule;
 
 final class LawsOfChess
 {
     /**
      * Prepare set of rules according to Fide handbook.
      *
-     * @return MoveRule[]
+     * @return Rule[]
      */
     public function rules(): array
     {

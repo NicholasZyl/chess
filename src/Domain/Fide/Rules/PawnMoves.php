@@ -3,18 +3,20 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Move;
-use NicholasZyl\Chess\Domain\Rules\MoveRule;
+use NicholasZyl\Chess\Domain\Rule;
 
-final class PawnMoves implements MoveRule
+final class PawnMoves implements Rule
 {
     use NotIntervenedMove;
 
@@ -94,37 +96,41 @@ final class PawnMoves implements MoveRule
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(Move $move): bool
+    public function isApplicable(Action $action): bool
     {
-        return $move->piece() instanceof Pawn;
+        return $action instanceof Move && $action->piece() instanceof Pawn;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function apply(Move $move, Game $game): void
+    public function apply(Action $action, Game $game): void
     {
-        if (!$this->isApplicable($move)) {
-            throw new MoveToIllegalPosition($move);
+        if (!$action instanceof Move) {
+            throw new RuleIsNotApplicable();
         }
-        $isLegalMove = $this->isLegalMove($move);
-        $isLegalCapture = $this->isLegalCapture($move);
+
+        if (!$this->isApplicable($action)) {
+            throw new MoveToIllegalPosition($action);
+        }
+        $isLegalMove = $this->isLegalMove($action);
+        $isLegalCapture = $this->isLegalCapture($action);
 
         if (!$isLegalMove && !$isLegalCapture) {
-            throw new MoveToIllegalPosition($move);
+            throw new MoveToIllegalPosition($action);
         }
 
-        if ($isLegalMove && $game->isPositionOccupied($move->destination())) {
-            throw new MoveToIllegalPosition($move);
+        if ($isLegalMove && $game->isPositionOccupied($action->destination())) {
+            throw new MoveToIllegalPosition($action);
         }
 
         if ($isLegalCapture
-            && !$game->isPositionOccupiedByOpponentOf($move->destination(), $move->piece()->color())
-            && !$move->destination()->equals($this->enPassantPossibileAt)) {
-            throw new MoveToIllegalPosition($move);
+            && !$game->isPositionOccupiedByOpponentOf($action->destination(), $action->piece()->color())
+            && !$action->destination()->equals($this->enPassantPossibileAt)) {
+            throw new MoveToIllegalPosition($action);
         }
 
-        $this->validateNotIntervenedMove($move, $game);
+        $this->validateNotIntervenedMove($action, $game);
     }
 
     /**

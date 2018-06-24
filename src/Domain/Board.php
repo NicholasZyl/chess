@@ -96,5 +96,5 @@ interface Board
      *
      * @return Event[]
      */
-    public function exchangePieceOnTo(Coordinates $position, Piece $exchangedPiece): array;
+    public function exchangePieceOnPositionTo(Coordinates $position, Piece $exchangedPiece): array;
 }

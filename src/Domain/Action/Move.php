@@ -1,13 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain;
+namespace NicholasZyl\Chess\Domain\Action;
 
+use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
+use NicholasZyl\Chess\Domain\Piece;
 
-final class Move
+final class Move implements Action
 {
     /**
      * @var Piece

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Event;
 
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class PieceWasMoved implements Event

@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Move;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rules\MoveRule;
+use NicholasZyl\Chess\Domain\Rule;
 use PhpSpec\ObjectBehavior;
 
 class KingMovesSpec extends ObjectBehavior
@@ -33,7 +34,7 @@ class KingMovesSpec extends ObjectBehavior
 
     function it_is_piece_moves_rule()
     {
-        $this->shouldBeAnInstanceOf(MoveRule::class);
+        $this->shouldBeAnInstanceOf(Rule::class);
     }
 
     function it_has_standard_priority()
@@ -105,6 +106,13 @@ class KingMovesSpec extends ObjectBehavior
         );
 
         $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_for_not_move_action()
+    {
+        $action = new class implements Action {};
+
+        $this->isApplicable($action)->shouldBe(false);
     }
 
     function it_may_be_played_on_board(Game $game)

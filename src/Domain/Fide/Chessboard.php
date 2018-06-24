@@ -154,7 +154,7 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function exchangePieceOnTo(Coordinates $position, Piece $exchangedPiece): array
+    public function exchangePieceOnPositionTo(Coordinates $position, Piece $exchangedPiece): array
     {
         $square = $this->getSquareAt($position);
         if (!$square->isOccupied()) {
