@@ -125,25 +125,19 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should be moved to (?P<coordinates>[a-h][0-8])/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) should (?P<not>not )?be moved (from|to) (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
+     * @param bool $not
      * @param CoordinatePair $coordinates
      */
-    public function pieceShouldBeMovedTo(Piece $piece, CoordinatePair $coordinates)
+    public function pieceShouldBeMovedTo(Piece $piece, bool $not, CoordinatePair $coordinates)
     {
-        expect($this->occurredEvents)->toContainEventThatPieceMovedTo($piece, $coordinates);
-    }
-
-    /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should not be moved from (?P<coordinates>[a-h][0-8])/
-     *
-     * @param Piece $piece
-     * @param CoordinatePair $coordinates
-     */
-    public function pieceShouldNotBeMovedFrom(Piece $piece, CoordinatePair $coordinates)
-    {
-        expect($this->occurredEvents)->toNotContainEventThatPieceMovedTo($piece, $coordinates);
+        if ($not) {
+            expect($this->occurredEvents)->toNotContainEventThatPieceMovedTo($piece, $coordinates);
+        } else {
+            expect($this->occurredEvents)->toContainEventThatPieceMovedTo($piece, $coordinates);
+        }
     }
 
     /**
@@ -155,37 +149,38 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should be captured/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be captured/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
+     * @param bool $not
      */
-    public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates)
+    public function pieceOnSquareShouldBeCaptured(Piece $piece, CoordinatePair $coordinates, bool $not = false)
     {
-        expect($this->occurredEvents)->toContainEvent(new Event\PieceWasCaptured($piece, $coordinates));
+        $pieceWasCaptured = new Event\PieceWasCaptured($piece, $coordinates);
+        if ($not) {
+            expect($this->occurredEvents)->toNotContainEvent($pieceWasCaptured);
+        } else {
+            expect($this->occurredEvents)->toContainEvent($pieceWasCaptured);
+        }
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should not be captured/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be exchanged with (?P<exchangedWithPiece>[a-z]+ [a-z]+)/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
-     */
-    public function pieceOnSquareShouldNotBeCaptured(Piece $piece, CoordinatePair $coordinates)
-    {
-        expect($this->occurredEvents)->toNotContainEvent(new Event\PieceWasCaptured($piece, $coordinates));
-    }
-
-    /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should be exchanged with (?P<exchangedWithPiece>[a-z]+ [a-z]+)/
-     *
-     * @param Piece $piece
-     * @param CoordinatePair $coordinates
+     * @param bool $not
      * @param Piece $exchangedWithPiece
      */
-    public function pieceShouldBeExchangedWith(Piece $piece, CoordinatePair $coordinates, Piece $exchangedWithPiece)
+    public function pieceShouldBeExchangedWith(Piece $piece, CoordinatePair $coordinates, bool $not, Piece $exchangedWithPiece)
     {
-        expect($this->occurredEvents)->toContainEvent(new Event\PieceWasExchanged($piece, $exchangedWithPiece, $coordinates));
+        $pieceWasExchanged = new Event\PieceWasExchanged($piece, $exchangedWithPiece, $coordinates);
+        if ($not) {
+            expect($this->occurredEvents)->toNotContainEvent($pieceWasExchanged);
+        } else {
+            expect($this->occurredEvents)->toContainEvent($pieceWasExchanged);
+        }
     }
 
     /**

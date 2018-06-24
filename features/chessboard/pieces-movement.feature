@@ -207,3 +207,4 @@ Feature: The moves of the pieces
     And I moved piece from b6 to b7
     When I try to exchange piece on b7 to white queen
     Then the exchange is illegal
+    And white pawn on b8 should not be exchanged with white queen
