@@ -109,6 +109,22 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
+     * @When /I exchange piece on (?P<coordinates>[a-h][0-8]) to (?P<piece>[a-z]+ [a-z]+)/
+     *
+     * @param Piece $piece
+     * @param CoordinatePair $coordinates
+     */
+    public function iExchangePieceOnPositionTo(Piece $piece, CoordinatePair $coordinates)
+    {
+        try {
+            $this->occurredEvents = $this->game->exchangePieceOnBoardTo($coordinates, $piece);
+        } catch (\RuntimeException $exception) {
+            $this->caughtException = $exception;
+            $this->occurredEvents = [];
+        }
+    }
+
+    /**
      * @Then /(?P<piece>[a-z]+ [a-z]+) should be moved to (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
@@ -161,7 +177,20 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should be exchanged with (?P<exchangedWithPiece>[a-z]+ [a-z]+)/
+     *
+     * @param Piece $piece
+     * @param CoordinatePair $coordinates
+     * @param Piece $exchangedWithPiece
+     */
+    public function pieceShouldBeExchangedWith(Piece $piece, CoordinatePair $coordinates, Piece $exchangedWithPiece)
+    {
+        expect($this->occurredEvents)->toContainEventThatPieceWasExchanged($piece, $coordinates, $exchangedWithPiece);
+    }
+
+    /**
      * @Transform :piece
+     * @Transform :exchangedWithPiece
      *
      * @param string $pieceDescription
      * @return Piece
@@ -209,6 +238,15 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
             'containEventThatPieceWasCaptured' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
                 foreach ($occurredEvents as $occurredEvent) {
                     if ($occurredEvent instanceof Event\PieceWasCaptured && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->capturedAt()->equals($coordinates)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            'containEventThatPieceWasExchanged' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates, Piece $exchangedWithPiece) {
+                foreach ($occurredEvents as $occurredEvent) {
+                    if ($occurredEvent instanceof Event\PieceWasExchanged && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->position()->equals($coordinates) && $occurredEvent->exchangedWith()->isSameAs($exchangedWithPiece)) {
                         return true;
                     }
                 }

@@ -83,4 +83,14 @@ interface Board
      * @return Piece
      */
     public function removePieceFrom(Coordinates $position): Piece;
+
+    /**
+     * Exchange piece placed on position to the provided one.
+     *
+     * @param Coordinates $position
+     * @param Piece $exchangedPiece
+     *
+     * @return Event[]
+     */
+    public function exchangePieceOnTo(Coordinates $position, Piece $exchangedPiece): array;
 }

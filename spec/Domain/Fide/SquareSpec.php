@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
@@ -55,16 +54,6 @@ class SquareSpec extends ObjectBehavior
         $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('pick');
     }
 
-    function it_disallows_placing_piece_on_square_occupied_with_same_color()
-    {
-        $piece = Pawn::forColor(Piece\Color::white());
-        $this->place($piece);
-
-        $movingPiece = Knight::forColor(Piece\Color::white());
-
-        $this->shouldThrow(new SquareIsOccupied($this->coordinates))->during('place', [$movingPiece,]);
-    }
-
     function it_knows_when_is_occupied()
     {
         $piece = Pawn::forColor(Piece\Color::white());
@@ -78,14 +67,14 @@ class SquareSpec extends ObjectBehavior
         $this->isOccupied()->shouldBe(false);
     }
 
-    function it_captures_piece_when_placing_piece_with_another_color()
+    function it_returns_exchanged_piece_when_placing_another_piece_on_it()
     {
-        $opponentPiece = Pawn::forColor(Piece\Color::black());
-        $this->place($opponentPiece);
+        $previousPiece = Pawn::forColor(Piece\Color::black());
+        $this->place($previousPiece);
 
         $piece = Knight::forColor(Piece\Color::white());
 
-        $this->place($piece)->shouldBeLike($opponentPiece);
+        $this->place($piece)->shouldBeLike($previousPiece);
     }
 
     function it_knows_that_it_has_placed_piece_in_given_color_on_it()

@@ -195,3 +195,9 @@ Feature: The moves of the pieces
     When I try to move piece from b3 to d5
     Then the move is illegal
     And white bishop should not be moved from b3
+
+  Scenario: Pawn's promotion
+    Given there is a chessboard with white pawn placed on b7
+    And I moved piece from b7 to b8
+    When I exchange piece on b8 to white queen
+    Then white pawn on b8 should be exchanged with white queen

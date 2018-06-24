@@ -213,4 +213,17 @@ class Game
     {
         return $this->board->removePieceFrom($position);
     }
+
+    /**
+     * Exchange a piece on the board at given position to provided piece.
+     *
+     * @param Coordinates $position
+     * @param Piece $exchangedPiece
+     *
+     * @return Event[]
+     */
+    public function exchangePieceOnBoardTo(Coordinates $position, Piece $exchangedPiece): array
+    {
+        return $this->board->exchangePieceOnTo($position, $exchangedPiece);
+    }
 }

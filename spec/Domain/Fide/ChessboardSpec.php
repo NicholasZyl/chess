@@ -4,12 +4,15 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
+use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
+use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
@@ -174,5 +177,45 @@ class ChessboardSpec extends ObjectBehavior
         $position = CoordinatePair::fromFileAndRank('b', 2);
 
         $this->shouldThrow(new SquareIsUnoccupied($position))->during('removePieceFrom', [$position,]);
+    }
+
+    function it_exchanges_piece_on_given_position()
+    {
+        $position = CoordinatePair::fromFileAndRank('b', 2);
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->placePieceAt($piece, $position);
+
+        $exchangedPiece = Queen::forColor(Piece\Color::white());
+
+        $this->exchangePieceOnTo($position, $exchangedPiece)->shouldBeLike([new PieceWasExchanged($piece, $exchangedPiece, $position),]);
+
+        $this->pickPieceFrom($position)->shouldBe($exchangedPiece);
+    }
+
+    function it_fails_when_trying_to_exchange_piece_outside_of_board()
+    {
+        $invalidPosition = CoordinatePair::fromFileAndRank('r', 2);
+        $exchangedPiece = Queen::forColor(Piece\Color::white());
+
+        $this->shouldThrow(new OutOfBoard($invalidPosition))->during('exchangePieceOnTo', [$invalidPosition, $exchangedPiece,]);
+    }
+
+    function it_fails_when_trying_to_exchange_on_unoccupied_position()
+    {
+        $position = CoordinatePair::fromFileAndRank('b', 2);
+        $exchangedPiece = Queen::forColor(Piece\Color::white());
+
+        $this->shouldThrow(new SquareIsUnoccupied($position))->during('exchangePieceOnTo', [$position, $exchangedPiece,]);
+    }
+
+    function it_fails_when_trying_to_exchange_with_another_color()
+    {
+        $position = CoordinatePair::fromFileAndRank('b', 2);
+        $piece = Pawn::forColor(Piece\Color::white());
+        $this->placePieceAt($piece, $position);
+
+        $exchangedPiece = Queen::forColor(Piece\Color::black());
+
+        $this->shouldThrow(PositionOccupiedByAnotherColor::class)->during('exchangePieceOnTo', [$position, $exchangedPiece,]);
     }
 }

@@ -58,16 +58,12 @@ final class Square
      *
      * @param Piece $piece
      *
-     * @return Piece|null Returns captured piece if was placed here.
+     * @return Piece|null Returns exchanged piece if any was placed here.
      *
      * @throws SquareIsOccupied
      */
     public function place(Piece $piece): ?Piece
     {
-        if ($this->isOccupied() && $this->placedPiece->isSameColorAs($piece)) {
-            throw new SquareIsOccupied($this->coordinates);
-        }
-
         $capturedPiece = $this->placedPiece;
         $this->placedPiece = $piece;
 

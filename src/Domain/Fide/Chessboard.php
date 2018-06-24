@@ -6,7 +6,11 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
+use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
+use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
@@ -52,7 +56,11 @@ final class Chessboard implements Board
     public function placePieceAt(Piece $piece, Coordinates $position): array
     {
         $events = [];
-        $capturedPiece = $this->getSquareAt($position)->place($piece);
+        $square = $this->getSquareAt($position);
+        if ($square->isOccupiedBy($piece->color())) {
+            throw new SquareIsOccupied($position);
+        }
+        $capturedPiece = $square->place($piece);
         $this->pieces[(string)$piece->color()]->attach($piece, $position);
         if ($capturedPiece) {
             $this->pieces[(string)$capturedPiece->color()]->detach($capturedPiece);
@@ -141,5 +149,24 @@ final class Chessboard implements Board
         $this->pieces[(string)$piece->color()]->detach($piece);
 
         return $piece;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function exchangePieceOnTo(Coordinates $position, Piece $exchangedPiece): array
+    {
+        $square = $this->getSquareAt($position);
+        if (!$square->isOccupied()) {
+            throw new SquareIsUnoccupied($position);
+        }
+        if ($square->isOccupiedBy($exchangedPiece->color()->opponent())) {
+            throw new PositionOccupiedByAnotherColor($position, $exchangedPiece->color()->opponent());
+        }
+        $removedPiece = $square->place($exchangedPiece);
+        $this->pieces[(string)$exchangedPiece->color()]->detach($removedPiece);
+        $this->pieces[(string)$exchangedPiece->color()]->attach($exchangedPiece);
+
+        return [new PieceWasExchanged($removedPiece, $exchangedPiece, $position),];
     }
 }

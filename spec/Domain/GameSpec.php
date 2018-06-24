@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
@@ -11,6 +12,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Move;
@@ -217,5 +219,16 @@ class GameSpec extends ObjectBehavior
         $board->removePieceFrom($position)->shouldBeCalled()->willReturn($piece);
 
         $this->removePieceFromBoard($position)->shouldBe($piece);
+    }
+
+    function it_allows_to_exchange_piece_on_board(Board $board)
+    {
+        $piece = Queen::forColor(Color::white());
+        $position = CoordinatePair::fromFileAndRank('a', 1);
+
+        $pieceWasExchanged = new PieceWasExchanged(Pawn::forColor(Color::white()), $piece, $position);
+        $board->exchangePieceOnTo($position, $piece)->shouldBeCalled()->willReturn([$pieceWasExchanged,]);
+
+        $this->exchangePieceOnBoardTo($position, $piece)->shouldBeLike([$pieceWasExchanged,]);
     }
 }
