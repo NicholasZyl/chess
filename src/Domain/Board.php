@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
+use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -89,6 +90,9 @@ interface Board
      *
      * @param Coordinates $position
      * @param Piece $exchangedPiece
+     *
+     * @throws OutOfBoard
+     * @throws PositionOccupiedByAnotherColor
      *
      * @return Event[]
      */

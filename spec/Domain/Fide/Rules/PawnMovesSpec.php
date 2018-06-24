@@ -5,8 +5,8 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveOverInterveningPiece;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;

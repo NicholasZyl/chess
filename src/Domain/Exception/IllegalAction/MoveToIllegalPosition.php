@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Exception\IllegalMove;
+namespace NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Move;
 
-class MoveToIllegalPosition extends IllegalMove
+class MoveToIllegalPosition extends IllegalAction
 {
     /**
      * Create exception for move that would be made to an illegal position for given piece.

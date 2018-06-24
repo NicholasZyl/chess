@@ -7,7 +7,7 @@ use Helper\PieceFactory;
 use Helper\PieceTestPositions;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Game;
@@ -109,7 +109,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @When /I exchange piece on (?P<coordinates>[a-h][0-8]) to (?P<piece>[a-z]+ [a-z]+)/
+     * @When /I (try to )?exchange piece on (?P<coordinates>[a-h][0-8]) to (?P<piece>[a-z]+ [a-z]+)/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
@@ -147,11 +147,11 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then the move is/was illegal
+     * @Then the :action is/was illegal
      */
-    public function theMoveIsIllegal()
+    public function actionIsIllegal()
     {
-        expect($this->caughtException)->shouldBeAnInstanceOf(IllegalMove::class);
+        expect($this->caughtException)->shouldBeAnInstanceOf(IllegalAction::class);
     }
 
     /**

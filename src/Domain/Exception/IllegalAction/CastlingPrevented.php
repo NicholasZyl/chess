@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Exception\IllegalMove;
+namespace NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Move;
 
-final class CastlingPrevented extends IllegalMove
+final class CastlingPrevented extends IllegalAction
 {
     /**
-     * Create an exception for catling being prevented because of some rules.
+     * Create an exception for castling being prevented because of some rules.
      *
      * @param Move $move
      */

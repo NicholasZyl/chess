@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalMove;
+namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Move;
@@ -25,12 +25,12 @@ class MoveToIllegalPositionSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(IllegalMove\MoveToIllegalPosition::class);
+        $this->shouldHaveType(IllegalAction\MoveToIllegalPosition::class);
     }
 
     function it_is_illegal_move()
     {
-        $this->shouldBeAnInstanceOf(IllegalMove::class);
+        $this->shouldBeAnInstanceOf(IllegalAction::class);
     }
 
     function it_specifies_the_reason_why_it_is_illegal()

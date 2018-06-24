@@ -201,3 +201,9 @@ Feature: The moves of the pieces
     And I moved piece from b7 to b8
     When I exchange piece on b8 to white queen
     Then white pawn on b8 should be exchanged with white queen
+
+  Scenario: Pawn's promotion
+    Given there is a chessboard with white pawn placed on b6
+    And I moved piece from b6 to b7
+    When I try to exchange piece on b7 to white queen
+    Then the exchange is illegal

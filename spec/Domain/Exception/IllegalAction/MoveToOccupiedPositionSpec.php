@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalMove;
+namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove\MoveToOccupiedPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
@@ -24,7 +24,7 @@ class MoveToOccupiedPositionSpec extends ObjectBehavior
 
     function it_is_illegal_move()
     {
-        $this->shouldBeAnInstanceOf(IllegalMove::class);
+        $this->shouldBeAnInstanceOf(IllegalAction::class);
     }
 
     function it_specifies_the_reason_why_it_is_illegal()

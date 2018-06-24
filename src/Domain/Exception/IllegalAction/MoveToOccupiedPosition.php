@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain\Exception\IllegalMove;
+namespace NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
-final class MoveToOccupiedPosition extends IllegalMove
+final class MoveToOccupiedPosition extends IllegalAction
 {
     /**
      * Create exception for move to position occupied by piece of the same color.

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Move;
 
@@ -45,7 +45,7 @@ interface MoveRule
      * @param Move $move
      * @param Game $game
      *
-     * @throws IllegalMove
+     * @throws IllegalAction
      *
      * @return void
      */

@@ -9,7 +9,10 @@ use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
-use NicholasZyl\Chess\Domain\Exception\IllegalMove;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Piece\InitialPositions;
 use NicholasZyl\Chess\Domain\Rules\MoveRule;
@@ -47,7 +50,7 @@ class Game
      * @param Coordinates $to
      *
      * @throws BoardException
-     * @throws IllegalMove
+     * @throws IllegalAction
      *
      * @return Event[]
      */
@@ -62,12 +65,12 @@ class Game
             $events = array_merge($events, $this->onEventsOccurred($events));
 
             return $events;
-        } catch (IllegalMove $illegalMove) {
+        } catch (IllegalAction $illegalMove) {
             $this->board->placePieceAt($piece, $from);
             throw $illegalMove;
         } catch (SquareIsOccupied $squareIsOccupied) {
             $this->board->placePieceAt($piece, $from);
-            throw new IllegalMove\MoveToOccupiedPosition($squareIsOccupied->coordinates());
+            throw new MoveToOccupiedPosition($squareIsOccupied->coordinates());
         }
     }
 
@@ -76,7 +79,7 @@ class Game
      *
      * @param Move $move
      *
-     * @throws IllegalMove
+     * @throws IllegalAction
      *
      * @return void
      */
@@ -89,7 +92,7 @@ class Game
             }
         );
         if (empty($rules)) {
-            throw new IllegalMove\MoveToIllegalPosition($move);
+            throw new MoveToIllegalPosition($move);
         }
         usort($rules, function (MoveRule $ruleA, MoveRule $ruleB) {
             return $ruleB->priority() <=> $ruleA->priority();
@@ -150,7 +153,7 @@ class Game
             $this->applyRuleToMove($move);
 
             return true;
-        } catch (IllegalMove $illegalMove) {
+        } catch (IllegalAction $illegalMove) {
             return false;
         }
     }
@@ -220,10 +223,16 @@ class Game
      * @param Coordinates $position
      * @param Piece $exchangedPiece
      *
+     * @throws ExchangeIsNotAllowed
+     *
      * @return Event[]
      */
     public function exchangePieceOnBoardTo(Coordinates $position, Piece $exchangedPiece): array
     {
-        return $this->board->exchangePieceOnTo($position, $exchangedPiece);
+        try {
+            return $this->board->exchangePieceOnTo($position, $exchangedPiece);
+        } catch (BoardException $exception) {
+            throw new ExchangeIsNotAllowed($position);
+        }
     }
 }
