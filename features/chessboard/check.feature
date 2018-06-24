@@ -9,4 +9,4 @@ Feature: The king's check
       | black king  | h8       |
       | white rook  | d3       |
     When I move piece from d3 to d8
-    Then black king is in check
+    Then black is in check

@@ -6,7 +6,6 @@ namespace spec\NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Event\InCheck;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -17,7 +16,7 @@ class InCheckSpec extends ObjectBehavior
     function let()
     {
         $this->beConstructedWith(
-            King::forColor(Color::white())
+            Color::white()
         );
     }
 
@@ -31,21 +30,21 @@ class InCheckSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Event::class);
     }
 
-    function it_knows_which_piece_is_in_check()
+    function it_knows_which_color_is_in_check()
     {
-        $this->piece()->shouldBeLike(King::forColor(Color::white()));
+        $this->color()->shouldBeLike(Color::white());
     }
 
-    function it_equals_another_event_if_check_for_the_same_piece()
+    function it_equals_another_event_if_check_for_the_same_color()
     {
-        $another = new InCheck(King::forColor(Color::white()));
+        $another = new InCheck(Color::white());
 
         $this->equals($another)->shouldBe(true);
     }
 
-    function it_does_not_equal_another_event_if_for_capturing_other_piece_on_same_position()
+    function it_does_not_equal_another_event_if_check_is_for_another_color()
     {
-        $another = new InCheck(King::forColor(Color::black()));
+        $another = new InCheck(Color::black());
 
         $this->equals($another)->shouldBe(false);
     }

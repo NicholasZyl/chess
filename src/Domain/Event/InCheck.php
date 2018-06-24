@@ -4,33 +4,33 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Event;
 
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class InCheck implements Event
 {
     /**
-     * @var Piece
+     * @var Color
      */
-    private $piece;
+    private $color;
 
     /**
-     * Create an event that piece is in check.
+     * Create an event that color is in check.
      *
-     * @param Piece $piece
+     * @param Color $color
      */
-    public function __construct(Piece $piece)
+    public function __construct(Color $color)
     {
-        $this->piece = $piece;
+        $this->color = $color;
     }
 
     /**
-     * Which piece is in check.
+     * Which color is in check.
      *
-     * @return Piece
+     * @return Color
      */
-    public function piece(): Piece
+    public function color(): Color
     {
-        return $this->piece;
+        return $this->color;
     }
 
     /**
@@ -38,6 +38,6 @@ final class InCheck implements Event
      */
     public function equals(?Event $anotherEvent): bool
     {
-        return $anotherEvent instanceof self && $this->piece->isSameAs($anotherEvent->piece());
+        return $anotherEvent instanceof self && $this->color->is($anotherEvent->color());
     }
 }

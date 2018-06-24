@@ -184,13 +184,13 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) is in check/
+     * @Then :color is in check
      *
-     * @param Piece $piece
+     * @param Color $color
      */
-    public function kingIsInCheck(Piece $piece)
+    public function kingIsInCheck(Color $color)
     {
-        expect($this->occurredEvents)->toContainEvent(new Event\InCheck($piece));
+        expect($this->occurredEvents)->toContainEvent(new Event\InCheck($color));
     }
 
     /**
@@ -200,7 +200,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      * @param string $pieceDescription
      * @return Piece
      */
-    public function castToPiece(string $pieceDescription)
+    public function castToPiece(string $pieceDescription): Piece
     {
         $pieceDescription = explode(' ', $pieceDescription);
         if (count($pieceDescription) !== 2) {
@@ -218,9 +218,21 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      * @param string $coordinates
      * @return CoordinatePair
      */
-    public function castToCoordinates(string $coordinates)
+    public function castToCoordinates(string $coordinates): CoordinatePair
     {
         return CoordinatePair::fromString($coordinates);
+    }
+
+    /**
+     * @Transform :color
+     *
+     * @param string $color
+     *
+     * @return Color
+     */
+    public function castToColor(string $color): Color
+    {
+        return Color::fromString($color);
     }
 
     /**

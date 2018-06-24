@@ -32,7 +32,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldHaveType(KingMoves::class);
     }
 
-    function it_is_piece_moves_rule()
+    function it_is_chess_rule()
     {
         $this->shouldBeAnInstanceOf(Rule::class);
     }
