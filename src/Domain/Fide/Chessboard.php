@@ -45,8 +45,8 @@ final class Chessboard implements Board
             }
         }
         $this->pieces = [
-            (string) Color::white() => new \SplObjectStorage(),
-            (string) Color::black() => new \SplObjectStorage(),
+            Color::WHITE => new \SplObjectStorage(),
+            Color::BLACK => new \SplObjectStorage(),
         ];
     }
 
@@ -160,7 +160,7 @@ final class Chessboard implements Board
         if (!$square->isOccupied()) {
             throw new SquareIsUnoccupied($position);
         }
-        if ($square->isOccupiedBy($exchangedPiece->color()->opponent())) {
+        if (!$square->isOccupiedBy($exchangedPiece->color())) {
             throw new PositionOccupiedByAnotherColor($position, $exchangedPiece->color()->opponent());
         }
         $removedPiece = $square->place($exchangedPiece);

@@ -21,7 +21,7 @@ final class ExchangeIsNotAllowed extends IllegalAction
     public function __construct(Coordinates $position)
     {
         $this->position = $position;
-        parent::__construct(sprintf('Exchange on %s was not allowed.', $position));
+        parent::__construct(sprintf('Exchange piece on %s was not allowed.', $position));
     }
 
     /**

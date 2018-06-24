@@ -5,8 +5,8 @@ namespace NicholasZyl\Chess\Domain\Piece;
 
 final class Color
 {
-    private const WHITE = 'White';
-    private const BLACK = 'Black';
+    public const WHITE = 'White';
+    public const BLACK = 'Black';
     private const VALID_COLORS = [
         self::WHITE,
         self::BLACK,

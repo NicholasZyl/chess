@@ -4,16 +4,20 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
+use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Game;
+use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
 
 final class PawnMoves implements Rule
@@ -22,14 +26,10 @@ final class PawnMoves implements Rule
 
     private const MOVE_TO_ADJOINING_SQUARE = 1;
     private const MOVE_ADVANCING_TWO_SQUARES = 2;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function priority(): int
-    {
-        return self::STANDARD_PRIORITY;
-    }
+    private const FURTHEST_RANKS = [
+        Color::WHITE => Chessboard::HIGHEST_RANK,
+        Color::BLACK => Chessboard::LOWEST_RANK,
+    ];
 
     /**
      * @var \SplObjectStorage
@@ -42,11 +42,24 @@ final class PawnMoves implements Rule
     private $enPassantPossibileAt;
 
     /**
+     * @var Coordinates|null
+     */
+    private $promotionPosition;
+
+    /**
      * Create Pawn Moves rules.
      */
     public function __construct()
     {
         $this->movedPawns = new \SplObjectStorage();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function priority(): int
+    {
+        return self::STANDARD_PRIORITY;
     }
 
     /**
@@ -89,6 +102,9 @@ final class PawnMoves implements Rule
         } else {
             $this->enPassantPossibileAt = null;
         }
+        if ($event->destination()->rank() === self::FURTHEST_RANKS[(string)$event->piece()->color()]) {
+            $this->promotionPosition = $event->destination();
+        }
 
         return $events;
     }
@@ -98,7 +114,8 @@ final class PawnMoves implements Rule
      */
     public function isApplicable(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Pawn;
+        return $action instanceof Move && $action->piece() instanceof Pawn
+            || $action instanceof Exchange;
     }
 
     /**
@@ -106,31 +123,46 @@ final class PawnMoves implements Rule
      */
     public function apply(Action $action, Game $game): void
     {
-        if (!$action instanceof Move) {
+        if ($action instanceof Move) {
+            $this->applyToMove($action, $game);
+        } elseif ($action instanceof Exchange) {
+            $this->applyToExchange($action);
+        } else {
             throw new RuleIsNotApplicable();
         }
+    }
 
-        if (!$this->isApplicable($action)) {
-            throw new MoveToIllegalPosition($action);
+    /**
+     * Apply rules to the move.
+     *
+     * @param Move $move
+     * @param Game $game
+     *
+     * @return void
+     */
+    private function applyToMove(Move $move, Game $game): void
+    {
+        if (!$this->isApplicable($move)) {
+            throw new MoveToIllegalPosition($move);
         }
-        $isLegalMove = $this->isLegalMove($action);
-        $isLegalCapture = $this->isLegalCapture($action);
+        $isLegalMove = $this->isLegalMove($move);
+        $isLegalCapture = $this->isLegalCapture($move);
 
         if (!$isLegalMove && !$isLegalCapture) {
-            throw new MoveToIllegalPosition($action);
+            throw new MoveToIllegalPosition($move);
         }
 
-        if ($isLegalMove && $game->isPositionOccupied($action->destination())) {
-            throw new MoveToIllegalPosition($action);
+        if ($isLegalMove && $game->isPositionOccupied($move->destination())) {
+            throw new MoveToIllegalPosition($move);
         }
 
         if ($isLegalCapture
-            && !$game->isPositionOccupiedByOpponentOf($action->destination(), $action->piece()->color())
-            && !$action->destination()->equals($this->enPassantPossibileAt)) {
-            throw new MoveToIllegalPosition($action);
+            && !$game->isPositionOccupiedByOpponentOf($move->destination(), $move->piece()->color())
+            && !$move->destination()->equals($this->enPassantPossibileAt)) {
+            throw new MoveToIllegalPosition($move);
         }
 
-        $this->validateNotIntervenedMove($action, $game);
+        $this->validateNotIntervenedMove($move, $game);
     }
 
     /**
@@ -160,5 +192,20 @@ final class PawnMoves implements Rule
     {
         return $move->inDirection(new Forward($move->piece()->color(), new AlongDiagonal()))
             && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE);
+    }
+
+    /**
+     * Apply rules to the exchange.
+     *
+     * @param Exchange $exchange
+     *
+     * @return void
+     */
+    private function applyToExchange(Exchange $exchange): void
+    {
+        if (!$exchange->position()->equals($this->promotionPosition)) {
+            throw new ExchangeIsNotAllowed($exchange->position());
+        }
+        $this->promotionPosition = null;
     }
 }

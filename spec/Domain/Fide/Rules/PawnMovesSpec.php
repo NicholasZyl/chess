@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -50,7 +52,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->priority()->shouldBe(10);
     }
 
-    function it_is_applicable_for_pawn_move()
+    function it_is_applicable_to_pawn_move()
     {
         $move = new Move(
             $this->whitePawn,
@@ -61,7 +63,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->isApplicable($move)->shouldBe(true);
     }
 
-    function it_is_not_applicable_for_other_piece_move()
+    function it_is_not_applicable_to_other_piece_move()
     {
         $move = new Move(
             Queen::forColor(Color::white()),
@@ -70,6 +72,11 @@ class PawnMovesSpec extends ObjectBehavior
         );
 
         $this->isApplicable($move)->shouldBe(false);
+    }
+
+    function it_is_applicable_to_exchange_action()
+    {
+        $this->isApplicable(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)))->shouldBe(true);
     }
 
     function it_allows_white_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file(Game $game)
@@ -361,5 +368,75 @@ class PawnMovesSpec extends ObjectBehavior
             ),
             $game
         )->shouldBeLike([new PieceWasCaptured($this->whitePawn, CoordinatePair::fromFileAndRank('d', 4)),]);
+    }
+
+    function it_disallows_exchange_by_default(Game $game)
+    {
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)), $game,]);
+    }
+
+    function it_allows_exchange_when_white_pawn_reaches_rank_furthes_from_its_starting_position(Game $game)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->whitePawn,
+                    CoordinatePair::fromFileAndRank('d', 7),
+                    CoordinatePair::fromFileAndRank('d', 8)
+                )
+            ),
+            $game
+        );
+
+        $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('d', 8)), $game);
+    }
+
+    function it_allows_exchange_when_black_pawn_reaches_rank_furthes_from_its_starting_position(Game $game)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $game
+        );
+
+        $this->apply(new Exchange(Queen::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game);
+    }
+
+    function it_disallows_exchange_if_another_piece_reaches_furthest_position(Game $game)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    Queen::forColor(Color::white()),
+                    CoordinatePair::fromFileAndRank('a', 2),
+                    CoordinatePair::fromFileAndRank('a', 1)
+                )
+            ),
+            $game
+        );
+
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 1)), $game,]);
+    }
+
+    function it_disallows_more_than_one_exchange(Game $game)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->whitePawn,
+                    CoordinatePair::fromFileAndRank('b', 7),
+                    CoordinatePair::fromFileAndRank('b', 8)
+                )
+            ),
+            $game
+        );
+
+        $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $game);
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $game,]);
     }
 }
