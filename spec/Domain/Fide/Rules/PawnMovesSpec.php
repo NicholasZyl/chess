@@ -11,6 +11,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
@@ -42,7 +43,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->shouldHaveType(PawnMoves::class);
     }
 
-    function it_is_piece_moves_rule()
+    function it_is_chess_rule()
     {
         $this->shouldBeAnInstanceOf(Rule::class);
     }
@@ -454,5 +455,21 @@ class PawnMovesSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game,]);
+    }
+
+    function it_disallows_exchange_to_a_king(Game $game)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $game
+        );
+
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(King::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game,]);
     }
 }

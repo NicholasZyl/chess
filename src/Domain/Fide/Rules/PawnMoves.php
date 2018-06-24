@@ -15,6 +15,7 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
+use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -203,7 +204,7 @@ final class PawnMoves implements Rule
      */
     private function applyToExchange(Exchange $exchange): void
     {
-        if (!$exchange->position()->equals($this->promotionPosition) || $exchange->pieceToExchangeWith() instanceof Pawn) {
+        if (!$exchange->position()->equals($this->promotionPosition) || $exchange->pieceToExchangeWith() instanceof Pawn || $exchange->pieceToExchangeWith() instanceof King) {
             throw new ExchangeIsNotAllowed($exchange->position());
         }
         $this->promotionPosition = null;
