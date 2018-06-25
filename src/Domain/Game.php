@@ -6,6 +6,7 @@ namespace NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
@@ -64,9 +65,6 @@ class Game
             $this->applyRuleToAction($move);
             $events = $this->board->placePieceAt($piece, $to);
             $events[] = new PieceWasMoved($move);
-            $events = array_merge($events, $this->onEventsOccurred($events));
-
-            return $events;
         } catch (NoApplicableRule $noApplicableRule) {
             $this->board->placePieceAt($piece, $from);
             throw new MoveToIllegalPosition($move);
@@ -77,12 +75,23 @@ class Game
             $this->board->placePieceAt($piece, $from);
             throw new MoveToOccupiedPosition($squareIsOccupied->coordinates());
         }
+
+        try {
+            $events = array_merge($events, $this->onEventsOccurred($events));
+        } catch (IllegalAction\MoveExposesToCheck $moveExposesToCheck) {
+            $this->revertMove($events);
+            throw $moveExposesToCheck;
+        }
+
+        return $events;
     }
 
     /**
      * Act on events that just occurred.
      *
      * @param array $events
+     *
+     * @throws IllegalAction\MoveExposesToCheck
      *
      * @return Event[]
      */
@@ -101,6 +110,8 @@ class Game
      *
      * @param Event $event
      *
+     * @throws IllegalAction\MoveExposesToCheck
+     *
      * @return Event[]
      */
     private function applyRulesAfterEvent(Event $event): array
@@ -111,6 +122,25 @@ class Game
         }
 
         return $events;
+    }
+
+    /**
+     * Fully revert the move that just happened.
+     *
+     * @param Event[] $events
+     *
+     * @return void
+     */
+    private function revertMove(array $events): void
+    {
+        foreach (array_reverse($events) as $event) {
+            if ($event instanceof PieceWasCaptured) {
+                $this->board->placePieceAt($event->piece(), $event->capturedAt());
+            } elseif ($event instanceof PieceWasMoved) {
+                $piece = $this->board->pickPieceFrom($event->destination());
+                $this->board->placePieceAt($piece, $event->source());
+            }
+        }
     }
 
     /**

@@ -6,15 +6,18 @@ namespace spec\NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
@@ -158,6 +161,31 @@ class GameSpec extends ObjectBehavior
         $rule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldNotBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('playMove', [$source, $destination,]);
+    }
+
+    function it_reverts_move_if_it_is_exposing_to_check(Board $board, Rule $rule)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $source = CoordinatePair::fromFileAndRank('c', 2);
+        $destination = CoordinatePair::fromFileAndRank('d', 3);
+        $move = new Move($pawn, $source, $destination);
+
+        $capturedPiece = Bishop::forColor(Color::black());
+
+        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
+        $rule->isApplicable($move)->shouldBeCalled()->willReturn(true);
+        $rule->apply($move, $this->getWrappedObject())->shouldBeCalled();
+        $pieceWasCaptured = new PieceWasCaptured($capturedPiece, $destination);
+        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([$pieceWasCaptured,]);
+        $rule->applyAfter($pieceWasCaptured, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
+        $moveExposesToCheck = new MoveExposesToCheck();
+        $rule->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled()->willThrow($moveExposesToCheck);
+
+        $board->pickPieceFrom($destination)->shouldBeCalled()->willReturn($pawn);
+        $board->placePieceAt($pawn, $source)->shouldBeCalled()->willReturn([]);
+        $board->placePieceAt($capturedPiece, $destination)->shouldBeCalled()->willReturn([]);
+
+        $this->shouldThrow($moveExposesToCheck)->during('playMove', [$source, $destination,]);
     }
 
     function it_knows_if_given_piece_is_occupied(Board $board)

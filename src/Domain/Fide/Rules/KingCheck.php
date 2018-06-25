@@ -55,7 +55,10 @@ final class KingCheck implements Rule
                 $this->kingsPositions[(string)$color] = $event->destination();
             }
 
-            $ownKingPosition = $this->kingsPositions[(string)$color];
+            if ($game->isPositionAttackedByOpponentOf($this->kingsPositions[(string)$color], $color)) {
+                throw new IllegalAction\MoveExposesToCheck();
+            }
+
             if ($game->isPositionAttackedByOpponentOf($this->kingsPositions[(string)$color->opponent()], $color->opponent())) {
                 $events[] = new Event\InCheck($color->opponent());
             }

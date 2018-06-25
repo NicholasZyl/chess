@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Event\InCheck;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
@@ -50,6 +51,7 @@ class KingCheckSpec extends ObjectBehavior
 
     function it_does_nothing_if_king_is_not_attacked_after_move(Game $game)
     {
+        $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 1), Color::white())->shouldBeCalled()->willReturn(false);
         $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 8), Color::black())->shouldBeCalled()->willReturn(false);
 
         $this->applyAfter(
@@ -66,6 +68,7 @@ class KingCheckSpec extends ObjectBehavior
 
     function it_notices_when_opponents_king_is_in_check_after_move(Game $game)
     {
+        $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 1), Color::white())->shouldBeCalled()->willReturn(false);
         $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 8), Color::black())->shouldBeCalled()->willReturn(true);
 
         $this->applyAfter(
@@ -80,8 +83,9 @@ class KingCheckSpec extends ObjectBehavior
         )->shouldBeLike([new InCheck(Color::black()),]);
     }
 
-    function it_validates_kings_actual_position(Game $game)
+    function it_always_checks_king_actual_position(Game $game)
     {
+        $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('h', 8), Color::black())->shouldBeCalled()->willReturn(false);
         $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 1), Color::white())->shouldBeCalled()->willReturn(false);
 
         $this->applyAfter(
@@ -95,6 +99,7 @@ class KingCheckSpec extends ObjectBehavior
             $game
         )->shouldBeLike([]);
 
+        $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 1), Color::white())->shouldBeCalled()->willReturn(false);
         $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('h', 8), Color::black())->shouldBeCalled()->willReturn(false);
 
         $this->applyAfter(
@@ -107,5 +112,41 @@ class KingCheckSpec extends ObjectBehavior
             ),
             $game
         )->shouldBeLike([]);
+    }
+
+    function it_notices_when_kings_move_is_exposing_it_to_check(Game $game)
+    {
+        $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('f', 1), Color::white())->shouldBeCalled()->willReturn(true);
+
+        $this->shouldThrow(MoveExposesToCheck::class)->during('applyAfter',
+            [
+                new PieceWasMoved(
+                    new Move(
+                        King::forColor(Color::white()),
+                        CoordinatePair::fromFileAndRank('e', 1),
+                        CoordinatePair::fromFileAndRank('f', 1)
+                    )
+                ),
+                $game,
+            ]
+        );
+    }
+
+    function it_notices_when_piece_move_is_exposing_its_king_to_check(Game $game)
+    {
+        $game->isPositionAttackedByOpponentOf(CoordinatePair::fromFileAndRank('e', 1), Color::white())->shouldBeCalled()->willReturn(true);
+
+        $this->shouldThrow(MoveExposesToCheck::class)->during('applyAfter',
+            [
+                new PieceWasMoved(
+                    new Move(
+                        Rook::forColor(Color::white()),
+                        CoordinatePair::fromFileAndRank('e', 3),
+                        CoordinatePair::fromFileAndRank('f', 3)
+                    )
+                ),
+                $game,
+            ]
+        );
     }
 }

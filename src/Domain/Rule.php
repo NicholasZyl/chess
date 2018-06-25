@@ -23,6 +23,8 @@ interface Rule
      * @param Event $event
      * @param Game $game
      *
+     * @throws IllegalAction\MoveExposesToCheck
+     *
      * @return Event[]
      */
     public function applyAfter(Event $event, Game $game): array;
