@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
@@ -15,9 +16,9 @@ use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 
 class PawnMovesSpec extends ObjectBehavior
@@ -80,7 +81,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->isApplicable(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)))->shouldBe(true);
     }
 
-    function it_allows_white_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file(Game $game)
+    function it_allows_white_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -88,12 +89,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(false);
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_allows_black_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file(Game $game)
+    function it_allows_black_pawn_move_forward_to_the_square_immediately_in_front_on_the_same_file(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->blackPawn,
@@ -101,12 +102,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 6)
         );
 
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 6))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 6))->willReturn(false);
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_disallows_pawn_move_forward_if_destination_position_is_occupied(Game $game)
+    function it_disallows_pawn_move_forward_if_destination_position_is_occupied(Board $board, Rules $rules)
     {
         $destination = CoordinatePair::fromFileAndRank('c', 3);
         $move = new Move(
@@ -115,12 +116,12 @@ class PawnMovesSpec extends ObjectBehavior
             $destination
         );
 
-        $game->isPositionOccupied($destination)->willReturn(true);
+        $board->isPositionOccupied($destination)->willReturn(true);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_move_along_rank(Game $game)
+    function it_disallows_pawn_move_along_rank(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -128,10 +129,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_move_along_diagonal(Game $game)
+    function it_disallows_pawn_move_along_diagonal(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -139,10 +140,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 5)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_move_to_another_square(Game $game)
+    function it_disallows_pawn_move_to_another_square(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -150,10 +151,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 5)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_move_along_file_backward(Game $game)
+    function it_disallows_pawn_move_along_file_backward(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->blackPawn,
@@ -161,10 +162,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 4)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_allows_pawn_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file(Game $game)
+    function it_allows_pawn_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -172,12 +173,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('b', 3), Color::white())->willReturn(true);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 3), Color::black())->willReturn(true);
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_disallows_pawn_move_along_diagonal_if_is_not_capture(Game $game)
+    function it_disallows_pawn_move_along_diagonal_if_is_not_capture(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -185,12 +186,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('b', 3), Color::white())->willReturn(false);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 3), Color::black())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_move_backward_along_file(Game $game)
+    function it_disallows_pawn_move_backward_along_file(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -198,10 +199,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_move_further_than_to_adjoining_square(Game $game)
+    function it_disallows_pawn_move_further_than_to_adjoining_square(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -209,10 +210,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 5)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_allows_pawn_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied(Game $game)
+    function it_allows_pawn_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->blackPawn,
@@ -220,13 +221,13 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 5)
         );
 
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 6))->willReturn(false);
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 5))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 6))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 5))->willReturn(false);
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_disallows_pawn_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Game $game)
+    function it_disallows_pawn_move_more_than_to_the_square_immediately_in_front_on_the_same_file_on_next_moves(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -242,13 +243,14 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('a', 3)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_advance_two_squares_if_any_is_occupied(Game $game)
+    function it_disallows_pawn_advance_two_squares_if_any_is_occupied(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->whitePawn,
@@ -256,13 +258,13 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 4)
         );
 
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 4))->willReturn(false);
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(true);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 4))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(true);
 
-        $this->shouldThrow(new MoveOverInterveningPiece(CoordinatePair::fromFileAndRank('b', 3)))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveOverInterveningPiece(CoordinatePair::fromFileAndRank('b', 3)))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_allows_pawn_en_passant_capture_if_opponents_pawn_just_advanced_two_squares(Game $game)
+    function it_allows_pawn_en_passant_capture_if_opponents_pawn_just_advanced_two_squares(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -272,7 +274,8 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('c', 5)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
         $move = new Move(
@@ -281,12 +284,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 6)
         );
 
-        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('c', 6), Color::white())->willReturn(false);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('c', 6), Color::black())->willReturn(false);
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_disallows_pawn_en_passant_capture_if_another_move_occurred(Game $game)
+    function it_disallows_pawn_en_passant_capture_if_another_move_occurred(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -296,7 +299,8 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('c', 5)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
         $this->applyAfter(
             new PieceWasMoved(
@@ -306,7 +310,8 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('g', 6)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
         $move = new Move(
@@ -315,12 +320,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 6)
         );
 
-        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('c', 6), Color::white())->willReturn(false);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('c', 6), Color::black())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_disallows_pawn_en_passant_capture_if_moving_to_another_square(Game $game)
+    function it_disallows_pawn_en_passant_capture_if_moving_to_another_square(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -330,7 +335,8 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('d', 2)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
         $move = new Move(
@@ -339,12 +345,12 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $game->isPositionOccupiedByOpponentOf(CoordinatePair::fromFileAndRank('b', 2), Color::black())->willReturn(false);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 2), Color::white())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_captures_pawn_after_en_passant_move(Game $game)
+    function it_captures_pawn_after_en_passant_move(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -354,10 +360,11 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('d', 4)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $game->removePieceFromBoard(CoordinatePair::fromFileAndRank('d', 4))->shouldBeCalled()->willReturn($this->whitePawn);
+        $board->removePieceFrom(CoordinatePair::fromFileAndRank('d', 4))->shouldBeCalled()->willReturn($this->whitePawn);
 
         $this->applyAfter(
             new PieceWasMoved(
@@ -367,16 +374,17 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('d', 3)
                 )
             ),
-            $game
+            $board,
+            $rules
         )->shouldBeLike([new PieceWasCaptured($this->whitePawn, CoordinatePair::fromFileAndRank('d', 4)),]);
     }
 
-    function it_disallows_exchange_by_default(Game $game)
+    function it_disallows_exchange_by_default(Board $board, Rules $rules)
     {
-        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)), $game,]);
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)), $board, $rules,]);
     }
 
-    function it_allows_exchange_when_white_pawn_reaches_rank_furthes_from_its_starting_position(Game $game)
+    function it_allows_exchange_when_white_pawn_reaches_rank_furthes_from_its_starting_position(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -386,13 +394,14 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('d', 8)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('d', 8)), $game);
+        $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('d', 8)), $board, $rules);
     }
 
-    function it_allows_exchange_when_black_pawn_reaches_rank_furthes_from_its_starting_position(Game $game)
+    function it_allows_exchange_when_black_pawn_reaches_rank_furthes_from_its_starting_position(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -402,13 +411,14 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('g', 1)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->apply(new Exchange(Queen::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game);
+        $this->apply(new Exchange(Queen::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $board, $rules);
     }
 
-    function it_disallows_exchange_if_another_piece_reaches_furthest_position(Game $game)
+    function it_disallows_exchange_if_another_piece_reaches_furthest_position(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -418,13 +428,14 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('a', 1)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 1)), $game,]);
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 1)), $board, $rules,]);
     }
 
-    function it_disallows_more_than_one_exchange(Game $game)
+    function it_disallows_more_than_one_exchange(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -434,14 +445,15 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('b', 8)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $game);
-        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $game,]);
+        $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $board, $rules);
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 8)), $board, $rules,]);
     }
 
-    function it_disallows_exchange_to_another_pawn(Game $game)
+    function it_disallows_exchange_to_another_pawn(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -451,13 +463,14 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('g', 1)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game,]);
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $board, $rules,]);
     }
 
-    function it_disallows_exchange_to_a_king(Game $game)
+    function it_disallows_exchange_to_a_king(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -467,9 +480,10 @@ class PawnMovesSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('g', 1)
                 )
             ),
-            $game
+            $board,
+            $rules
         );
 
-        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(King::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $game,]);
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(King::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $board, $rules,]);
     }
 }

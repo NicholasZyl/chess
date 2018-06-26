@@ -32,13 +32,13 @@ class Rules
      * Apply rules to given action.
      *
      * @param Action $action
-     * @param Game $game
+     * @param Board $board
      *
      * @throws IllegalAction
      *
      * @return void
      */
-    public function applyRulesTo(Action $action, Game $game): void
+    public function applyRulesTo(Action $action, Board $board): void
     {
         $rules = array_filter(
             $this->rules,
@@ -55,22 +55,22 @@ class Rules
 
         /** @var Rule $rule */
         $rule = reset($rules);
-        $rule->apply($action, $game);
+        $rule->apply($action, $board, $this);
     }
 
     /**
      * Apply rules after event that occurred.
      *
      * @param Event $event
-     * @param Game $game
+     * @param Board $board
      *
      * @return array
      */
-    public function applyAfter(Event $event, Game $game): array
+    public function applyAfter(Event $event, Board $board): array
     {
         $events = [];
         foreach ($this->rules as $rule) {
-            $events = array_merge($events, $rule->applyAfter($event, $game));
+            $events = array_merge($events, $rule->applyAfter($event, $board, $this));
         }
 
         return $events;

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
@@ -11,10 +12,11 @@ use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class Chessboard implements Board
 {
@@ -97,17 +99,28 @@ final class Chessboard implements Board
     /**
      * {@inheritdoc}
      */
-    public function isPositionAttackedBy(Coordinates $position, Color $color, Game $game): bool
+    public function isPositionAttackedBy(Coordinates $position, Color $color, Rules $rules): bool
     {
         $this->isPositionOnBoard($position);
 
         $isAttacked = false;
         $piecesSet = $this->pieces[(string)$color];
         foreach ($piecesSet as $piece) {
-            $isAttacked = $isAttacked || $game->mayMove($piece, $piecesSet[$piece], $position);
+            $isAttacked = $isAttacked || $this->mayPieceMove($piece, $piecesSet[$piece], $position, $rules);
         }
 
         return $isAttacked;
+    }
+
+    private function mayPieceMove(Piece $piece, Coordinates $source, Coordinates $destination, Rules $rules): bool
+    {
+        try {
+            $rules->applyRulesTo(new Move($piece, $source, $destination), $this);
+        } catch (IllegalAction $illegalAction) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

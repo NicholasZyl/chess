@@ -61,17 +61,17 @@ interface Board
     public function isPositionOccupiedBy(Coordinates $position, Color $color): bool;
 
     /**
-     * Check if position is attacked by any piece of passed color according to the game and its rules.
+     * Check if position is attacked by any piece of passed color according to the rules.
      *
      * @param Coordinates $position
      * @param Color $color
-     * @param Game $game
+     * @param Rules $rules
      *
      * @throws OutOfBoard
      *
      * @return bool
      */
-    public function isPositionAttackedBy(Coordinates $position, Color $color, Game $game): bool;
+    public function isPositionAttackedBy(Coordinates $position, Color $color, Rules $rules): bool;
 
     /**
      * Remove a piece from given position.

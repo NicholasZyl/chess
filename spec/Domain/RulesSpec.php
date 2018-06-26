@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
@@ -31,19 +31,19 @@ class RulesSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->duringInstantiation();
     }
 
-    function it_applies_applicable_rules_to_action(Rule $firstRule, Rule $secondRule, Game $game)
+    function it_applies_applicable_rules_to_action(Rule $firstRule, Rule $secondRule, Board $board)
     {
         $action = new class implements Action {};
 
         $firstRule->isApplicable($action)->shouldBeCalled()->willReturn(true);
         $secondRule->isApplicable($action)->shouldBeCalled()->willReturn(false);
-        $firstRule->apply($action, $game)->shouldBeCalled();
+        $firstRule->apply($action, $board, $this->getWrappedObject())->shouldBeCalled();
         $secondRule->apply(Argument::cetera())->shouldNotBeCalled();
 
-        $this->applyRulesTo($action, $game);
+        $this->applyRulesTo($action, $board);
     }
 
-    function it_fails_if_there_is_no_applicable_rule_to_action(Rule $firstRule, Rule $secondRule, Game $game)
+    function it_fails_if_there_is_no_applicable_rule_to_action(Rule $firstRule, Rule $secondRule, Board $board)
     {
         $action = new class implements Action {};
 
@@ -52,10 +52,10 @@ class RulesSpec extends ObjectBehavior
         $firstRule->apply(Argument::cetera())->shouldNotBeCalled();
         $secondRule->apply(Argument::cetera())->shouldNotBeCalled();
 
-        $this->shouldThrow(NoApplicableRule::class)->during('applyRulesTo', [$action, $game,]);
+        $this->shouldThrow(NoApplicableRule::class)->during('applyRulesTo', [$action, $board,]);
     }
 
-    function it_applies_rules_to_occurred_event(Rule $firstRule, Rule $secondRule, Game $game)
+    function it_applies_rules_to_occurred_event(Rule $firstRule, Rule $secondRule, Board $board)
     {
         $event = new class implements Event {
             /**
@@ -76,11 +76,39 @@ class RulesSpec extends ObjectBehavior
             }
         };
 
-        $firstRule->applyAfter($event, $game)->shouldBeCalled()->willReturn([$otherEvent,]);
-        $secondRule->applyAfter($event, $game)->shouldBeCalled()->willReturn([]);
+        $firstRule->applyAfter($event, $board, $this->getWrappedObject())->shouldBeCalled()->willReturn([$otherEvent,]);
+        $secondRule->applyAfter($event, $board, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
 
-        $this->applyAfter($event, $game)->shouldBe([$otherEvent,]);
+        $this->applyAfter($event, $board)->shouldBe([$otherEvent,]);
     }
+
+//    function it_informs_when_piece_may_move_according_to_rules(Rule $firstRule, Rule $secondRule)
+//    {
+//        $source = CoordinatePair::fromFileAndRank('b', 2);
+//        $destination = CoordinatePair::fromFileAndRank('b', 3);
+//        $piece = Pawn::forColor(Color::white());
+//        $move = new Action\Move($piece, $source, $destination);
+//
+//        $firstRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
+//        $secondRule->isApplicable($move)->shouldBeCalled()->willReturn(false);
+//        $firstRule->apply($move, $board)->shouldBeCalled();
+//
+//        $this->mayPieceMove($piece, $source, $destination)->shouldBe(true);
+//    }
+//
+//    function it_informs_when_piece_may_not_move_according_to_rules(Rule $firstRule, Rule $secondRule)
+//    {
+//        $source = CoordinatePair::fromFileAndRank('b', 2);
+//        $destination = CoordinatePair::fromFileAndRank('b', 3);
+//        $piece = Pawn::forColor(Color::white());
+//        $move = new Action\Move($piece, $source, $destination);
+//
+//        $firstRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
+//        $secondRule->isApplicable($move)->shouldBeCalled()->willReturn(false);
+//        $firstRule->apply($move, $board)->shouldBeCalled()->willThrow(new MoveToIllegalPosition($move));
+//
+//        $this->mayPieceMove($piece, $source, $destination)->shouldBe(false);
+//    }
 
 //    function it_applies_only_most_important_applicable_rule(Board $board, InitialPositions $initialPositions, Rule $rule, Rule $lessImportantRule)
 //    {

@@ -5,14 +5,15 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 
 class KingMovesSpec extends ObjectBehavior
@@ -115,7 +116,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->isApplicable($action)->shouldBe(false);
     }
 
-    function it_may_be_played_on_board(Game $game)
+    function it_may_be_played_on_board(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->king,
@@ -123,10 +124,10 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 2)
         );
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_if_not_applicable(Game $game)
+    function it_may_not_be_played_if_not_applicable(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->king,
@@ -134,6 +135,6 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 }

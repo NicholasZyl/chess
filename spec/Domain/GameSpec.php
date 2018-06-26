@@ -51,10 +51,10 @@ class GameSpec extends ObjectBehavior
         $move = new Move($pawn, $source, $destination);
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
 
         $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
-        $rules->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled();
 
         $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move),]);
     }
@@ -68,7 +68,7 @@ class GameSpec extends ObjectBehavior
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
         $illegalMove = new MoveToIllegalPosition($move);
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled()->willThrow($illegalMove);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled()->willThrow($illegalMove);
         $board->placePieceAt($pawn, $destination)->shouldNotBeCalled();
         $board->placePieceAt($pawn, $source)->shouldBeCalled();
 
@@ -83,7 +83,7 @@ class GameSpec extends ObjectBehavior
         $move = new Move($pawn, $source, $destination);
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
-        $rules->applyRulesTo($move, $this->getWrappedObject())->willThrow(new NoApplicableRule());
+        $rules->applyRulesTo($move, $board)->willThrow(new NoApplicableRule());
         $board->placePieceAt($pawn, $destination)->shouldNotBeCalled();
         $board->placePieceAt($pawn, $source)->shouldBeCalled();
 
@@ -98,10 +98,10 @@ class GameSpec extends ObjectBehavior
         $move = new Move($pawn, $source, $destination);
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
         $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
         $anotherEvent = new PieceWasMoved(new Move(Rook::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 3), $source));
-        $rules->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled()->willReturn([$anotherEvent]);
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$anotherEvent]);
 
         $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move), $anotherEvent,]);
     }
@@ -125,10 +125,10 @@ class GameSpec extends ObjectBehavior
         $move = new Move($pawn, $source, $destination);
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
         $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willThrow(new SquareIsOccupied($destination));
         $board->placePieceAt($pawn, $source)->shouldBeCalled();
-        $rules->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldNotBeCalled();
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldNotBeCalled();
 
         $this->shouldThrow(new MoveToOccupiedPosition($destination))->during('playMove', [$source, $destination,]);
     }
@@ -143,12 +143,12 @@ class GameSpec extends ObjectBehavior
         $capturedPiece = Bishop::forColor(Color::black());
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
         $pieceWasCaptured = new PieceWasCaptured($capturedPiece, $destination);
         $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([$pieceWasCaptured,]);
-        $rules->applyAfter($pieceWasCaptured, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
+        $rules->applyAfter($pieceWasCaptured, $board)->shouldBeCalled()->willReturn([]);
         $moveExposesToCheck = new MoveExposesToCheck();
-        $rules->applyAfter(new PieceWasMoved($move), $this->getWrappedObject())->shouldBeCalled()->willThrow($moveExposesToCheck);
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willThrow($moveExposesToCheck);
 
         $board->pickPieceFrom($destination)->shouldBeCalled()->willReturn($pawn);
         $board->placePieceAt($pawn, $source)->shouldBeCalled()->willReturn([]);
@@ -157,75 +157,13 @@ class GameSpec extends ObjectBehavior
         $this->shouldThrow($moveExposesToCheck)->during('playMove', [$source, $destination,]);
     }
 
-    function it_knows_if_given_piece_is_occupied(Board $board)
-    {
-        $position = CoordinatePair::fromFileAndRank('a', 1);
-        $board->isPositionOccupied($position)->shouldBeCalled()->willReturn(true);
-
-        $this->isPositionOccupied($position)->shouldBe(true);
-    }
-
-    function it_knows_if_given_piece_is_occupied_by_opponent_color(Board $board)
-    {
-        $position = CoordinatePair::fromFileAndRank('a', 1);
-        $color = Color::white();
-        $board->isPositionOccupiedBy($position, $color)->shouldBeCalled()->willReturn(true);
-
-        $this->isPositionOccupiedByOpponentOf($position, Color::black())->shouldBe(true);
-    }
-
-    function it_knows_if_position_is_attacked(Board $board)
-    {
-        $player = Color::white();
-        $opponent = Color::black();
-        $position = CoordinatePair::fromFileAndRank('b', 3);
-
-        $board->isPositionAttackedBy($position, $opponent, $this->getWrappedObject())->shouldBeCalled()->willReturn(true);
-
-        $this->isPositionAttackedByOpponentOf($position, $player)->shouldBe(true);
-    }
-
-    function it_knows_when_piece_may_be_moved(Rules $rules)
-    {
-        $pawn = Pawn::forColor(Color::white());
-        $source = CoordinatePair::fromFileAndRank('c', 2);
-        $destination = CoordinatePair::fromFileAndRank('c', 3);
-        $move = new Move($pawn, $source, $destination);
-
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled();
-
-        $this->mayMove($pawn, $source, $destination)->shouldBe(true);
-    }
-
-    function it_knows_when_piece_may_not_be_moved(Rules $rules)
-    {
-        $pawn = Pawn::forColor(Color::white());
-        $source = CoordinatePair::fromFileAndRank('c', 2);
-        $destination = CoordinatePair::fromFileAndRank('c', 3);
-        $move = new Move($pawn, $source, $destination);
-
-        $rules->applyRulesTo($move, $this->getWrappedObject())->shouldBeCalled()->willThrow(new MoveToIllegalPosition($move));
-
-        $this->mayMove($pawn, $source, $destination)->shouldBe(false);
-    }
-
-    function it_removes_piece_from_a_board_at_given_position(Board $board)
-    {
-        $piece = Pawn::forColor(Color::white());
-        $position = CoordinatePair::fromFileAndRank('a', 1);
-
-        $board->removePieceFrom($position)->shouldBeCalled()->willReturn($piece);
-
-        $this->removePieceFromBoard($position)->shouldBe($piece);
-    }
-
     function it_allows_to_exchange_piece_on_board(Board $board, Rules $rules)
     {
         $piece = Queen::forColor(Color::white());
         $position = CoordinatePair::fromFileAndRank('a', 1);
         $action = new Exchange($piece, $position);
 
-        $rules->applyRulesTo($action, $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo($action, $board)->shouldBeCalled();
 
         $pieceWasExchanged = new PieceWasExchanged(Pawn::forColor(Color::white()), $piece, $position);
         $board->exchangePieceOnPositionTo($position, $piece)->shouldBeCalled()->willReturn([$pieceWasExchanged,]);
@@ -239,7 +177,7 @@ class GameSpec extends ObjectBehavior
         $position = CoordinatePair::fromFileAndRank('a', 1);
         $action = new Exchange($piece, $position);
 
-        $rules->applyRulesTo($action, $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo($action, $board)->shouldBeCalled();
 
         $board->exchangePieceOnPositionTo($position, $piece)->shouldBeCalled()->willThrow(new PositionOccupiedByAnotherColor($position, Color::black()));
 
@@ -251,7 +189,7 @@ class GameSpec extends ObjectBehavior
         $piece = Queen::forColor(Color::white());
         $position = CoordinatePair::fromFileAndRank('a', 1);
 
-        $rules->applyRulesTo(new Exchange($piece, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new NoApplicableRule());
+        $rules->applyRulesTo(new Exchange($piece, $position), $board)->shouldBeCalled()->willThrow(new NoApplicableRule());
         $board->exchangePieceOnPositionTo($position, $piece)->shouldNotBeCalled();
 
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('exchangePieceOnBoardTo', [$position, $piece,]);
@@ -263,7 +201,7 @@ class GameSpec extends ObjectBehavior
         $position = CoordinatePair::fromFileAndRank('a', 1);
         $action = new Exchange($piece, $position);
 
-        $rules->applyRulesTo($action, $this->getWrappedObject())->shouldBeCalled()->willThrow(new ExchangeIsNotAllowed($position));
+        $rules->applyRulesTo($action, $board)->shouldBeCalled()->willThrow(new ExchangeIsNotAllowed($position));
         $board->exchangePieceOnPositionTo($position, $piece)->shouldNotBeCalled();
 
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('exchangePieceOnBoardTo', [$position, $piece,]);

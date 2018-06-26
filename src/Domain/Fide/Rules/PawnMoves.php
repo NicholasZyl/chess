@@ -6,6 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide\Rules;
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
@@ -17,9 +18,9 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class PawnMoves implements Rule
 {
@@ -66,11 +67,11 @@ final class PawnMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function applyAfter(Event $event, Game $game): array
+    public function applyAfter(Event $event, Board $board, Rules $rules): array
     {
         if ($event instanceof Event\PieceWasMoved) {
             if ($event->piece() instanceof Pawn) {
-                return $this->onPawnMoved($event, $game);
+                return $this->onPawnMoved($event, $board);
             } else {
                 $this->enPassantPossibileAt = null;
             }
@@ -83,18 +84,18 @@ final class PawnMoves implements Rule
      * Handle event that pawn was moved.
      *
      * @param Event\PieceWasMoved $event
-     * @param Game $game
+     * @param Board $board
      *
      * @return Event[]
      */
-    private function onPawnMoved(Event\PieceWasMoved $event, Game $game): array
+    private function onPawnMoved(Event\PieceWasMoved $event, Board $board): array
     {
         $events = [];
 
         $this->movedPawns->attach($event->piece());
         if ($event->destination()->equals($this->enPassantPossibileAt)) {
             $position = $this->enPassantPossibileAt->nextTowards($event->source(), new AlongFile());
-            $piece = $game->removePieceFromBoard($position);
+            $piece = $board->removePieceFrom($position);
             $this->enPassantPossibileAt = null;
 
             $events[] = new Event\PieceWasCaptured($piece, $position);
@@ -122,10 +123,10 @@ final class PawnMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function apply(Action $action, Game $game): void
+    public function apply(Action $action, Board $board, Rules $rules): void
     {
         if ($action instanceof Move) {
-            $this->applyToMove($action, $game);
+            $this->applyToMove($action, $board);
         } elseif ($action instanceof Exchange) {
             $this->applyToExchange($action);
         } else {
@@ -137,11 +138,11 @@ final class PawnMoves implements Rule
      * Apply rules to the move.
      *
      * @param Move $move
-     * @param Game $game
+     * @param Board $board
      *
      * @return void
      */
-    private function applyToMove(Move $move, Game $game): void
+    private function applyToMove(Move $move, Board $board): void
     {
         if (!$this->isApplicable($move)) {
             throw new MoveToIllegalPosition($move);
@@ -153,17 +154,17 @@ final class PawnMoves implements Rule
             throw new MoveToIllegalPosition($move);
         }
 
-        if ($isLegalMove && $game->isPositionOccupied($move->destination())) {
+        if ($isLegalMove && $board->isPositionOccupied($move->destination())) {
             throw new MoveToIllegalPosition($move);
         }
 
         if ($isLegalCapture
-            && !$game->isPositionOccupiedByOpponentOf($move->destination(), $move->piece()->color())
+            && !$board->isPositionOccupiedBy($move->destination(), $move->piece()->color()->opponent())
             && !$move->destination()->equals($this->enPassantPossibileAt)) {
             throw new MoveToIllegalPosition($move);
         }
 
-        $this->validateNotIntervenedMove($move, $game);
+        $this->validateNotIntervenedMove($move, $board);
     }
 
     /**

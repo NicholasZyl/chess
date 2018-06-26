@@ -21,13 +21,12 @@ interface Rule
      * Apply rule after event had happened. May return more events.
      *
      * @param Event $event
-     * @param Game $game
-     *
-     * @throws IllegalAction\MoveExposesToCheck
+     * @param Board $board
+     * @param Rules $rules
      *
      * @return Event[]
      */
-    public function applyAfter(Event $event, Game $game): array;
+    public function applyAfter(Event $event, Board $board, Rules $rules): array;
 
     /**
      * Is rule applicable for given action.
@@ -42,11 +41,12 @@ interface Rule
      * Apply rule to the action.
      *
      * @param Action $action
-     * @param Game $game
+     * @param Board $board
+     * @param Rules $rules
      *
      * @throws IllegalAction
      *
      * @return void
      */
-    public function apply(Action $action, Game $game): void;
+    public function apply(Action $action, Board $board, Rules $rules): void;
 }

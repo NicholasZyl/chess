@@ -5,14 +5,15 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\QueenMoves;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 
 class QueenMovesSpec extends ObjectBehavior
@@ -104,19 +105,19 @@ class QueenMovesSpec extends ObjectBehavior
         $this->isApplicable($action)->shouldBe(false);
     }
 
-    function it_may_be_played_on_board_if_not_over_other_pieces(Game $game)
+    function it_may_be_played_on_board_if_not_over_other_pieces(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->queen,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 3)
         );
-        $game->isPositionOccupied(CoordinatePair::fromFileAndRank('a', 2))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('a', 2))->willReturn(false);
 
-        $this->apply($move, $game);
+        $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_over_intervening_pieces(Game $game)
+    function it_may_not_be_played_over_intervening_pieces(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->queen,
@@ -124,8 +125,8 @@ class QueenMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 3)
         );
         $occupiedPosition = CoordinatePair::fromFileAndRank('c', 2);
-        $game->isPositionOccupied($occupiedPosition)->willReturn(true);
+        $board->isPositionOccupied($occupiedPosition)->willReturn(true);
 
-        $this->shouldThrow(new MoveOverInterveningPiece($occupiedPosition))->during('apply', [$move, $game,]);
+        $this->shouldThrow(new MoveOverInterveningPiece($occupiedPosition))->during('apply', [$move, $board, $rules,]);
     }
 }

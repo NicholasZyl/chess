@@ -4,14 +4,15 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class KingCheck implements Rule
 {
@@ -45,7 +46,7 @@ final class KingCheck implements Rule
     /**
      * {@inheritdoc}
      */
-    public function applyAfter(Event $event, Game $game): array
+    public function applyAfter(Event $event, Board $board, Rules $rules): array
     {
         $events = [];
 
@@ -55,11 +56,11 @@ final class KingCheck implements Rule
                 $this->kingsPositions[(string)$color] = $event->destination();
             }
 
-            if ($game->isPositionAttackedByOpponentOf($this->kingsPositions[(string)$color], $color)) {
+            if ($board->isPositionAttackedBy($this->kingsPositions[(string)$color], $color->opponent(), $rules)) {
                 throw new IllegalAction\MoveExposesToCheck();
             }
 
-            if ($game->isPositionAttackedByOpponentOf($this->kingsPositions[(string)$color->opponent()], $color->opponent())) {
+            if ($board->isPositionAttackedBy($this->kingsPositions[(string)$color->opponent()], $color, $rules)) {
                 $events[] = new Event\InCheck($color->opponent());
             }
         }
@@ -78,7 +79,7 @@ final class KingCheck implements Rule
     /**
      * {@inheritdoc}
      */
-    public function apply(Action $action, Game $game): void
+    public function apply(Action $action, Board $board, Rules $rules): void
     {
         throw new IllegalAction\RuleIsNotApplicable();
     }

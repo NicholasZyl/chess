@@ -5,12 +5,13 @@ namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
-use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class KingMoves implements Rule
 {
@@ -27,7 +28,7 @@ final class KingMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function applyAfter(Event $event, Game $game): array
+    public function applyAfter(Event $event, Board $board, Rules $rules): array
     {
         // No specific rules to apply.
         return [];
@@ -44,7 +45,7 @@ final class KingMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function apply(Action $action, Game $game): void
+    public function apply(Action $action, Board $board, Rules $rules): void
     {
         if (!$action instanceof Move) {
             throw new RuleIsNotApplicable();
