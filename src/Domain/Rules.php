@@ -6,7 +6,7 @@ namespace NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
 
-final class Rules
+class Rules
 {
     /**
      * @var Rule[]

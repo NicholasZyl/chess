@@ -28,7 +28,7 @@ class Game
     private $board;
 
     /**
-     * @var Rule[]
+     * @var Rules
      */
     private $rules;
 
@@ -37,9 +37,9 @@ class Game
      *
      * @param Board $board
      * @param InitialPositions $initialPositions
-     * @param Rule[] $rules
+     * @param Rules $rules
      */
-    public function __construct(Board $board, InitialPositions $initialPositions, array $rules)
+    public function __construct(Board $board, InitialPositions $initialPositions, Rules $rules)
     {
         $this->board = $board;
         $this->rules = $rules;
@@ -62,7 +62,7 @@ class Game
         $piece = $this->board->pickPieceFrom($from);
         $move = new Move($piece, $from, $to);
         try {
-            $this->applyRuleToAction($move);
+            $this->rules->applyRulesTo($move, $this);
             $events = $this->board->placePieceAt($piece, $to);
             $events[] = new PieceWasMoved($move);
         } catch (NoApplicableRule $noApplicableRule) {
@@ -99,29 +99,10 @@ class Game
     {
         $firedEvents = [];
         foreach ($events as $event) {
-            $firedEvents = array_merge($firedEvents, $this->applyRulesAfterEvent($event));
+            $firedEvents = array_merge($firedEvents, $this->rules->applyAfter($event, $this));
         }
 
         return $firedEvents;
-    }
-
-    /**
-     * Apply all rules after an event happened.
-     *
-     * @param Event $event
-     *
-     * @throws IllegalAction\MoveExposesToCheck
-     *
-     * @return Event[]
-     */
-    private function applyRulesAfterEvent(Event $event): array
-    {
-        $events = [];
-        foreach ($this->rules as $rule) {
-            $events = array_merge($events, $rule->applyAfter($event, $this));
-        }
-
-        return $events;
     }
 
     /**
@@ -156,7 +137,7 @@ class Game
     {
         try {
             $move = new Move($piece, $from, $to);
-            $this->applyRuleToAction($move);
+            $this->rules->applyRulesTo($move, $this);
 
             return true;
         } catch (IllegalAction $illegalMove) {
@@ -237,41 +218,11 @@ class Game
     {
         try {
             $exchange = new Exchange($exchangedPiece, $position);
-            $this->applyRuleToAction($exchange);
+            $this->rules->applyRulesTo($exchange, $this);
 
             return $this->board->exchangePieceOnPositionTo($position, $exchangedPiece);
         } catch (IllegalAction | BoardException $exception) {
             throw new ExchangeIsNotAllowed($position);
         }
-    }
-
-    /**
-     * Find and apply the most appropriate, applicable rule to given action.
-     *
-     * @param Action $action
-     *
-     * @throws NoApplicableRule
-     * @throws IllegalAction
-     *
-     * @return void
-     */
-    private function applyRuleToAction(Action $action): void
-    {
-        $rules = array_filter(
-            $this->rules,
-            function (Rule $rule) use ($action) {
-                return $rule->isApplicable($action);
-            }
-        );
-        if (empty($rules)) {
-            throw new NoApplicableRule();
-        }
-        usort($rules, function (Rule $ruleA, Rule $ruleB) {
-            return $ruleB->priority() <=> $ruleA->priority();
-        });
-
-        /** @var Rule $rule */
-        $rule = reset($rules);
-        $rule->apply($action, $this);
     }
 }

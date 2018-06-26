@@ -81,4 +81,30 @@ class RulesSpec extends ObjectBehavior
 
         $this->applyAfter($event, $game)->shouldBe([$otherEvent,]);
     }
+
+//    function it_applies_only_most_important_applicable_rule(Board $board, InitialPositions $initialPositions, Rule $rule, Rule $lessImportantRule)
+//    {
+//        $this->beConstructedWith($board, $initialPositions, [$lessImportantRule, $rule,]);
+//
+//        $pawn = Pawn::forColor(Color::white());
+//        $source = CoordinatePair::fromFileAndRank('c', 2);
+//        $destination = CoordinatePair::fromFileAndRank('c', 3);
+//        $move = new Move($pawn, $source, $destination);
+//
+//        $lessImportantRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
+//        $lessImportantRule->apply($move, $this->getWrappedObject())->shouldNotBeCalled();
+//        $lessImportantRule->priority()->willReturn(10);
+//
+//        $rule->isApplicable($move)->shouldBeCalled()->willReturn(true);
+//        $rule->apply($move, $this->getWrappedObject())->shouldBeCalled();
+//        $rule->priority()->willReturn(50);
+//
+//        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
+//        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
+//
+//        $rule->applyAfter(Argument::cetera())->shouldBeCalled();
+//        $lessImportantRule->applyAfter(Argument::cetera())->shouldBeCalled();
+//
+//        $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move),]);
+//    }
 }
