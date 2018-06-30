@@ -6,26 +6,37 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
+use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\CastlingPrevented;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
+use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class KingMovesSpec extends ObjectBehavior
 {
     /**
      * @var King
      */
-    private $king;
+    private $whiteKing;
+
+    /**
+     * @var King
+     */
+    private $blackKing;
 
     function let()
     {
-        $this->king = King::forColor(Color::white());
+        $this->whiteKing = King::forColor(Color::white());
+        $this->blackKing = King::forColor(Color::black());
     }
 
     function it_is_initializable()
@@ -38,59 +49,15 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_is_applicable_for_king_move_along_diagonal()
+    function it_is_applicable_for_king_move()
     {
         $move = new Move(
-            $this->king,
+            $this->whiteKing,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
         $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_applicable_for_king_move_along_file()
-    {
-        $move = new Move(
-            $this->king,
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('a', 2)
-        );
-
-        $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_applicable_for_king_move_along_rank()
-    {
-        $move = new Move(
-            $this->king,
-            CoordinatePair::fromFileAndRank('d', 3),
-            CoordinatePair::fromFileAndRank('c', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_king_move_not_along_known_direction()
-    {
-        $move = new Move(
-            $this->king,
-            CoordinatePair::fromFileAndRank('d', 3),
-            CoordinatePair::fromFileAndRank('c', 1)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
-    }
-
-    function it_is_not_applicable_for_king_move_further_than_to_adjoining_square()
-    {
-        $move = new Move(
-            $this->king,
-            CoordinatePair::fromFileAndRank('a', 3),
-            CoordinatePair::fromFileAndRank('c', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
     }
 
     function it_is_not_applicable_for_other_piece_move()
@@ -111,10 +78,21 @@ class KingMovesSpec extends ObjectBehavior
         $this->isApplicable($action)->shouldBe(false);
     }
 
-    function it_may_be_played_on_board(Board $board, Rules $rules)
+    function it_is_applicable_for_king_move_along_diagonal()
     {
         $move = new Move(
-            $this->king,
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 2)
+        );
+
+        $this->isApplicable($move)->shouldBe(true);
+    }
+
+    function it_allows_move_if_is_along_file(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 2)
         );
@@ -122,14 +100,298 @@ class KingMovesSpec extends ObjectBehavior
         $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_if_not_applicable(Board $board, Rules $rules)
+    function it_allows_move_if_is_along_rank(Board $board, Rules $rules)
     {
         $move = new Move(
-            $this->king,
-            CoordinatePair::fromFileAndRank('c', 1),
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('c', 3)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->apply($move, $board, $rules);
+    }
+
+    function it_disallows_move_if_is_not_along_known_direction(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('c', 1)
+        );
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_disallows_move_if_is_further_than_to_adjoining_square(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('a', 3),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_allows_king_castling_move(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->blackKing,
+            CoordinatePair::fromFileAndRank('e', 8),
+            CoordinatePair::fromFileAndRank('c', 8)
+        );
+
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionAttackedBy(Argument::cetera())->willReturn(false);
+
+        $this->apply($move, $board, $rules);
+    }
+
+    function it_disallows_castling_move_if_king_has_already_moved(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('c', 1)
+        );
+
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->whiteKing,
+                    CoordinatePair::fromFileAndRank('f', 1),
+                    CoordinatePair::fromFileAndRank('e', 1)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_allows_castling_move_if_other_king_has_moved(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('c', 1)
+        );
+
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackKing,
+                    CoordinatePair::fromFileAndRank('f', 1),
+                    CoordinatePair::fromFileAndRank('e', 1)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionAttackedBy(Argument::cetera())->willReturn(false);
+
+        $this->apply($move, $board, $rules);
+    }
+
+    function it_disallows_castling_move_if_rook_was_already_moved(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    Rook::forColor(Color::black()),
+                    CoordinatePair::fromFileAndRank('a', 8),
+                    CoordinatePair::fromFileAndRank('a', 6)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $move = new Move(
+            $this->blackKing,
+            CoordinatePair::fromFileAndRank('e', 8),
+            CoordinatePair::fromFileAndRank('c', 8)
+        );
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_disallows_castling_move_if_rook_was_captured(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->blackKing,
+            CoordinatePair::fromFileAndRank('e', 8),
+            CoordinatePair::fromFileAndRank('g', 8)
+        );
+
+        $this->applyAfter(
+            new PieceWasCaptured(
+                Rook::forColor(Color::black()),
+                CoordinatePair::fromFileAndRank('h', 8)
+            ),
+            $board,
+            $rules
+        );
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_temporarily_prevents_castling_move_if_king_is_attacked(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('c', 1)
+        );
+
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(true);
+
+        $this->shouldThrow(new CastlingPrevented($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_temporarily_prevents_castling_move_if_position_king_must_cross_is_attacked(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('c', 1)
+        );
+
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('d', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(true);
+
+        $this->shouldThrow(new CastlingPrevented($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_temporarily_prevents_castling_move_if_position_king_is_to_occupy_is_attacked(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('g', 1)
+        );
+
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('f', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('g', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(true);
+
+        $this->shouldThrow(new CastlingPrevented($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_temporarily_prevents_castling_move_if_there_is_a_piece_between_king_and_rook(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('g', 1)
+        );
+
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('f', 1))->willReturn(false);
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('g', 1))->willReturn(true);
+
+        $this->shouldThrow(new CastlingPrevented($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_plays_rook_move_to_the_square_the_king_has_just_crossed_white_kingside_after_king_castling_move(Board $board, Rules $rules)
+    {
+        $kingWasMoved = new PieceWasMoved(
+            new Move(
+                $this->whiteKing,
+                CoordinatePair::fromFileAndRank('e', 1),
+                CoordinatePair::fromFileAndRank('g', 1)
+            )
+        );
+
+        $rookPosition = CoordinatePair::fromFileAndRank('h', 1);
+        $rookDestination = CoordinatePair::fromFileAndRank('f', 1);
+        $whiteRook = Rook::forColor(Color::white());
+        $board->pickPieceFrom($rookPosition)->shouldBeCalled()->willReturn($whiteRook);
+        $board->placePieceAt($whiteRook, $rookDestination)->shouldBeCalled();
+        $rookWasMoved = [new PieceWasMoved(new Move($whiteRook, $rookPosition, $rookDestination)),];
+
+        $this->applyAfter($kingWasMoved, $board, $rules)->shouldBeLike($rookWasMoved);
+    }
+
+    function it_plays_rook_move_to_the_square_the_king_has_just_crossed_white_queenside_after_king_castling_move(Board $board, Rules $rules)
+    {
+        $kingWasMoved = new PieceWasMoved(
+            new Move(
+                $this->whiteKing,
+                CoordinatePair::fromFileAndRank('e', 1),
+                CoordinatePair::fromFileAndRank('c', 1)
+            )
+        );
+
+        $whiteRook = Rook::forColor(Color::white());
+
+        $rookPosition = CoordinatePair::fromFileAndRank('a', 1);
+        $rookDestination = CoordinatePair::fromFileAndRank('d', 1);
+        $board->pickPieceFrom($rookPosition)->shouldBeCalled()->willReturn($whiteRook);
+        $board->placePieceAt($whiteRook, $rookDestination)->shouldBeCalled();
+        $rookWasMoved = [new PieceWasMoved(new Move($whiteRook, $rookPosition, $rookDestination)),];
+
+        $this->applyAfter($kingWasMoved, $board, $rules)->shouldBeLike($rookWasMoved);
+    }
+
+    function it_plays_rook_move_to_the_square_the_king_has_just_crossed_black_kingside_after_king_castling_move(Board $board, Rules $rules)
+    {
+        $kingWasMoved = new PieceWasMoved(
+            new Move(
+                $this->blackKing,
+                CoordinatePair::fromFileAndRank('e', 8),
+                CoordinatePair::fromFileAndRank('c', 8)
+            )
+        );
+
+        $rookPosition = CoordinatePair::fromFileAndRank('a', 8);
+        $rookDestination = CoordinatePair::fromFileAndRank('d', 8);
+        $blackRook = Rook::forColor(Color::black());
+        $board->pickPieceFrom($rookPosition)->shouldBeCalled()->willReturn($blackRook);
+        $board->placePieceAt($blackRook, $rookDestination)->shouldBeCalled();
+        $rookWasMoved = [new PieceWasMoved(new Move($blackRook, $rookPosition, $rookDestination)),];
+
+        $this->applyAfter($kingWasMoved, $board, $rules)->shouldBeLike($rookWasMoved);
+    }
+
+    function it_plays_rook_move_to_the_square_the_king_has_just_crossed_black_queenside_after_king_castling_move(Board $board, Rules $rules)
+    {
+        $kingWasMoved = new PieceWasMoved(
+            new Move(
+                $this->blackKing,
+                CoordinatePair::fromFileAndRank('e', 8),
+                CoordinatePair::fromFileAndRank('g', 8)
+            )
+        );
+
+        $rookPosition = CoordinatePair::fromFileAndRank('h', 8);
+        $rookDestination = CoordinatePair::fromFileAndRank('f', 8);
+        $blackRook = Rook::forColor(Color::black());
+        $board->pickPieceFrom($rookPosition)->shouldBeCalled()->willReturn($blackRook);
+        $board->placePieceAt($blackRook, $rookDestination)->shouldBeCalled();
+        $rookWasMoved = [new PieceWasMoved(new Move($blackRook, $rookPosition, $rookDestination)),];
+
+        $this->applyAfter($kingWasMoved, $board, $rules)->shouldBeLike($rookWasMoved);
+    }
+
+    function it_does_not_play_rook_move_if_it_was_standard_king_move(Board $board, Rules $rules)
+    {
+        $kingWasMoved = new PieceWasMoved(
+            new Move(
+                $this->blackKing,
+                CoordinatePair::fromFileAndRank('e', 8),
+                CoordinatePair::fromFileAndRank('f', 8)
+            )
+        );
+
+        $board->pickPieceFrom(Argument::cetera())->shouldNotBeCalled();
+        $board->placePieceAt(Argument::cetera())->shouldNotBeCalled();
+
+        $this->applyAfter($kingWasMoved, $board, $rules)->shouldBeLike([]);
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
-use NicholasZyl\Chess\Domain\Fide\Rules\CastlingMove;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingCheck;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
@@ -30,7 +29,6 @@ final class LawsOfChess
                 new RookMoves(),
                 new QueenMoves(),
                 new KingMoves(),
-                new CastlingMove(),
                 new KingCheck(),
             ]
         );
