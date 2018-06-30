@@ -31,7 +31,7 @@ final class QueenMoves implements Rule
      */
     public function isApplicable(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Queen && $action->inKnownDirection();
+        return $action instanceof Move && $action->piece() instanceof Queen;
     }
 
     /**
@@ -44,6 +44,10 @@ final class QueenMoves implements Rule
         }
 
         if (!$this->isApplicable($action)) {
+            throw new MoveToIllegalPosition($action);
+        }
+
+        if (!$action->inKnownDirection()) {
             throw new MoveToIllegalPosition($action);
         }
 
