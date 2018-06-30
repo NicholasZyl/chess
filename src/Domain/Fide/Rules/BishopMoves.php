@@ -37,13 +37,13 @@ final class BishopMoves implements Rule
 
     /**
      * {@inheritdoc}
-     * @param Move $action
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
         if (!$this->isApplicable($action)) {
             throw new RuleIsNotApplicable();
         }
+        /** @var Move $action */
 
         if (!$action->inDirection(new AlongDiagonal())) {
             throw new MoveToIllegalPosition($action);

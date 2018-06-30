@@ -42,13 +42,10 @@ final class KnightMoves implements Rule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        if (!$action instanceof Move) {
+        if (!$this->isApplicable($action)) {
             throw new RuleIsNotApplicable();
         }
-
-        if (!$this->isApplicable($action)) {
-            throw new MoveToIllegalPosition($action);
-        }
+        /** @var Move $action */
 
         if (!$this->isMoveToValidPosition($action)) {
             throw new MoveToIllegalPosition($action);
