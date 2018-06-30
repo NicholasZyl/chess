@@ -68,7 +68,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->isApplicable($action)->shouldBe(false);
     }
 
-    function it_may_be_played_if_along_diagonal(Board $board, Rules $rules)
+    function it_allows_move_if_is_along_diagonal(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->bishop,
@@ -80,7 +80,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_if_along_file(Board $board, Rules $rules)
+    function it_disallows_move_if_is_along_file(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->bishop,
@@ -92,7 +92,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_may_not_be_played_if_along_rank(Board $board, Rules $rules)
+    function it_disallows_move_if_is_along_rank(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->bishop,
@@ -104,7 +104,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
-    function it_may_be_played_on_board_if_not_over_other_pieces(Board $board, Rules $rules)
+    function it_disallows_move_if_is_not_over_other_pieces(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->bishop,
@@ -116,7 +116,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_over_intervening_pieces(Board $board, Rules $rules)
+    function it_disallows_move_if_is_over_intervening_pieces(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->bishop,
