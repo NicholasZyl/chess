@@ -33,7 +33,7 @@ final class RookMoves implements Rule
      */
     public function isApplicable(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Rook && ($action->inDirection(new AlongRank()) || $action->inDirection(new AlongFile()));
+        return $action instanceof Move && $action->piece() instanceof Rook;
     }
 
     /**
@@ -46,6 +46,10 @@ final class RookMoves implements Rule
         }
 
         if (!$this->isApplicable($action)) {
+            throw new MoveToIllegalPosition($action);
+        }
+
+        if (!($action->inDirection(new AlongRank()) || $action->inDirection(new AlongFile()))) {
             throw new MoveToIllegalPosition($action);
         }
 

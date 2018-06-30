@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
@@ -15,6 +16,7 @@ use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class RookMovesSpec extends ObjectBehavior
 {
@@ -38,7 +40,7 @@ class RookMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_is_applicable_for_rook_move_along_file()
+    function it_is_applicable_for_rook_move()
     {
         $move = new Move(
             $this->rook,
@@ -47,28 +49,6 @@ class RookMovesSpec extends ObjectBehavior
         );
 
         $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_applicable_for_rook_move_along_rank()
-    {
-        $move = new Move(
-            $this->rook,
-            CoordinatePair::fromFileAndRank('d', 3),
-            CoordinatePair::fromFileAndRank('a', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_rook_move_along_diagonal()
-    {
-        $move = new Move(
-            $this->rook,
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
     }
 
     function it_is_not_applicable_for_other_piece_move()
@@ -89,7 +69,42 @@ class RookMovesSpec extends ObjectBehavior
         $this->isApplicable($action)->shouldBe(false);
     }
 
-    function it_may_be_played_on_board_if_not_over_other_pieces(Board $board, Rules $rules)
+    function it_allows_move_if_is_along_file(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->rook,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+        $board->isPositionOccupied(Argument::type(Board\Coordinates::class))->willReturn(false);
+
+        $this->apply($move, $board, $rules);
+    }
+
+    function it_allows_move_if_is_along_rank(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->rook,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+        $board->isPositionOccupied(Argument::type(Board\Coordinates::class))->willReturn(false);
+
+        $this->apply($move, $board, $rules);
+    }
+
+    function it_disallows_move_if_is_along_diagonal(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->rook,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_allows_move_if_is_not_over_other_pieces(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->rook,
@@ -101,7 +116,7 @@ class RookMovesSpec extends ObjectBehavior
         $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_over_intervening_pieces(Board $board, Rules $rules)
+    function it_disallows_move_if_is_over_intervening_pieces(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->rook,
