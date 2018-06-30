@@ -97,4 +97,14 @@ interface Board
      * @return Event[]
      */
     public function exchangePieceOnPositionTo(Coordinates $position, Piece $exchangedPiece): array;
+
+    /**
+     * Check if given color has any legal move.
+     *
+     * @param Color $color
+     * @param Rules $rules
+     *
+     * @return bool
+     */
+    public function hasLegalMove(Color $color, Rules $rules): bool;
 }

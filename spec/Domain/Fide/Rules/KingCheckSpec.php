@@ -6,6 +6,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Event\Checkmated;
 use NicholasZyl\Chess\Domain\Event\InCheck;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
@@ -73,6 +74,8 @@ class KingCheckSpec extends ObjectBehavior
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 8), Color::white(), $rules)->shouldBeCalled()->willReturn(true);
 
+        $board->hasLegalMove(Color::black(), $rules)->shouldBeCalled()->willReturn(true);
+
         $this->applyAfter(
             new PieceWasMoved(
                 new Move(
@@ -84,6 +87,26 @@ class KingCheckSpec extends ObjectBehavior
             $board,
             $rules
         )->shouldBeLike([new InCheck(Color::black()),]);
+    }
+
+    function it_notices_when_opponents_king_is_checkmated_after_move(Board $board, Rules $rules)
+    {
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 8), Color::white(), $rules)->shouldBeCalled()->willReturn(true);
+
+        $board->hasLegalMove(Color::black(), $rules)->shouldBeCalled()->willReturn(false);
+
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    Rook::forColor(Color::white()),
+                    CoordinatePair::fromFileAndRank('c', 4),
+                    CoordinatePair::fromFileAndRank('e', 4)
+                )
+            ),
+            $board,
+            $rules
+        )->shouldBeLike([new InCheck(Color::black()), new Checkmated(Color::black()),]);
     }
 
     function it_always_checks_king_actual_position(Board $board, Rules $rules)

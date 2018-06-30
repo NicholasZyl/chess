@@ -188,9 +188,19 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      *
      * @param Color $color
      */
-    public function kingIsInCheck(Color $color)
+    public function playerIsInCheck(Color $color)
     {
         expect($this->occurredEvents)->toContainEvent(new Event\InCheck($color));
+    }
+
+    /**
+     * @Then :color is checkmated
+     *
+     * @param Color $color
+     */
+    public function playerIsCheckmated(Color $color)
+    {
+        expect($this->occurredEvents)->toContainEvent(new Event\Checkmated($color));
     }
 
     /**

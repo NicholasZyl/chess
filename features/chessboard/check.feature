@@ -3,7 +3,7 @@ Feature: The king's check
   As a player
   I need to check my opponent's king
 
-  Scenario: The king is checked after move
+  Scenario: The king is checked after move when king is attacked
     Given there is a chessboard with placed pieces
       | piece       | location |
       | black king  | h8       |
@@ -30,3 +30,12 @@ Feature: The king's check
     When I move piece from f8 to f1
     Then the move is illegal
     And black rook should not be moved from f8
+
+  Scenario: If opponent's king is in check and opponent has no legal move then it's checkmated
+    Given there is a chessboard with placed pieces
+      | piece       | location |
+      | white king  | h2       |
+      | black rook  | a8       |
+      | black rook  | g8       |
+    When I move piece from a8 to h8
+    Then white is checkmated

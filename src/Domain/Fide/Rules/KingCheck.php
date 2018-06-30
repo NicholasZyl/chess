@@ -62,6 +62,9 @@ final class KingCheck implements Rule
 
             if ($board->isPositionAttackedBy($this->kingsPositions[(string)$color->opponent()], $color, $rules)) {
                 $events[] = new Event\InCheck($color->opponent());
+                if (!$board->hasLegalMove($color->opponent(), $rules)) {
+                    $events[] = new Event\Checkmated($color->opponent());
+                };
             }
         }
 
