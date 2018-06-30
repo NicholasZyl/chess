@@ -16,6 +16,7 @@ use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
+use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Color;
@@ -98,6 +99,7 @@ final class PawnMoves implements Rule
         }
         if ($event->destination()->rank() === self::FURTHEST_RANKS[(string)$event->piece()->color()]) {
             $this->promotionPosition = $event->destination();
+            $events[] = new PawnReachedPromotion($event->piece(), $this->promotionPosition);
         }
 
         return $events;

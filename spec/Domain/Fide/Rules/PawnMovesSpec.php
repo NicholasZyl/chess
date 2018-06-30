@@ -12,6 +12,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
@@ -372,6 +373,21 @@ class PawnMovesSpec extends ObjectBehavior
             $board,
             $rules
         )->shouldBeLike([new PieceWasCaptured($this->whitePawn, CoordinatePair::fromFileAndRank('d', 4)),]);
+    }
+
+    function it_is_to_be_promoted_when_reaches_furhtest_rank_from_its_starting_position(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $board,
+            $rules
+        )->shouldBeLike([new PawnReachedPromotion($this->blackPawn, CoordinatePair::fromFileAndRank('g', 1))]);
     }
 
     function it_disallows_exchange_by_default(Board $board, Rules $rules)
