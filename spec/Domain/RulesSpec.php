@@ -31,14 +31,14 @@ class RulesSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->duringInstantiation();
     }
 
-    function it_applies_applicable_rules_to_action(Rule $firstRule, Rule $secondRule, Board $board)
+    function it_applies_all_applicable_rules_to_action(Rule $firstRule, Rule $secondRule, Board $board)
     {
         $action = new class implements Action {};
 
         $firstRule->isApplicable($action)->shouldBeCalled()->willReturn(true);
-        $secondRule->isApplicable($action)->shouldBeCalled()->willReturn(false);
+        $secondRule->isApplicable($action)->shouldBeCalled()->willReturn(true);
         $firstRule->apply($action, $board, $this->getWrappedObject())->shouldBeCalled();
-        $secondRule->apply(Argument::cetera())->shouldNotBeCalled();
+        $secondRule->apply($action, $board, $this->getWrappedObject())->shouldBeCalled();
 
         $this->applyRulesTo($action, $board);
     }
@@ -81,58 +81,4 @@ class RulesSpec extends ObjectBehavior
 
         $this->applyAfter($event, $board)->shouldBe([$otherEvent,]);
     }
-
-//    function it_informs_when_piece_may_move_according_to_rules(Rule $firstRule, Rule $secondRule)
-//    {
-//        $source = CoordinatePair::fromFileAndRank('b', 2);
-//        $destination = CoordinatePair::fromFileAndRank('b', 3);
-//        $piece = Pawn::forColor(Color::white());
-//        $move = new Action\Move($piece, $source, $destination);
-//
-//        $firstRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
-//        $secondRule->isApplicable($move)->shouldBeCalled()->willReturn(false);
-//        $firstRule->apply($move, $board)->shouldBeCalled();
-//
-//        $this->mayPieceMove($piece, $source, $destination)->shouldBe(true);
-//    }
-//
-//    function it_informs_when_piece_may_not_move_according_to_rules(Rule $firstRule, Rule $secondRule)
-//    {
-//        $source = CoordinatePair::fromFileAndRank('b', 2);
-//        $destination = CoordinatePair::fromFileAndRank('b', 3);
-//        $piece = Pawn::forColor(Color::white());
-//        $move = new Action\Move($piece, $source, $destination);
-//
-//        $firstRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
-//        $secondRule->isApplicable($move)->shouldBeCalled()->willReturn(false);
-//        $firstRule->apply($move, $board)->shouldBeCalled()->willThrow(new MoveToIllegalPosition($move));
-//
-//        $this->mayPieceMove($piece, $source, $destination)->shouldBe(false);
-//    }
-
-//    function it_applies_only_most_important_applicable_rule(Board $board, InitialPositions $initialPositions, Rule $rule, Rule $lessImportantRule)
-//    {
-//        $this->beConstructedWith($board, $initialPositions, [$lessImportantRule, $rule,]);
-//
-//        $pawn = Pawn::forColor(Color::white());
-//        $source = CoordinatePair::fromFileAndRank('c', 2);
-//        $destination = CoordinatePair::fromFileAndRank('c', 3);
-//        $move = new Move($pawn, $source, $destination);
-//
-//        $lessImportantRule->isApplicable($move)->shouldBeCalled()->willReturn(true);
-//        $lessImportantRule->apply($move, $this->getWrappedObject())->shouldNotBeCalled();
-//        $lessImportantRule->priority()->willReturn(10);
-//
-//        $rule->isApplicable($move)->shouldBeCalled()->willReturn(true);
-//        $rule->apply($move, $this->getWrappedObject())->shouldBeCalled();
-//        $rule->priority()->willReturn(50);
-//
-//        $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($pawn);
-//        $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
-//
-//        $rule->applyAfter(Argument::cetera())->shouldBeCalled();
-//        $lessImportantRule->applyAfter(Argument::cetera())->shouldBeCalled();
-//
-//        $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move),]);
-//    }
 }

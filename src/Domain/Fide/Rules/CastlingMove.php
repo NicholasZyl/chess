@@ -30,14 +30,6 @@ final class CastlingMove implements Rule
     ];
 
     /**
-     * {@inheritdoc}
-     */
-    public function priority(): int
-    {
-        return self::HIGH_PRIORITY;
-    }
-
-    /**
      * @var \SplObjectStorage
      */
     private $movedKings;

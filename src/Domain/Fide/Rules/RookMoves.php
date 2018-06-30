@@ -22,14 +22,6 @@ final class RookMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function priority(): int
-    {
-        return self::STANDARD_PRIORITY;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function applyAfter(Event $event, Board $board, Rules $rules): array
     {
         // No specific rules to apply.

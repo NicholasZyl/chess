@@ -38,11 +38,6 @@ class RookMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_has_standard_priority()
-    {
-        $this->priority()->shouldBe(10);
-    }
-
     function it_is_applicable_for_rook_move_along_file()
     {
         $move = new Move(

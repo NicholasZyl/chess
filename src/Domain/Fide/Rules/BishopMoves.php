@@ -21,14 +21,6 @@ final class BishopMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function priority(): int
-    {
-        return self::STANDARD_PRIORITY;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function applyAfter(Event $event, Board $board, Rules $rules): array
     {
         // No specific rules to apply.
@@ -40,19 +32,20 @@ final class BishopMoves implements Rule
      */
     public function isApplicable(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Bishop && $action->inDirection(new AlongDiagonal());
+        return $action instanceof Move && $action->piece() instanceof Bishop;
     }
 
     /**
      * {@inheritdoc}
+     * @param Move $action
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        if (!$action instanceof Move) {
+        if (!$this->isApplicable($action)) {
             throw new RuleIsNotApplicable();
         }
 
-        if (!$this->isApplicable($action)) {
+        if (!$action->inDirection(new AlongDiagonal())) {
             throw new MoveToIllegalPosition($action);
         }
 

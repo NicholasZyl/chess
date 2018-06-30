@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
@@ -25,6 +26,11 @@ final class KingCheck implements Rule
     private $kingsPositions;
 
     /**
+     * @var bool Rule shouldn't be applied for consequent checks when being already applied for a move
+     */
+    private $isApplying = false;
+
+    /**
      * Create rules for checks.
      */
     public function __construct()
@@ -38,14 +44,6 @@ final class KingCheck implements Rule
     /**
      * {@inheritdoc}
      */
-    public function priority(): int
-    {
-        return self::STANDARD_PRIORITY;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function applyAfter(Event $event, Board $board, Rules $rules): array
     {
         $events = [];
@@ -54,10 +52,6 @@ final class KingCheck implements Rule
             $color = $event->piece()->color();
             if ($event->piece() instanceof King) {
                 $this->kingsPositions[(string)$color] = $event->destination();
-            }
-
-            if ($board->isPositionAttackedBy($this->kingsPositions[(string)$color], $color->opponent(), $rules)) {
-                throw new IllegalAction\MoveExposesToCheck();
             }
 
             if ($board->isPositionAttackedBy($this->kingsPositions[(string)$color->opponent()], $color, $rules)) {
@@ -76,7 +70,7 @@ final class KingCheck implements Rule
      */
     public function isApplicable(Action $action): bool
     {
-        return false;
+        return !$this->isApplying && $action instanceof Move;
     }
 
     /**
@@ -84,6 +78,24 @@ final class KingCheck implements Rule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        throw new IllegalAction\RuleIsNotApplicable();
+        if (!$this->isApplicable($action)) {
+            throw new IllegalAction\RuleIsNotApplicable();
+        }
+        $this->isApplying = true;
+        /** @var Move $action */
+
+        $color = $action->piece()->color();
+        $kingPosition = $this->kingsPositions[(string)$color];
+        if ($action->piece() instanceof King) {
+            $kingPosition = $action->destination();
+        }
+
+        try {
+            if ($board->isPositionAttackedBy($kingPosition, $color->opponent(), $rules)) {
+                throw new IllegalAction\MoveExposesToCheck();
+            }
+        } finally {
+            $this->isApplying = false;
+        }
     }
 }

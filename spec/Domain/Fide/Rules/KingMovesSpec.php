@@ -38,11 +38,6 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_has_standard_priority()
-    {
-        $this->priority()->shouldBe(10);
-    }
-
     function it_is_applicable_for_king_move_along_diagonal()
     {
         $move = new Move(

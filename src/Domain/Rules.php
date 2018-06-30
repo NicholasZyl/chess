@@ -49,13 +49,10 @@ class Rules
         if (empty($rules)) {
             throw new NoApplicableRule();
         }
-        usort($rules, function (Rule $ruleA, Rule $ruleB) {
-            return $ruleB->priority() <=> $ruleA->priority();
-        });
 
-        /** @var Rule $rule */
-        $rule = reset($rules);
-        $rule->apply($action, $board, $this);
+        foreach ($rules as $rule) {
+            $rule->apply($action, $board, $this);
+        }
     }
 
     /**

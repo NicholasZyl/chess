@@ -47,11 +47,6 @@ class CastlingMoveSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_has_high_priority()
-    {
-        $this->priority()->shouldBe(50);
-    }
-
     function it_is_applicable_for_king_moving_two_squares_queenside()
     {
         $move = new Move(

@@ -7,16 +7,6 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
 interface Rule
 {
-    public const STANDARD_PRIORITY = 10;
-    public const HIGH_PRIORITY = 50;
-
-    /**
-     * Get the priority of rule. The higher means more important.
-     *
-     * @return int
-     */
-    public function priority(): int;
-
     /**
      * Apply rule after event had happened. May return more events.
      *

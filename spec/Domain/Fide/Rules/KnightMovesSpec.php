@@ -38,11 +38,6 @@ class KnightMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_has_standard_priority()
-    {
-        $this->priority()->shouldBe(10);
-    }
-
     function it_is_applicable_for_knight_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal()
     {
         $move = new Move(

@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
@@ -38,12 +39,7 @@ class BishopMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_has_standard_priority()
-    {
-        $this->priority()->shouldBe(10);
-    }
-
-    function it_is_applicable_for_bishop_move_along_diagonal()
+    function it_is_applicable_for_bishop_move()
     {
         $move = new Move(
             $this->bishop,
@@ -52,28 +48,6 @@ class BishopMovesSpec extends ObjectBehavior
         );
 
         $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_bishop_move_along_file()
-    {
-        $move = new Move(
-            $this->bishop,
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('a', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
-    }
-
-    function it_is_not_applicable_for_bishop_move_along_rank()
-    {
-        $move = new Move(
-            $this->bishop,
-            CoordinatePair::fromFileAndRank('d', 3),
-            CoordinatePair::fromFileAndRank('a', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
     }
 
     function it_is_not_applicable_for_other_piece_move()
@@ -92,6 +66,42 @@ class BishopMovesSpec extends ObjectBehavior
         $action = new class implements Action {};
 
         $this->isApplicable($action)->shouldBe(false);
+    }
+
+    function it_may_be_played_if_along_diagonal(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->bishop,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 2))->willReturn(false);
+
+        $this->apply($move, $board, $rules);
+    }
+
+    function it_may_not_be_played_if_along_file(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->bishop,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 2))->willReturn(false);
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_may_not_be_played_if_along_rank(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->bishop,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 2))->willReturn(false);
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
 
     function it_may_be_played_on_board_if_not_over_other_pieces(Board $board, Rules $rules)
