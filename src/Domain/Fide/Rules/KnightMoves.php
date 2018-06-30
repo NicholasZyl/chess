@@ -34,14 +34,32 @@ final class KnightMoves implements Rule
      */
     public function isApplicable(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Knight && $this->isMoveToValidPosition($action);
+        return $action instanceof Move && $action->piece() instanceof Knight;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function apply(Action $action, Board $board, Rules $rules): void
+    {
+        if (!$action instanceof Move) {
+            throw new RuleIsNotApplicable();
+        }
+
+        if (!$this->isApplicable($action)) {
+            throw new MoveToIllegalPosition($action);
+        }
+
+        if (!$this->isMoveToValidPosition($action)) {
+            throw new MoveToIllegalPosition($action);
+        }
     }
 
     /**
      * Check if move is made to valid position meaning the nearest position not on same file, rank nor diagonal.
      *
      * @param Move $move
-     * 
+     *
      * @return bool
      */
     private function isMoveToValidPosition(Move $move): bool
@@ -58,19 +76,5 @@ final class KnightMoves implements Rule
 
         return !$alongFile && !$alongRank && !$alongDiagonal
             && $distanceAlongFile <= self::DISTANCE_TO_THE_NEAREST_COORDINATES && $distanceAlongRank <= self::DISTANCE_TO_THE_NEAREST_COORDINATES;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function apply(Action $action, Board $board, Rules $rules): void
-    {
-        if (!$action instanceof Move) {
-            throw new RuleIsNotApplicable();
-        }
-
-        if (!$this->isApplicable($action)) {
-            throw new MoveToIllegalPosition($action);
-        }
     }
 }

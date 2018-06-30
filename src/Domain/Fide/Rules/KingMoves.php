@@ -11,6 +11,7 @@ use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\CastlingPrevented;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
@@ -121,7 +122,10 @@ final class KingMoves implements Rule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        /** @var Move $action */
+        if (!$action instanceof Move) {
+            throw new RuleIsNotApplicable();
+        }
+
         if (!$this->isApplicable($action)) {
             throw new MoveToIllegalPosition($action);
         }

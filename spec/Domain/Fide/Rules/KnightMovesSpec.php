@@ -38,7 +38,7 @@ class KnightMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Rule::class);
     }
 
-    function it_is_applicable_for_knight_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal()
+    function it_is_applicable_for_knight_move()
     {
         $move = new Move(
             $this->knight,
@@ -47,39 +47,6 @@ class KnightMovesSpec extends ObjectBehavior
         );
 
         $this->isApplicable($move)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_knight_move_along_diagonal()
-    {
-        $move = new Move(
-            $this->knight,
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('c', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
-    }
-
-    function it_is_not_applicable_for_knight_move_along_file()
-    {
-        $move = new Move(
-            $this->knight,
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('a', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
-    }
-
-    function it_is_not_applicable_for_rook_move_along_rank()
-    {
-        $move = new Move(
-            $this->knight,
-            CoordinatePair::fromFileAndRank('d', 3),
-            CoordinatePair::fromFileAndRank('a', 3)
-        );
-
-        $this->isApplicable($move)->shouldBe(false);
     }
 
     function it_is_not_applicable_for_other_piece_move()
@@ -100,18 +67,51 @@ class KnightMovesSpec extends ObjectBehavior
         $this->isApplicable($action)->shouldBe(false);
     }
 
-    function it_may_be_played_on_board_if_applicable(Board $board, Rules $rules)
+    function it_disallows_move_if_is_along_diagonal(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->knight,
             CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 3)
+            CoordinatePair::fromFileAndRank('c', 3)
+        );
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_disallows_move_if_is_along_file(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_disallows_move_if_is_along_rank(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+
+        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_allows_move_if_is_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal(Board $board, Rules $rules)
+    {
+        $move = new Move(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 2)
         );
 
         $this->apply($move, $board, $rules);
     }
 
-    function it_may_not_be_played_if_not_applicable(Board $board, Rules $rules)
+    function it_disallows_move_if_is_not_applicable(Board $board, Rules $rules)
     {
         $move = new Move(
             $this->knight,
