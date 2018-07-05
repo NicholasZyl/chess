@@ -36,13 +36,13 @@ class KingCheckSpec extends ObjectBehavior
     function it_is_not_applicable_to_exchanges()
     {
         $exchange = new Exchange(Knight::forColor(Color::white()), CoordinatePair::fromFileAndRank('f', 4));
-        $this->isApplicable($exchange)->shouldBe(false);
+        $this->isApplicableTo($exchange)->shouldBe(false);
     }
 
     function it_is_applicable_to_every_move()
     {
         $exchange = new Move(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank('e', 5), CoordinatePair::fromFileAndRank('e', 4));
-        $this->isApplicable($exchange)->shouldBe(true);
+        $this->isApplicableTo($exchange)->shouldBe(true);
     }
 
     function it_does_nothing_if_king_is_not_attacked_after_move(Board $board, Rules $rules)

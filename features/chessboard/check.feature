@@ -30,12 +30,12 @@ Feature: The king's check
     When I move piece from f8 to f1
     Then the move is illegal
     And black rook should not be moved from f8
-
+@wip
   Scenario: If opponent's king is in check and opponent has no legal move then it's checkmated
     Given there is a chessboard with placed pieces
       | piece       | location |
-      | white king  | h2       |
+      | white king  | e1       |
       | black rook  | a8       |
-      | black rook  | g8       |
+      | black rook  | g7       |
     When I move piece from a8 to h8
     Then white is checkmated

@@ -66,4 +66,22 @@ class AlongFileSpec extends ObjectBehavior
 
         $this->distanceBetween($from, $to)->shouldBe(2);
     }
+
+    function it_calculates_next_coordinates_from_given_point_up()
+    {
+        $this->beConstructedWith(true);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 6));
+    }
+
+    function it_calculates_next_coordinates_from_given_point_down()
+    {
+        $this->beConstructedWith(false);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('e', 4));
+    }
 }

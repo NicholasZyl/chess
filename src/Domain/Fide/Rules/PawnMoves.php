@@ -9,6 +9,7 @@ use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
@@ -19,11 +20,12 @@ use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rules;
 
-final class PawnMoves implements Rule
+final class PawnMoves implements PieceMovesRule
 {
     use NotIntervenedMove;
 
@@ -108,7 +110,7 @@ final class PawnMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(Action $action): bool
+    public function isApplicableTo(Action $action): bool
     {
         return $action instanceof Move && $action->piece() instanceof Pawn
             || $action instanceof Exchange;
@@ -138,7 +140,7 @@ final class PawnMoves implements Rule
      */
     private function applyToMove(Move $move, Board $board): void
     {
-        if (!$this->isApplicable($move)) {
+        if (!$this->isApplicableTo($move)) {
             throw new MoveToIllegalPosition($move);
         }
         $isLegalMove = $this->isLegalMove($move);
@@ -203,5 +205,50 @@ final class PawnMoves implements Rule
             throw new ExchangeIsNotAllowed($exchange->position());
         }
         $this->promotionPosition = null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicableFor(Piece $piece): bool
+    {
+        return $piece instanceof Pawn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLegalDestinationsFrom(Piece $piece, Coordinates $actualPosition, Board $board): \Generator
+    {
+        $towardsHigherRank = Color::white()->is($piece->color());
+        $forwardAlongFile = new AlongFile($towardsHigherRank);
+        /** @var Board\Direction[] $captureDirections */
+        $captureDirections = [
+            new AlongDiagonal(true, $towardsHigherRank),
+            new AlongDiagonal(false, $towardsHigherRank),
+        ];
+
+        $destinationToAdjoiningSquare = $forwardAlongFile->nextAlongFrom($actualPosition);
+        if (!$board->isPositionOccupied($destinationToAdjoiningSquare)) {
+            yield $destinationToAdjoiningSquare;
+        }
+
+        if ($actualPosition->rank() === ($towardsHigherRank ? 2 : 7) && !$this->movedPawns->contains($piece)) {
+            $twoSquaresForward = $forwardAlongFile->nextAlongFrom($destinationToAdjoiningSquare);
+            if (!$board->isPositionOccupied($twoSquaresForward)) {
+                yield $twoSquaresForward;
+            }
+        }
+
+        foreach ($captureDirections as $direction) {
+            try {
+                $captureDestination = $direction->nextAlongFrom($actualPosition);
+                if ($board->isPositionOccupiedBy($captureDestination, $piece->color()->opponent()) || $captureDestination->equals($this->enPassantPossibileAt)) {
+                    yield $captureDestination;
+                }
+            } catch (OutOfBoard $outOfBoard) {
+                // Ignore
+            }
+        }
     }
 }

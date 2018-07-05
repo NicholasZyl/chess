@@ -19,13 +19,13 @@ interface Rule
     public function applyAfter(Event $event, Board $board, Rules $rules): array;
 
     /**
-     * Is rule applicable for given action.
+     * Is rule applicable to given action.
      *
      * @param Action $action
      *
      * @return bool
      */
-    public function isApplicable(Action $action): bool;
+    public function isApplicableTo(Action $action): bool;
 
     /**
      * Apply rule to the action.

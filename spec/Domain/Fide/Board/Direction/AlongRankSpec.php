@@ -66,4 +66,22 @@ class AlongRankSpec extends ObjectBehavior
 
         $this->distanceBetween($from, $to)->shouldBe(2);
     }
+
+    function it_calculates_next_coordinates_from_given_point_towards_kingside()
+    {
+        $this->beConstructedWith(true);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('f', 5));
+    }
+
+    function it_calculates_next_coordinates_from_given_point_towards_queenside()
+    {
+        $this->beConstructedWith(false);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('d', 5));
+    }
 }

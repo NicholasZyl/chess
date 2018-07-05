@@ -203,6 +203,11 @@ final class Chessboard implements Board
      */
     public function hasLegalMove(Color $color, Rules $rules): bool
     {
-        return true;
+        $legalMoves = [];
+        foreach ($this->pieces[(string)$color] as $piece) {
+            $legalMoves = array_merge($legalMoves, $rules->getLegalDestinationsFor($piece, $this->pieces[(string)$color][$piece], $this));
+        }
+
+        return !empty($legalMoves);
     }
 }

@@ -8,19 +8,23 @@ use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\CastlingPrevented;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
+use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
-use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rules;
 
-final class KingMoves implements Rule
+final class KingMoves implements PieceMovesRule
 {
     private const MOVE_TO_ADJOINING_SQUARE = 1;
     private const CASTLING_MOVE_DISTANCE = 2;
@@ -112,9 +116,9 @@ final class KingMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(Action $action): bool
+    public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof King;
+        return $action instanceof Move && $this->isApplicableFor($action->piece());
     }
 
     /**
@@ -122,7 +126,7 @@ final class KingMoves implements Rule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        if (!$this->isApplicable($action)) {
+        if (!$this->isApplicableTo($action)) {
             throw new RuleIsNotApplicable();
         }
         /** @var Move $action */
@@ -194,5 +198,55 @@ final class KingMoves implements Rule
             $source->file() < $destination->file() ? Chessboard::FILE_MOST_KINGSIDE : Chessboard::FILE_MOST_QUEENSIDE,
             $source->rank()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicableFor(Piece $piece): bool
+    {
+        return $piece instanceof King;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLegalDestinationsFrom(Piece $piece, Coordinates $actualPosition, Board $board): \Generator
+    {
+        /** @var Board\Direction[] $directions */
+        $directions = [
+            new AlongFile(true),
+            new AlongDiagonal(true, true),
+            new AlongRank(true),
+            new AlongDiagonal(true, false),
+            new AlongFile(false),
+            new AlongDiagonal(false, false),
+            new AlongRank(false),
+            new AlongDiagonal(false, true),
+        ];
+
+        foreach ($directions as $direction) {
+            try {
+                $destination = $direction->nextAlongFrom($actualPosition);
+                if (!$board->isPositionOccupiedBy($destination, $piece->color())) {
+                    yield $destination;
+                }
+            } catch (OutOfBoard $outOfBoard) {
+                continue;
+            }
+        }
+        if ($actualPosition->equals($this->getStartingPositionForKing($piece)) && !$this->movedKings->contains($piece)) {
+            if (array_key_exists('a'.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
+                yield CoordinatePair::fromFileAndRank('c', $actualPosition->rank());
+            }
+            if (array_key_exists('h'.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
+                yield CoordinatePair::fromFileAndRank('g', $actualPosition->rank());
+            }
+        }
+    }
+
+    private function getStartingPositionForKing(Piece $king): Coordinates
+    {
+        return CoordinatePair::fromFileAndRank('e', $king->color()->is(Piece\Color::white()) ? 1 : 8);
     }
 }

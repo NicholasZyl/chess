@@ -13,8 +13,8 @@ final class OutOfBoard extends BoardException
      *
      * @param Coordinates $coordinates
      */
-    public function __construct(Coordinates $coordinates)
+    public function __construct(?Coordinates $coordinates = null)
     {
-        parent::__construct(sprintf('Position %s is out of board.', $coordinates));
+        parent::__construct(sprintf('Position %s is out of board.', $coordinates ?: 'TODO'));
     }
 }

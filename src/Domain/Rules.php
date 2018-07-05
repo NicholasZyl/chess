@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
 
@@ -12,6 +14,11 @@ class Rules
      * @var Rule[]
      */
     private $rules;
+
+    /**
+     * @var PieceMovesRule[]
+     */
+    private $moveRules;
 
     /**
      * Create a set of rules.
@@ -24,8 +31,11 @@ class Rules
             if (!$rule instanceof Rule) {
                 throw new \InvalidArgumentException('Rules can consists only of rule objects.');
             }
+            $this->rules[] = $rule;
+            if ($rule instanceof PieceMovesRule) {
+                $this->moveRules[] = $rule;
+            }
         }
-        $this->rules = $rules;
     }
 
     /**
@@ -43,7 +53,7 @@ class Rules
         $rules = array_filter(
             $this->rules,
             function (Rule $rule) use ($action) {
-                return $rule->isApplicable($action);
+                return $rule->isApplicableTo($action);
             }
         );
         if (empty($rules)) {
@@ -71,5 +81,36 @@ class Rules
         }
 
         return $events;
+    }
+
+    /**
+     * Get all legal destinations for given piece.
+     *
+     * @param Piece $piece
+     * @param Coordinates $position
+     * @param Board $board
+     *
+     * @return Coordinates[]
+     */
+    public function getLegalDestinationsFor(Piece $piece, Coordinates $position, Board $board): array
+    {
+        $destinations = [];
+        $legalDestinations = [];
+        foreach ($this->moveRules as $rule) {
+            if ($rule->isApplicableFor($piece)) {
+                $destinations = $rule->getLegalDestinationsFrom($piece, $position, $board);
+            }
+        }
+
+        foreach ($destinations as $destination) {
+            try {
+                $this->applyRulesTo(new Move($piece, $position, $destination), $board);
+                $legalDestinations[] = $destination;
+            } catch (IllegalAction $illegalAction) {
+                // Skip
+            }
+        }
+
+        return $legalDestinations;
     }
 }

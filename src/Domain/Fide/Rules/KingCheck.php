@@ -68,7 +68,7 @@ final class KingCheck implements Rule
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(Action $action): bool
+    public function isApplicableTo(Action $action): bool
     {
         return !$this->isApplying && $action instanceof Move;
     }
@@ -78,7 +78,7 @@ final class KingCheck implements Rule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        if (!$this->isApplicable($action)) {
+        if (!$this->isApplicableTo($action)) {
             throw new IllegalAction\RuleIsNotApplicable();
         }
         $this->isApplying = true;

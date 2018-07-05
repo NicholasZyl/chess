@@ -11,6 +11,16 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 final class AlongRank implements Direction
 {
     /**
+     * @var bool
+     */
+    private $towardsKingside;
+
+    public function __construct(bool $towardsKingside = true)
+    {
+        $this->towardsKingside = $towardsKingside;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function areOnSame(Coordinates $from, Coordinates $to): bool
@@ -56,5 +66,13 @@ final class AlongRank implements Direction
     public function __toString(): string
     {
         return 'along same rank';
+    }
+
+    public function nextAlongFrom(Coordinates $position): Coordinates
+    {
+        return CoordinatePair::fromFileAndRank(
+            chr(ord($position->file()) + ($this->towardsKingside ? 1 : -1)),
+            $position->rank()
+        );
     }
 }

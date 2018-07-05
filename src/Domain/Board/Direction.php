@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Board;
 
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 
 interface Direction
 {
@@ -56,4 +57,15 @@ interface Direction
      * @return string
      */
     public function __toString(): string;
+
+    /**
+     * Get next coordinates from given position along the direction.
+     *
+     * @param Coordinates $position
+     *
+     * @throws OutOfBoard
+     *
+     * @return Coordinates
+     */
+    public function nextAlongFrom(Coordinates $position): Coordinates;
 }

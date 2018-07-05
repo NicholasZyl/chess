@@ -6,15 +6,17 @@ namespace NicholasZyl\Chess\Domain\Fide\Rules;
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
-use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rules;
 
-final class BishopMoves implements Rule
+final class BishopMoves implements PieceMovesRule
 {
     use NotIntervenedMove;
 
@@ -30,9 +32,9 @@ final class BishopMoves implements Rule
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(Action $action): bool
+    public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Bishop;
+        return $action instanceof Move && $this->isApplicableFor($action->piece());
     }
 
     /**
@@ -40,7 +42,7 @@ final class BishopMoves implements Rule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        if (!$this->isApplicable($action)) {
+        if (!$this->isApplicableTo($action)) {
             throw new RuleIsNotApplicable();
         }
         /** @var Move $action */
@@ -50,5 +52,29 @@ final class BishopMoves implements Rule
         }
 
         $this->validateNotIntervenedMove($action, $board);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicableFor(Piece $piece): bool
+    {
+        return $piece instanceof Bishop;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLegalDestinationsFrom(Piece $piece, Coordinates $actualPosition, Board $board): \Generator
+    {
+        /** @var Board\Direction[] $directions */
+        $directions = [
+            new AlongDiagonal(true, true),
+            new AlongDiagonal(true, false),
+            new AlongDiagonal(false, false),
+            new AlongDiagonal(false, true),
+        ];
+
+        return $this->getNotIntervenedDestinationsForDirections($directions, $actualPosition, $board, $piece);
     }
 }

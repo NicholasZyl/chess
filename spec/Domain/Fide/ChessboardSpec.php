@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
@@ -13,6 +14,7 @@ use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
+use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
@@ -28,11 +30,10 @@ class ChessboardSpec extends ObjectBehavior
         $this->isPositionOccupied($coordinates);
     }
 
-    function it_does_not_allow_interacting_with_position_out_of_board()
+    function it_does_not_allow_interacting_with_position_out_of_board(Coordinates $outOfBoardCoordinates)
     {
-        $coordinates = CoordinatePair::fromFileAndRank('i', 9);
-
-        $this->shouldThrow(new OutOfBoard($coordinates))->during('isPositionOccupied', [$coordinates,]);
+        $outOfBoardCoordinates->__toString()->willReturn('');
+        $this->shouldThrow(OutOfBoard::class)->during('isPositionOccupied', [$outOfBoardCoordinates,]);
     }
 
     function it_allows_placing_piece_at_given_coordinates()
@@ -156,11 +157,10 @@ class ChessboardSpec extends ObjectBehavior
         $this->isPositionAttackedBy($position, Piece\Color::black(), $rules)->shouldBe(false);
     }
 
-    function it_cannot_check_if_square_out_of_board_is_attacked(Rules $rules)
+    function it_cannot_check_if_square_out_of_board_is_attacked(Coordinates $outOfBoardCoordinates, Rules $rules)
     {
-        $coordinates = CoordinatePair::fromFileAndRank('z', 9);
-
-        $this->shouldThrow(new OutOfBoard($coordinates))->during('isPositionAttackedBy', [$coordinates, Piece\Color::white(), $rules,]);
+        $outOfBoardCoordinates->__toString()->willReturn('');
+        $this->shouldThrow(new OutOfBoard($outOfBoardCoordinates->getWrappedObject()))->during('isPositionAttackedBy', [$outOfBoardCoordinates, Piece\Color::white(), $rules,]);
     }
 
     function it_removes_piece_from_given_position()
@@ -194,12 +194,12 @@ class ChessboardSpec extends ObjectBehavior
         $this->pickPieceFrom($position)->shouldBe($exchangedPiece);
     }
 
-    function it_fails_when_trying_to_exchange_piece_outside_of_board()
+    function it_fails_when_trying_to_exchange_piece_outside_of_board(Coordinates $outOfBoardCoordinates)
     {
-        $invalidPosition = CoordinatePair::fromFileAndRank('r', 2);
+        $outOfBoardCoordinates->__toString()->willReturn('');
         $exchangedPiece = Queen::forColor(Piece\Color::white());
 
-        $this->shouldThrow(new OutOfBoard($invalidPosition))->during('exchangePieceOnPositionTo', [$invalidPosition, $exchangedPiece,]);
+        $this->shouldThrow(new OutOfBoard($outOfBoardCoordinates->getWrappedObject()))->during('exchangePieceOnPositionTo', [$outOfBoardCoordinates, $exchangedPiece,]);
     }
 
     function it_fails_when_trying_to_exchange_on_unoccupied_position()
@@ -219,5 +219,20 @@ class ChessboardSpec extends ObjectBehavior
         $exchangedPiece = Queen::forColor(Piece\Color::black());
 
         $this->shouldThrow(PositionOccupiedByAnotherColor::class)->during('exchangePieceOnPositionTo', [$position, $exchangedPiece,]);
+    }
+
+    function it_confirms_that_color_has_valid_move_if_any_piece_has_it(Rules $rules)
+    {
+        $pawn = Pawn::forColor(Piece\Color::white());
+        $pawnPosition = CoordinatePair::fromFileAndRank('d', 2);
+        $this->placePieceAt($pawn, $pawnPosition);
+        $king = King::forColor(Piece\Color::white());
+        $kingPosition = CoordinatePair::fromFileAndRank('b', 4);
+        $this->placePieceAt($king, $kingPosition);
+
+        $rules->getLegalDestinationsFor($pawn, $pawnPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([CoordinatePair::fromFileAndRank('d', 3),]);
+        $rules->getLegalDestinationsFor($king, $kingPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
+
+        $this->hasLegalMove(Piece\Color::white(), $rules)->shouldBe(true);
     }
 }

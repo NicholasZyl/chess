@@ -11,6 +11,22 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 final class AlongDiagonal implements Direction
 {
     /**
+     * @var bool
+     */
+    private $towardsKingside;
+
+    /**
+     * @var bool
+     */
+    private $towardsHigherRank;
+
+    public function __construct(bool $towardsKingside = true, bool $towardsHigherRank = true)
+    {
+        $this->towardsKingside = $towardsKingside;
+        $this->towardsHigherRank = $towardsHigherRank;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function areOnSame(Coordinates $from, Coordinates $to): bool
@@ -62,5 +78,13 @@ final class AlongDiagonal implements Direction
     public function __toString(): string
     {
         return 'along same diagonal';
+    }
+
+    public function nextAlongFrom(Coordinates $position): Coordinates
+    {
+        return CoordinatePair::fromFileAndRank(
+            chr(ord($position->file()) + ($this->towardsKingside ? 1 : -1)),
+            $position->rank() + ($this->towardsHigherRank ? 1 : -1)
+        );
     }
 }

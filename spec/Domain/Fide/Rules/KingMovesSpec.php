@@ -16,7 +16,7 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Rule;
+use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -44,12 +44,12 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldHaveType(KingMoves::class);
     }
 
-    function it_is_chess_rule()
+    function it_is_chess_rule_for_piece_moves()
     {
-        $this->shouldBeAnInstanceOf(Rule::class);
+        $this->shouldBeAnInstanceOf(PieceMovesRule::class);
     }
 
-    function it_is_applicable_for_king_move()
+    function it_is_applicable_to_king_move()
     {
         $move = new Move(
             $this->whiteKing,
@@ -57,10 +57,10 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->isApplicable($move)->shouldBe(true);
+        $this->isApplicableTo($move)->shouldBe(true);
     }
 
-    function it_is_not_applicable_for_other_piece_move()
+    function it_is_not_applicable_to_other_piece_move()
     {
         $move = new Move(
             Knight::forColor(Color::white()),
@@ -68,25 +68,139 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 2)
         );
 
-        $this->isApplicable($move)->shouldBe(false);
+        $this->isApplicableTo($move)->shouldBe(false);
     }
 
-    function it_is_not_applicable_for_not_move_action()
+    function it_is_not_applicable_to_not_move_action()
     {
         $action = new class implements Action {};
 
-        $this->isApplicable($action)->shouldBe(false);
+        $this->isApplicableTo($action)->shouldBe(false);
     }
 
-    function it_is_applicable_for_king_move_along_diagonal()
+    function it_is_applicable_for_king()
     {
-        $move = new Move(
-            $this->whiteKing,
-            CoordinatePair::fromFileAndRank('a', 1),
-            CoordinatePair::fromFileAndRank('b', 2)
+        $this->isApplicableFor($this->blackKing)->shouldBe(true);
+    }
+
+    function it_is_not_applicable_for_other_piece()
+    {
+        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
+    }
+
+    function it_may_move_to_any_adjoining_square(Board $board, Rules $rules)
+    {
+        $position = CoordinatePair::fromFileAndRank('c', 3);
+
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->getLegalDestinationsFrom(
+            $this->whiteKing, $position, $board
+        )->shouldYieldLike([
+            CoordinatePair::fromFileAndRank('c', 4),
+            CoordinatePair::fromFileAndRank('d', 4),
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('d', 2),
+            CoordinatePair::fromFileAndRank('c', 2),
+            CoordinatePair::fromFileAndRank('b', 2),
+            CoordinatePair::fromFileAndRank('b', 3),
+            CoordinatePair::fromFileAndRank('b', 4),
+        ]);
+    }
+
+    function it_may_not_move_to_square_occupied_by_same_color(Board $board, Rules $rules)
+    {
+        $position = CoordinatePair::fromFileAndRank('c', 3);
+
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('c', 4), Color::black())->willReturn(true);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('d', 4), Color::black())->willReturn(true);
+        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 2), Color::black())->willReturn(true);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->getLegalDestinationsFrom(
+            $this->blackKing, $position, $board
+        )->shouldYieldLike([
+            CoordinatePair::fromFileAndRank('d', 3),
+            CoordinatePair::fromFileAndRank('d', 2),
+            CoordinatePair::fromFileAndRank('c', 2),
+            CoordinatePair::fromFileAndRank('b', 3),
+            CoordinatePair::fromFileAndRank('b', 4),
+        ]);
+    }
+
+    function it_may_move_by_castling_from_starting_position(Board $board, Rules $rules)
+    {
+        $position = CoordinatePair::fromFileAndRank('e', 1);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->getLegalDestinationsFrom(
+            $this->whiteKing, $position, $board
+        )->shouldYieldLike([
+            CoordinatePair::fromFileAndRank('e', 2),
+            CoordinatePair::fromFileAndRank('f', 2),
+            CoordinatePair::fromFileAndRank('f', 1),
+            CoordinatePair::fromFileAndRank('d', 1),
+            CoordinatePair::fromFileAndRank('d', 2),
+            CoordinatePair::fromFileAndRank('c', 1),
+            CoordinatePair::fromFileAndRank('g', 1),
+        ]);
+    }
+
+    function it_may_not_move_by_castling_if_king_already_moved(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackKing,
+                    CoordinatePair::fromFileAndRank('f', 8),
+                    CoordinatePair::fromFileAndRank('e', 8)
+                )
+            ),
+            $board,
+            $rules
         );
 
-        $this->isApplicable($move)->shouldBe(true);
+        $position = CoordinatePair::fromFileAndRank('e', 8);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->getLegalDestinationsFrom(
+            $this->blackKing, $position, $board
+        )->shouldYieldLike([
+            CoordinatePair::fromFileAndRank('f', 8),
+            CoordinatePair::fromFileAndRank('f', 7),
+            CoordinatePair::fromFileAndRank('e', 7),
+            CoordinatePair::fromFileAndRank('d', 7),
+            CoordinatePair::fromFileAndRank('d', 8),
+        ]);
+    }
+
+    function it_may_not_move_by_castling_if_rook_already_moved(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    Rook::forColor(Color::black()),
+                    CoordinatePair::fromFileAndRank('a', 8),
+                    CoordinatePair::fromFileAndRank('a', 7)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $position = CoordinatePair::fromFileAndRank('e', 8);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->getLegalDestinationsFrom(
+            $this->blackKing, $position, $board
+        )->shouldYieldLike([
+            CoordinatePair::fromFileAndRank('f', 8),
+            CoordinatePair::fromFileAndRank('f', 7),
+            CoordinatePair::fromFileAndRank('e', 7),
+            CoordinatePair::fromFileAndRank('d', 7),
+            CoordinatePair::fromFileAndRank('d', 8),
+            CoordinatePair::fromFileAndRank('g', 8),
+        ]);
     }
 
     function it_allows_move_if_is_along_file(Board $board, Rules $rules)

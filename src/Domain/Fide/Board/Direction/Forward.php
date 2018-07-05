@@ -87,4 +87,9 @@ final class Forward implements Direction
     {
         return sprintf('forward %s', $this->direction);
     }
+
+    public function nextAlongFrom(Coordinates $position): Coordinates
+    {
+        // TODO: Implement nextAlongFrom() method.
+    }
 }

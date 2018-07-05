@@ -87,4 +87,40 @@ class AlongDiagonalSpec extends ObjectBehavior
 
         $this->distanceBetween($from, $to)->shouldBe(4);
     }
+
+    function it_calculates_next_coordinates_from_given_point_towards_kingside_up()
+    {
+        $this->beConstructedWith(true, true);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('f', 6));
+    }
+
+    function it_calculates_next_coordinates_from_given_point_towards_kingside_down()
+    {
+        $this->beConstructedWith(true, false);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('f', 4));
+    }
+
+    function it_calculates_next_coordinates_from_given_point_towards_queenside_up()
+    {
+        $this->beConstructedWith(false, true);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('d', 6));
+    }
+
+    function it_calculates_next_coordinates_from_given_point_towards_queenside_down()
+    {
+        $this->beConstructedWith(false, false);
+
+        $position = CoordinatePair::fromFileAndRank('e', 5);
+
+        $this->nextAlongFrom($position)->shouldBeLike(CoordinatePair::fromFileAndRank('d', 4));
+    }
 }

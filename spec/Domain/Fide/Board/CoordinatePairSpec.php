@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Board;
 
+use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
@@ -31,17 +32,10 @@ class CoordinatePairSpec extends ObjectBehavior
             ->duringInstantiation();
     }
 
-    function it_cannot_be_created_for_file_which_is_not_a_lowercase_character()
+    function it_cannot_be_created_for_coordinates_outside_of_board()
     {
-        $this->beConstructedThrough('fromFileAndRank', ['Z', 1,]);
-        $this->shouldThrow(new \InvalidArgumentException('"Z" is not a proper file.'))
-            ->duringInstantiation();
-    }
-
-    function it_cannot_be_created_for_negative_file()
-    {
-        $this->beConstructedThrough('fromFileAndRank', ['a', -1,]);
-        $this->shouldThrow(new \InvalidArgumentException('"-1" is not a proper rank.'))
+        $this->beConstructedThrough('fromFileAndRank', ['i', 1,]);
+        $this->shouldThrow(OutOfBoard::class)
             ->duringInstantiation();
     }
 
