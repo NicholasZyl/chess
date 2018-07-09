@@ -53,16 +53,8 @@ abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
     /**
      * {@inheritdoc}
      */
-    public function isSameColorAs(\NicholasZyl\Chess\Domain\Piece $anotherPiece): bool
-    {
-        return $this->hasColor($anotherPiece->color());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isSameAs(\NicholasZyl\Chess\Domain\Piece $anotherPiece): bool
     {
-        return $anotherPiece instanceof static && $this->isSameColorAs($anotherPiece);
+        return $anotherPiece instanceof static && $this->hasColor($anotherPiece->color());
     }
 }
