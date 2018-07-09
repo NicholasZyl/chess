@@ -14,7 +14,6 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
-use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
@@ -52,6 +51,11 @@ class PawnMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(PieceMovesRule::class);
     }
 
+    function it_is_applicable_for_pawn()
+    {
+        $this->isFor()->shouldBe(Pawn::class);
+    }
+
     function it_is_applicable_to_pawn_move()
     {
         $move = new Move(
@@ -77,16 +81,6 @@ class PawnMovesSpec extends ObjectBehavior
     function it_is_applicable_to_exchange_action()
     {
         $this->isApplicableTo(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)))->shouldBe(true);
-    }
-
-    function it_is_applicable_for_pawn()
-    {
-        $this->isApplicableFor($this->blackPawn)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_other_piece()
-    {
-        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_white_to_the_square_immediately_in_front_on_the_same_file(Board $board, Rules $rules)

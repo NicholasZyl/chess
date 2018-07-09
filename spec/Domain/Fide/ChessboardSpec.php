@@ -230,8 +230,8 @@ class ChessboardSpec extends ObjectBehavior
         $kingPosition = CoordinatePair::fromFileAndRank('b', 4);
         $this->placePieceAt($king, $kingPosition);
 
-        $rules->getLegalDestinationsFor($pawn, $pawnPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([CoordinatePair::fromFileAndRank('d', 3),]);
-        $rules->getLegalDestinationsFor($king, $kingPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
+        $rules->getLegalDestinationsFrom($pawnPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([CoordinatePair::fromFileAndRank('d', 3),]);
+        $rules->getLegalDestinationsFrom($kingPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
 
         $this->hasLegalMove(Piece\Color::white(), $rules)->shouldBe(true);
     }

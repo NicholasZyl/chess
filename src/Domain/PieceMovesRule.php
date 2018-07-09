@@ -8,13 +8,11 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 interface PieceMovesRule extends Rule
 {
     /**
-     * Is rule applicable for given piece.
+     * Get piece rank the rule is applicable for.
      *
-     * @param Piece $piece
-     *
-     * @return bool
+     * @return string
      */
-    public function isApplicableFor(Piece $piece): bool;
+    public function isFor(): string;
 
     /**
      * Get all pseudo-legal destinations for a piece placed at given position.

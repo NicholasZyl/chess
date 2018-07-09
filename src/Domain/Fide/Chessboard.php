@@ -205,7 +205,7 @@ final class Chessboard implements Board
     {
         $legalMoves = [];
         foreach ($this->pieces[(string)$color] as $piece) {
-            $legalMoves = array_merge($legalMoves, $rules->getLegalDestinationsFor($piece, $this->pieces[(string)$color][$piece], $this));
+            $legalMoves = array_merge($legalMoves, $rules->getLegalDestinationsFrom($this->pieces[(string)$color][$piece], $this));
         }
 
         return !empty($legalMoves);

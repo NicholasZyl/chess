@@ -36,7 +36,7 @@ final class QueenMoves implements PieceMovesRule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move && $this->isApplicableFor($action->piece());
+        return $action instanceof Move && $action->piece() instanceof Queen;
     }
 
     /**
@@ -59,9 +59,9 @@ final class QueenMoves implements PieceMovesRule
     /**
      * {@inheritdoc}
      */
-    public function isApplicableFor(Piece $piece): bool
+    public function isFor(): string
     {
-        return $piece instanceof Queen;
+        return Queen::class;
     }
 
     /**

@@ -210,9 +210,9 @@ final class PawnMoves implements PieceMovesRule
     /**
      * {@inheritdoc}
      */
-    public function isApplicableFor(Piece $piece): bool
+    public function isFor(): string
     {
-        return $piece instanceof Pawn;
+        return Pawn::class;
     }
 
     /**

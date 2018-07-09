@@ -18,7 +18,7 @@ class Rules
     /**
      * @var PieceMovesRule[]
      */
-    private $moveRules;
+    private $moveRules = [];
 
     /**
      * Create a set of rules.
@@ -33,7 +33,11 @@ class Rules
             }
             $this->rules[] = $rule;
             if ($rule instanceof PieceMovesRule) {
-                $this->moveRules[] = $rule;
+                if (array_key_exists($rule->isFor(), $this->moveRules)) {
+                    throw new \InvalidArgumentException('Rules cannot contain more than one rule for a piece rank.');
+                }
+
+                $this->moveRules[$rule->isFor()] = $rule;
             }
         }
     }
@@ -84,33 +88,36 @@ class Rules
     }
 
     /**
-     * Get all legal destinations for given piece.
+     * Get all legal destinations for a piece placed on given position.
      *
-     * @param Piece $piece
      * @param Coordinates $position
      * @param Board $board
      *
      * @return Coordinates[]
      */
-    public function getLegalDestinationsFor(Piece $piece, Coordinates $position, Board $board): array
+    public function getLegalDestinationsFrom(Coordinates $position, Board $board): array
     {
-        $destinations = [];
-        $legalDestinations = [];
-        foreach ($this->moveRules as $rule) {
-            if ($rule->isApplicableFor($piece)) {
-                $destinations = $rule->getLegalDestinationsFrom($piece, $position, $board);
+        try {
+            $piece = $board->pickPieceFrom($position);
+            if (!array_key_exists(get_class($piece), $this->moveRules)) {
+                throw new NoApplicableRule();
             }
-        }
 
-        foreach ($destinations as $destination) {
-            try {
-                $this->applyRulesTo(new Move($piece, $position, $destination), $board);
-                $legalDestinations[] = $destination;
-            } catch (IllegalAction $illegalAction) {
-                // Skip
+            $destinations = $this->moveRules[get_class($piece)]->getLegalDestinationsFrom($piece, $position, $board);
+
+            $legalDestinations = [];
+            foreach ($destinations as $destination) {
+                try {
+                    $this->applyRulesTo(new Move($piece, $position, $destination), $board);
+                    $legalDestinations[] = $destination;
+                } catch (IllegalAction $illegalAction) {
+                    // Skip
+                }
             }
-        }
 
-        return $legalDestinations;
+            return $legalDestinations;
+        } finally {
+            $board->placePieceAt($piece, $position);
+        }
     }
 }

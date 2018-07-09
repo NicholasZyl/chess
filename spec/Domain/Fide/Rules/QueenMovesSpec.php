@@ -40,6 +40,11 @@ class QueenMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(PieceMovesRule::class);
     }
 
+    function it_is_applicable_for_queen()
+    {
+        $this->isFor()->shouldBe(Queen::class);
+    }
+
     function it_is_applicable_to_queen_move()
     {
         $move = new Move(
@@ -67,16 +72,6 @@ class QueenMovesSpec extends ObjectBehavior
         $action = new class implements Action {};
 
         $this->isApplicableTo($action)->shouldBe(false);
-    }
-
-    function it_is_applicable_for_queen()
-    {
-        $this->isApplicableFor($this->queen)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_other_piece()
-    {
-        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_any_square_along_file_rank_and_diagonal(Board $board, Rules $rules)

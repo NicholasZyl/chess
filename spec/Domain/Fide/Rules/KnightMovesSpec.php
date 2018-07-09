@@ -8,7 +8,6 @@ use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
@@ -40,6 +39,11 @@ class KnightMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(PieceMovesRule::class);
     }
 
+    function it_is_applicable_for_knight()
+    {
+        $this->isFor()->shouldBe(Knight::class);
+    }
+
     function it_is_applicable_to_knight_move()
     {
         $move = new Move(
@@ -67,16 +71,6 @@ class KnightMovesSpec extends ObjectBehavior
         $action = new class implements Action {};
 
         $this->isApplicableTo($action)->shouldBe(false);
-    }
-
-    function it_is_applicable_for_knight()
-    {
-        $this->isApplicableFor($this->knight)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_other_piece()
-    {
-        $this->isApplicableFor(Bishop::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal(Board $board, Rules $rules)

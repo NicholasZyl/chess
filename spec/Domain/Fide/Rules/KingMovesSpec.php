@@ -44,6 +44,11 @@ class KingMovesSpec extends ObjectBehavior
         $this->shouldHaveType(KingMoves::class);
     }
 
+    function it_is_applicable_for_king()
+    {
+        $this->isFor()->shouldBe(King::class);
+    }
+
     function it_is_chess_rule_for_piece_moves()
     {
         $this->shouldBeAnInstanceOf(PieceMovesRule::class);
@@ -76,16 +81,6 @@ class KingMovesSpec extends ObjectBehavior
         $action = new class implements Action {};
 
         $this->isApplicableTo($action)->shouldBe(false);
-    }
-
-    function it_is_applicable_for_king()
-    {
-        $this->isApplicableFor($this->blackKing)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_other_piece()
-    {
-        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_any_adjoining_square(Board $board, Rules $rules)

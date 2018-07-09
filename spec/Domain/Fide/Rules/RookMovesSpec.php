@@ -40,6 +40,11 @@ class RookMovesSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(PieceMovesRule::class);
     }
 
+    function it_is_applicable_for_rook()
+    {
+        $this->isFor()->shouldBe(Rook::class);
+    }
+
     function it_is_applicable_to_rook_move()
     {
         $move = new Move(
@@ -67,16 +72,6 @@ class RookMovesSpec extends ObjectBehavior
         $action = new class implements Action {};
 
         $this->isApplicableTo($action)->shouldBe(false);
-    }
-
-    function it_is_applicable_for_rook()
-    {
-        $this->isApplicableFor($this->rook)->shouldBe(true);
-    }
-
-    function it_is_not_applicable_for_other_piece()
-    {
-        $this->isApplicableFor(Knight::forColor(Color::white()))->shouldBe(false);
     }
 
     function it_may_move_to_any_square_along_file_and_rank(Board $board, Rules $rules)
