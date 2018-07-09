@@ -83,7 +83,7 @@ class KingMovesSpec extends ObjectBehavior
         $this->isApplicableTo($action)->shouldBe(false);
     }
 
-    function it_may_move_to_any_adjoining_square(Board $board, Rules $rules)
+    function it_may_move_to_any_adjoining_square(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -103,7 +103,7 @@ class KingMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_move_to_square_occupied_by_same_color(Board $board, Rules $rules)
+    function it_may_not_move_to_square_occupied_by_same_color(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -123,7 +123,7 @@ class KingMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_move_by_castling_from_starting_position(Board $board, Rules $rules)
+    function it_may_move_by_castling_from_starting_position(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('e', 1);
         $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
@@ -205,6 +205,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 2)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -216,6 +217,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -227,6 +229,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('c', 1)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
@@ -238,6 +241,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 3),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
@@ -250,6 +254,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 8)
         );
 
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionAttackedBy(Argument::cetera())->willReturn(false);
 
@@ -275,6 +280,7 @@ class KingMovesSpec extends ObjectBehavior
             $board,
             $rules
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
@@ -299,6 +305,7 @@ class KingMovesSpec extends ObjectBehavior
             $rules
         );
 
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionAttackedBy(Argument::cetera())->willReturn(false);
 
@@ -324,6 +331,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('e', 8),
             CoordinatePair::fromFileAndRank('c', 8)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
@@ -344,6 +352,7 @@ class KingMovesSpec extends ObjectBehavior
             $board,
             $rules
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
@@ -356,6 +365,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 1)
         );
 
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(true);
 
@@ -370,6 +380,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 1)
         );
 
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('d', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(true);
@@ -385,6 +396,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('g', 1)
         );
 
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('f', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(false);
@@ -401,6 +413,7 @@ class KingMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('g', 1)
         );
 
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('f', 1))->willReturn(false);
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('g', 1))->willReturn(true);
 

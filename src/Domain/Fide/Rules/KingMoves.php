@@ -26,7 +26,6 @@ use NicholasZyl\Chess\Domain\Rules;
 
 final class KingMoves implements PieceMovesRule
 {
-    private const MOVE_TO_ADJOINING_SQUARE = 1;
     private const CASTLING_MOVE_DISTANCE = 2;
     private const INITIAL_ROOK_POSITIONS = [
         'a1',
@@ -130,15 +129,12 @@ final class KingMoves implements PieceMovesRule
             throw new RuleIsNotApplicable();
         }
         /** @var Move $action */
-
-        if (!$action->inKnownDirection()) {
+        if (!in_array($action->destination(), iterator_to_array($this->getLegalDestinationsFrom($action->piece(), $action->source(), $board)))) {
             throw new MoveToIllegalPosition($action);
         }
 
         if ($action->isOverDistanceOf(self::CASTLING_MOVE_DISTANCE) && $action->inDirection(new AlongRank())) {
             $this->applyToCastling($action, $board, $rules);
-        } else if (!$action->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)) {
-            throw new MoveToIllegalPosition($action);
         }
     }
 
@@ -155,15 +151,7 @@ final class KingMoves implements PieceMovesRule
      */
     private function applyToCastling(Move $move, Board $board, Rules $rules): void
     {
-        if ($this->movedKings->contains($move->piece())) {
-            throw new MoveToIllegalPosition($move);
-        }
-
         $rookPosition = $this->getExpectedRookPosition($move->source(), $move->destination());
-        if (!array_key_exists((string)$rookPosition, $this->rookPositionsAvailableForCastling)) {
-            throw new MoveToIllegalPosition($move);
-        }
-
         $alongRank = new AlongRank();
         $step = $move->source()->nextTowards($rookPosition, $alongRank);
         while (!$step->equals($rookPosition)) {
@@ -247,6 +235,6 @@ final class KingMoves implements PieceMovesRule
 
     private function getStartingPositionForKing(Piece $king): Coordinates
     {
-        return CoordinatePair::fromFileAndRank('e', $king->color()->is(Piece\Color::white()) ? 1 : 8);
+        return CoordinatePair::fromFileAndRank('e', $king->color()->is(Piece\Color::white()) ? Chessboard::LOWEST_RANK : Chessboard::HIGHEST_RANK);
     }
 }

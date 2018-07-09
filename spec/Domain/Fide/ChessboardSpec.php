@@ -160,7 +160,7 @@ class ChessboardSpec extends ObjectBehavior
     function it_cannot_check_if_square_out_of_board_is_attacked(Coordinates $outOfBoardCoordinates, Rules $rules)
     {
         $outOfBoardCoordinates->__toString()->willReturn('');
-        $this->shouldThrow(new OutOfBoard($outOfBoardCoordinates->getWrappedObject()))->during('isPositionAttackedBy', [$outOfBoardCoordinates, Piece\Color::white(), $rules,]);
+        $this->shouldThrow(OutOfBoard::class)->during('isPositionAttackedBy', [$outOfBoardCoordinates, Piece\Color::white(), $rules,]);
     }
 
     function it_removes_piece_from_given_position()
@@ -199,7 +199,7 @@ class ChessboardSpec extends ObjectBehavior
         $outOfBoardCoordinates->__toString()->willReturn('');
         $exchangedPiece = Queen::forColor(Piece\Color::white());
 
-        $this->shouldThrow(new OutOfBoard($outOfBoardCoordinates->getWrappedObject()))->during('exchangePieceOnPositionTo', [$outOfBoardCoordinates, $exchangedPiece,]);
+        $this->shouldThrow(OutOfBoard::class)->during('exchangePieceOnPositionTo', [$outOfBoardCoordinates, $exchangedPiece,]);
     }
 
     function it_fails_when_trying_to_exchange_on_unoccupied_position()

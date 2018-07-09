@@ -6,8 +6,6 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Board\Direction;
 use NicholasZyl\Chess\Domain\Board\Direction;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongRank;
 use PhpSpec\ObjectBehavior;
 
 class AlongRankSpec extends ObjectBehavior
@@ -47,16 +45,6 @@ class AlongRankSpec extends ObjectBehavior
         $to = CoordinatePair::fromFileAndRank('a', 1);
 
         $this->shouldThrow(new CoordinatesNotReachable($from, $to, $this->getWrappedObject()))->during('nextCoordinatesTowards', [$from, $to,]);
-    }
-
-    function it_is_same_direction_if_along_rank()
-    {
-        $this->inSameDirectionAs(new AlongRank())->shouldBe(true);
-    }
-
-    function it_is_not_same_direction_if_not_along_diagonal()
-    {
-        $this->inSameDirectionAs(new AlongFile())->shouldBe(false);
     }
 
     function it_calculates_file_distance_between_two_coordinates_on_same_rank()

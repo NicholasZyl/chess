@@ -159,7 +159,7 @@ final class Chessboard implements Board
     private function isPositionOnBoard(Coordinates $position): void
     {
         if (!array_key_exists((string)$position, $this->grid)) {
-            throw new OutOfBoard($position);
+            throw new OutOfBoard((string) $position);
         }
     }
 

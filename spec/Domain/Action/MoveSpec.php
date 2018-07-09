@@ -75,18 +75,6 @@ class MoveSpec extends ObjectBehavior
         $this->inDirection(new AlongRank())->shouldBe(false);
     }
 
-    function it_knows_when_is_in_known_direction()
-    {
-        $this->inKnownDirection()->shouldBe(true);
-    }
-
-    function it_knows_when_is_not_in_known_direction()
-    {
-        $this->beConstructedWith($this->piece, $this->source, CoordinatePair::fromFileAndRank('e', 4));
-
-        $this->inKnownDirection()->shouldBe(false);
-    }
-
     function it_knows_when_is_over_given_distance()
     {
         $this->isOverDistanceOf(1)->shouldBe(true);

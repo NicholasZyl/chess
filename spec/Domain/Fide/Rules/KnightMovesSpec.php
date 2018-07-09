@@ -73,7 +73,7 @@ class KnightMovesSpec extends ObjectBehavior
         $this->isApplicableTo($action)->shouldBe(false);
     }
 
-    function it_may_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal(Board $board, Rules $rules)
+    function it_may_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -93,7 +93,7 @@ class KnightMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_move_to_square_occupied_by_same_color(Board $board, Rules $rules)
+    function it_may_not_move_to_square_occupied_by_same_color(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -113,7 +113,21 @@ class KnightMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_move_if_all_squares_are_occupied_by_same_color(Board $board, Rules $rules)
+    function it_may_not_move_outside_of_board(Board $board)
+    {
+        $position = CoordinatePair::fromFileAndRank('a', 1);
+
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->getLegalDestinationsFrom(
+            $this->knight, $position, $board
+        )->shouldYieldLike([
+            CoordinatePair::fromFileAndRank('b', 3),
+            CoordinatePair::fromFileAndRank('c', 2),
+        ]);
+    }
+
+    function it_may_not_move_if_all_squares_are_occupied_by_same_color(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -131,6 +145,7 @@ class KnightMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
@@ -142,6 +157,7 @@ class KnightMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 3)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
@@ -153,6 +169,7 @@ class KnightMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('a', 3)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }
@@ -164,6 +181,7 @@ class KnightMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('c', 2)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -175,6 +193,7 @@ class KnightMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 1),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
     }

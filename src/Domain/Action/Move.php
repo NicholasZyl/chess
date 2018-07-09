@@ -83,21 +83,6 @@ final class Move implements Action
     }
 
     /**
-     * Check if move is made in known direction.
-     *
-     * @return bool
-     */
-    public function inKnownDirection(): bool
-    {
-        try {
-            $this->source->directionTo($this->destination);
-            return true;
-        } catch (UnknownDirection $unknownDirection) {
-            return false;
-        }
-    }
-
-    /**
      * Check if move is made over expected distance.
      *
      * @param int $expectedDistance

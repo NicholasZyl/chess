@@ -15,7 +15,6 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\Forward;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
@@ -29,7 +28,6 @@ final class PawnMoves implements PieceMovesRule
 {
     use NotIntervenedMove;
 
-    private const MOVE_TO_ADJOINING_SQUARE = 1;
     private const MOVE_ADVANCING_TWO_SQUARES = 2;
     private const FURTHEST_RANKS = [
         Color::WHITE => Chessboard::HIGHEST_RANK,
@@ -54,6 +52,10 @@ final class PawnMoves implements PieceMovesRule
     /**
      * Create Pawn Moves rules.
      */
+    private const WHITE_STARTING_POSITION_RANK = 2;
+
+    private const BLACK_STARTING_POSITION_RANK = 7;
+
     public function __construct()
     {
         $this->movedPawns = new \SplObjectStorage();
@@ -143,53 +145,9 @@ final class PawnMoves implements PieceMovesRule
         if (!$this->isApplicableTo($move)) {
             throw new MoveToIllegalPosition($move);
         }
-        $isLegalMove = $this->isLegalMove($move);
-        $isLegalCapture = $this->isLegalCapture($move);
-
-        if (!$isLegalMove && !$isLegalCapture) {
+        if (!in_array($move->destination(), iterator_to_array($this->getLegalDestinationsFrom($move->piece(), $move->source(), $board)))) {
             throw new MoveToIllegalPosition($move);
         }
-
-        if ($isLegalMove && $board->isPositionOccupied($move->destination())) {
-            throw new MoveToIllegalPosition($move);
-        }
-
-        if ($isLegalCapture
-            && !$board->isPositionOccupiedBy($move->destination(), $move->piece()->color()->opponent())
-            && !$move->destination()->equals($this->enPassantPossibileAt)) {
-            throw new MoveToIllegalPosition($move);
-        }
-
-        $this->validateNotIntervenedMove($move, $board);
-    }
-
-    /**
-     * Is a legal move for given pawn.
-     *
-     * @param Move $move
-     *
-     * @return bool
-     */
-    private function isLegalMove(Move $move): bool
-    {
-        return $move->inDirection(new Forward($move->piece()->color(), new AlongFile()))
-            && (
-                !$this->movedPawns->contains($move->piece()) && $move->isOverDistanceOf(self::MOVE_ADVANCING_TWO_SQUARES)
-                || $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE)
-            );
-    }
-
-    /**
-     * Is a legal capture for given pawn.
-     *
-     * @param Move $move
-     *
-     * @return bool
-     */
-    private function isLegalCapture(Move $move): bool
-    {
-        return $move->inDirection(new Forward($move->piece()->color(), new AlongDiagonal()))
-            && $move->isOverDistanceOf(self::MOVE_TO_ADJOINING_SQUARE);
     }
 
     /**
@@ -229,13 +187,14 @@ final class PawnMoves implements PieceMovesRule
         ];
 
         $destinationToAdjoiningSquare = $forwardAlongFile->nextAlongFrom($actualPosition);
-        if (!$board->isPositionOccupied($destinationToAdjoiningSquare)) {
+        $isAdjoiningSquareOccupied = $board->isPositionOccupied($destinationToAdjoiningSquare);
+        if (!$isAdjoiningSquareOccupied) {
             yield $destinationToAdjoiningSquare;
         }
 
-        if ($actualPosition->rank() === ($towardsHigherRank ? 2 : 7) && !$this->movedPawns->contains($piece)) {
+        if ($actualPosition->rank() === ($towardsHigherRank ? self::WHITE_STARTING_POSITION_RANK : self::BLACK_STARTING_POSITION_RANK) && !$this->movedPawns->contains($piece)) {
             $twoSquaresForward = $forwardAlongFile->nextAlongFrom($destinationToAdjoiningSquare);
-            if (!$board->isPositionOccupied($twoSquaresForward)) {
+            if (!$isAdjoiningSquareOccupied && !$board->isPositionOccupied($twoSquaresForward)) {
                 yield $twoSquaresForward;
             }
         }

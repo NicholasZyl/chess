@@ -48,12 +48,9 @@ final class QueenMoves implements PieceMovesRule
             throw new RuleIsNotApplicable();
         }
         /** @var Move $action */
-
-        if (!$action->inKnownDirection()) {
+        if (!in_array($action->destination(), iterator_to_array($this->getLegalDestinationsFrom($action->piece(), $action->source(), $board)))) {
             throw new MoveToIllegalPosition($action);
         }
-
-        $this->validateNotIntervenedMove($action, $board);
     }
 
     /**

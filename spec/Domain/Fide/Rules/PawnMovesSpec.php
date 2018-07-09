@@ -9,7 +9,6 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
-use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
@@ -83,7 +82,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->isApplicableTo(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)))->shouldBe(true);
     }
 
-    function it_may_move_white_to_the_square_immediately_in_front_on_the_same_file(Board $board, Rules $rules)
+    function it_may_move_white_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -98,7 +97,7 @@ class PawnMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_move_black_to_the_square_immediately_in_front_on_the_same_file(Board $board, Rules $rules)
+    function it_may_move_black_to_the_square_immediately_in_front_on_the_same_file(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -113,7 +112,7 @@ class PawnMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_move_to_the_square_immediately_in_front_on_the_same_file_if_it_is_occupied(Board $board, Rules $rules)
+    function it_may_not_move_to_the_square_immediately_in_front_on_the_same_file_if_it_is_occupied(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('c', 3);
 
@@ -126,7 +125,7 @@ class PawnMovesSpec extends ObjectBehavior
         )->shouldYieldLike([]);
     }
 
-    function it_may_capture_along_diagonal_forward(Board $board, Rules $rules)
+    function it_may_capture_along_diagonal_forward(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('e', 5);
 
@@ -142,7 +141,7 @@ class PawnMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied(Board $board, Rules $rules)
+    function it_may_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
 
@@ -159,7 +158,7 @@ class PawnMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_advance_two_squares_along_the_same_file_on_first_move_if_any_is_occupied(Board $board, Rules $rules)
+    function it_may_not_advance_two_squares_along_the_same_file_on_first_move_if_any_is_occupied(Board $board)
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
 
@@ -273,7 +272,8 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 3)
         );
 
-        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -286,7 +286,8 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 6)
         );
 
-        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 6))->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -300,9 +301,11 @@ class PawnMovesSpec extends ObjectBehavior
             $destination
         );
 
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionOccupied($destination)->willReturn(true);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_move_along_rank(Board $board, Rules $rules)
@@ -312,8 +315,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_move_along_diagonal(Board $board, Rules $rules)
@@ -323,8 +328,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('b', 5)
         );
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_move_to_another_square(Board $board, Rules $rules)
@@ -334,8 +341,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('c', 5)
         );
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_move_along_file_backward(Board $board, Rules $rules)
@@ -345,8 +354,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 3),
             CoordinatePair::fromFileAndRank('c', 4)
         );
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_allows_pawn_capture_opponents_piece_diagonally_in_front_of_it_on_an_adjacent_file(Board $board, Rules $rules)
@@ -357,6 +368,7 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 3)
         );
 
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 3), Color::black())->willReturn(true);
 
         $this->apply($move, $board, $rules);
@@ -370,9 +382,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 3)
         );
 
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
         $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 3), Color::black())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_move_backward_along_file(Board $board, Rules $rules)
@@ -383,7 +396,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_move_further_than_to_adjoining_square(Board $board, Rules $rules)
@@ -394,7 +410,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 5)
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_allows_pawn_advance_two_squares_along_the_same_file_on_first_move_provided_both_are_unoccupied(Board $board, Rules $rules)
@@ -405,8 +424,8 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 5)
         );
 
-        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 6))->willReturn(false);
-        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 5))->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -431,7 +450,10 @@ class PawnMovesSpec extends ObjectBehavior
             $rules
         );
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_advance_two_squares_if_any_is_occupied(Board $board, Rules $rules)
@@ -444,8 +466,9 @@ class PawnMovesSpec extends ObjectBehavior
 
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 4))->willReturn(false);
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 3))->willReturn(true);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveOverInterveningPiece(CoordinatePair::fromFileAndRank('b', 3)))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_allows_pawn_en_passant_capture_if_opponents_pawn_just_advanced_two_squares(Board $board, Rules $rules)
@@ -468,7 +491,8 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 6)
         );
 
-        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('c', 6), Color::black())->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -504,9 +528,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 6)
         );
 
-        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('c', 6), Color::black())->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_disallows_pawn_en_passant_capture_if_moving_to_another_square(Board $board, Rules $rules)
@@ -529,9 +554,10 @@ class PawnMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('b', 2)
         );
 
-        $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('b', 2), Color::white())->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
-        $this->shouldThrow(new MoveToIllegalPosition($move))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 
     function it_captures_pawn_after_en_passant_move(Board $board, Rules $rules)

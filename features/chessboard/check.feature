@@ -26,7 +26,7 @@ Feature: The king's check
       | piece       | location |
       | black king  | e8       |
       | black rook  | f8       |
-      | white rook  | e8       |
+      | white rook  | e1       |
     When I move piece from f8 to f1
     Then the move is illegal
     And black rook should not be moved from f8

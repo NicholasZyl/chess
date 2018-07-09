@@ -6,7 +6,6 @@ namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
-use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveOverInterveningPiece;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
@@ -74,7 +73,7 @@ class RookMovesSpec extends ObjectBehavior
         $this->isApplicableTo($action)->shouldBe(false);
     }
 
-    function it_may_move_to_any_square_along_file_and_rank(Board $board, Rules $rules)
+    function it_may_move_to_any_square_along_file_and_rank(Board $board)
     {
         $board->isPositionOccupied(Argument::cetera())->willReturn(false);
         $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
@@ -102,7 +101,7 @@ class RookMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_move_to_squares_over_intervening_piece(Board $board, Rules $rules)
+    function it_may_not_move_to_squares_over_intervening_piece(Board $board)
     {
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('c', 2))->willReturn(true);
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('b', 1))->willReturn(true);
@@ -130,7 +129,7 @@ class RookMovesSpec extends ObjectBehavior
         ]);
     }
 
-    function it_may_not_move_to_squares_occupied_by_same_color(Board $board, Rules $rules)
+    function it_may_not_move_to_squares_occupied_by_same_color(Board $board)
     {
         $board->isPositionOccupied(CoordinatePair::fromFileAndRank('c', 2))->willReturn(true);
         $board->isPositionOccupiedBy(CoordinatePair::fromFileAndRank('c', 2), Color::white())->willReturn(true);
@@ -165,7 +164,8 @@ class RookMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 3)
         );
-        $board->isPositionOccupied(Argument::type(Board\Coordinates::class))->willReturn(false);
+        $board->isPositionOccupied(Argument::cetera())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -177,7 +177,8 @@ class RookMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('d', 3),
             CoordinatePair::fromFileAndRank('a', 3)
         );
-        $board->isPositionOccupied(Argument::type(Board\Coordinates::class))->willReturn(false);
+        $board->isPositionOccupied(Argument::cetera())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -189,6 +190,8 @@ class RookMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupied(Argument::cetera())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
@@ -200,7 +203,8 @@ class RookMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 3)
         );
-        $board->isPositionOccupied(CoordinatePair::fromFileAndRank('a', 2))->willReturn(false);
+        $board->isPositionOccupied(Argument::cetera())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->apply($move, $board, $rules);
     }
@@ -212,9 +216,12 @@ class RookMovesSpec extends ObjectBehavior
             CoordinatePair::fromFileAndRank('c', 1),
             CoordinatePair::fromFileAndRank('c', 3)
         );
+        $board->isPositionOccupied(Argument::cetera())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
         $occupiedPosition = CoordinatePair::fromFileAndRank('c', 2);
         $board->isPositionOccupied($occupiedPosition)->willReturn(true);
+        $board->isPositionOccupiedBy($occupiedPosition, Color::white())->willReturn(false);
 
-        $this->shouldThrow(new MoveOverInterveningPiece($occupiedPosition))->during('apply', [$move, $board, $rules,]);
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
     }
 }

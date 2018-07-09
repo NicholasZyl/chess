@@ -67,19 +67,14 @@ final class AlongDiagonal implements Direction
     /**
      * {@inheritdoc}
      */
-    public function inSameDirectionAs(Direction $direction): bool
-    {
-        return $direction instanceof self;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function __toString(): string
     {
         return 'along same diagonal';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function nextAlongFrom(Coordinates $position): Coordinates
     {
         return CoordinatePair::fromFileAndRank(

@@ -43,15 +43,6 @@ interface Direction
     public function distanceBetween(Coordinates $from, Coordinates $to): int;
 
     /**
-     * Check if is in same direction as another.
-     *
-     * @param Direction $direction
-     *
-     * @return bool
-     */
-    public function inSameDirectionAs(Direction $direction): bool;
-
-    /**
      * Get string representation of the direction.
      *
      * @return string

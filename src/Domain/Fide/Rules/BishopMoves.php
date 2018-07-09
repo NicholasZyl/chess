@@ -46,12 +46,9 @@ final class BishopMoves implements PieceMovesRule
             throw new RuleIsNotApplicable();
         }
         /** @var Move $action */
-
-        if (!$action->inDirection(new AlongDiagonal())) {
+        if (!in_array($action->destination(), iterator_to_array($this->getLegalDestinationsFrom($action->piece(), $action->source(), $board)))) {
             throw new MoveToIllegalPosition($action);
         }
-
-        $this->validateNotIntervenedMove($action, $board);
     }
 
     /**
