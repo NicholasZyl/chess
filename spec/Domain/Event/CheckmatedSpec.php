@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Event;
 
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Event\Checkmated;
 use NicholasZyl\Chess\Domain\Event\InCheck;
-use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class CheckmatedSpec extends ObjectBehavior

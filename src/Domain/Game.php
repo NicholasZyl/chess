@@ -14,7 +14,6 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToOccupiedPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
-use NicholasZyl\Chess\Domain\Piece\InitialPositions;
 
 class Game
 {
@@ -32,14 +31,13 @@ class Game
      * Create a new game.
      *
      * @param Board $board
-     * @param InitialPositions $initialPositions
-     * @param Rules $rules
+     * @param GameArrangement $arrangement
      */
-    public function __construct(Board $board, InitialPositions $initialPositions, Rules $rules)
+    public function __construct(Board $board, GameArrangement $arrangement)
     {
         $this->board = $board;
-        $this->rules = $rules;
-        $initialPositions->initialiseBoard($this->board);
+        $this->rules = $arrangement->rules();
+        $arrangement->initialiseBoard($this->board);
     }
 
     /**

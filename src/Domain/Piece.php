@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Piece\Color;
-
 interface Piece
 {
     /**

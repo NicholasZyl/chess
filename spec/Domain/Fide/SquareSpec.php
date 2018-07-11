@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Piece;
 use PhpSpec\ObjectBehavior;
 
 class SquareSpec extends ObjectBehavior
@@ -29,13 +29,13 @@ class SquareSpec extends ObjectBehavior
 
     function it_allows_to_place_piece_on_it()
     {
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->place($piece)->shouldBe(null);
     }
 
     function it_allows_to_pick_piece_placed_on_it()
     {
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->place($piece);
         $this->pick()->shouldBe($piece);
     }
@@ -47,7 +47,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_is_vacant_after_piece_is_picked()
     {
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->place($piece);
         $this->pick();
 
@@ -56,7 +56,7 @@ class SquareSpec extends ObjectBehavior
 
     function it_knows_when_is_occupied()
     {
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->place($piece);
 
         $this->isOccupied()->shouldBe(true);
@@ -69,32 +69,32 @@ class SquareSpec extends ObjectBehavior
 
     function it_returns_exchanged_piece_when_placing_another_piece_on_it()
     {
-        $previousPiece = Pawn::forColor(Piece\Color::black());
+        $previousPiece = Pawn::forColor(Color::black());
         $this->place($previousPiece);
 
-        $piece = Knight::forColor(Piece\Color::white());
+        $piece = Knight::forColor(Color::white());
 
         $this->place($piece)->shouldBeLike($previousPiece);
     }
 
     function it_knows_that_it_has_placed_piece_in_given_color_on_it()
     {
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->place($piece);
 
-        $this->isOccupiedBy(Piece\Color::white())->shouldBe(true);
+        $this->isOccupiedBy(Color::white())->shouldBe(true);
     }
 
     function it_knows_that_it_has_not_placed_piece_in_given_color_when_piece_has_different_color()
     {
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->place($piece);
 
-        $this->isOccupiedBy(Piece\Color::black())->shouldBe(false);
+        $this->isOccupiedBy(Color::black())->shouldBe(false);
     }
 
     function it_knows_that_it_has_not_placed_piece_in_given_color_when_is_unoccupied()
     {
-        $this->isOccupiedBy(Piece\Color::black())->shouldBe(false);
+        $this->isOccupiedBy(Color::black())->shouldBe(false);
     }
 }

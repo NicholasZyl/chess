@@ -6,6 +6,7 @@ namespace NicholasZyl\Chess\Domain\Fide;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
@@ -15,7 +16,6 @@ use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rules;
 
 final class Chessboard implements Board

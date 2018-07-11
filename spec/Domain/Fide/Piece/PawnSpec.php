@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Piece;
 
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Piece\Color;
 use PhpSpec\ObjectBehavior;
 
 class PawnSpec extends ObjectBehavior
@@ -22,26 +22,26 @@ class PawnSpec extends ObjectBehavior
 
     function it_has_color()
     {
-        $this->color()->shouldBeLike(Piece\Color::white());
+        $this->color()->shouldBeLike(Color::white());
     }
 
     function it_is_same_as_another_pawn_if_same_color()
     {
-        $pawn = Pawn::forColor(Piece\Color::white());
+        $pawn = Pawn::forColor(Color::white());
 
         $this->isSameAs($pawn)->shouldBe(true);
     }
 
     function it_is_not_same_as_another_pawn_if_different_color()
     {
-        $pawn = Pawn::forColor(Piece\Color::black());
+        $pawn = Pawn::forColor(Color::black());
 
         $this->isSameAs($pawn)->shouldBe(false);
     }
 
     function it_is_not_same_as_another_piece_even_if_same_color(Piece $piece)
     {
-        $piece->color()->willReturn(Piece\Color::white());
+        $piece->color()->willReturn(Color::white());
 
         $this->isSameAs($piece)->shouldBe(false);
     }

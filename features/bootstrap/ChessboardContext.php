@@ -4,15 +4,15 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Helper\PieceFactory;
-use Helper\PieceTestPositions;
+use Helper\TestArrangement;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
-use NicholasZyl\Chess\Domain\Piece\Color;
 
 /**
  * Defines application features from the specific context.
@@ -40,12 +40,18 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     private $occurredEvents = [];
 
     /**
+     * @var TestArrangement
+     */
+    private $testArrangement;
+
+    /**
      * ChessboardContext constructor.
      * @param PieceFactory $pieceFactory
      */
     public function __construct(PieceFactory $pieceFactory)
     {
         $this->pieceFactory = $pieceFactory;
+        $this->testArrangement = new TestArrangement(new \NicholasZyl\Chess\Domain\Fide\LawsOfChess());
     }
 
     /**
@@ -54,16 +60,14 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function thereIsAChessboardWithPieces(TableNode $table)
     {
-        $initialPositions = new PieceTestPositions();
-
         foreach ($table->getHash() as $pieceAtLocation) {
-            $initialPositions->placePieceAt(
+            $this->testArrangement->placePieceAt(
                 $this->castToPiece($pieceAtLocation['piece']),
                 $this->castToCoordinates($pieceAtLocation['location'])
             );
         }
 
-        $this->setupGame($initialPositions);
+        $this->theGameIsSetUp();
     }
 
     /**
@@ -74,22 +78,16 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
-        $initialPositions = new PieceTestPositions();
-        $initialPositions->placePieceAt($piece, $coordinates);
-        $this->setupGame($initialPositions);
+        $this->testArrangement->placePieceAt($piece, $coordinates);
+        $this->theGameIsSetUp();
     }
 
     /**
-     * Setup board with pieces at their initial positions.
-     *
-     * @param Piece\InitialPositions $initialPositions
-     *
-     * @return void
+     * @Given the game is set up
      */
-    private function setupGame(Piece\InitialPositions $initialPositions): void
+    public function theGameIsSetUp()
     {
-        $laws = new \NicholasZyl\Chess\Domain\Fide\LawsOfChess();
-        $this->game = new Game(new Chessboard(), $initialPositions, $laws->rules());
+        $this->game = new Game(new Chessboard(), $this->testArrangement);
     }
 
     /**
@@ -102,6 +100,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     {
         try {
             $this->occurredEvents = $this->game->playMove($source, $destination);
+            $this->caughtException = null;
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
             $this->occurredEvents = [];
@@ -118,6 +117,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     {
         try {
             $this->occurredEvents = $this->game->exchangePieceOnBoardTo($coordinates, $piece);
+            $this->caughtException = null;
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
             $this->occurredEvents = [];
@@ -137,6 +137,9 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
         if ($not) {
             expect($this->occurredEvents)->toNotContainEventThatPieceMoved($piece, $direction, $coordinates);
         } else {
+            if ($this->caughtException) {
+                throw $this->caughtException;
+            }
             expect($this->occurredEvents)->toContainEventThatPieceMoved($piece, $direction, $coordinates);
         }
     }
@@ -162,6 +165,9 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
         if ($not) {
             expect($this->occurredEvents)->toNotContainEvent($pieceWasCaptured);
         } else {
+            if ($this->caughtException) {
+                throw $this->caughtException;
+            }
             expect($this->occurredEvents)->toContainEvent($pieceWasCaptured);
         }
     }
@@ -180,6 +186,9 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
         if ($not) {
             expect($this->occurredEvents)->toNotContainEvent($pieceWasExchanged);
         } else {
+            if ($this->caughtException) {
+                throw $this->caughtException;
+            }
             expect($this->occurredEvents)->toContainEvent($pieceWasExchanged);
         }
     }

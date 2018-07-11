@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide\Piece;
 
-use NicholasZyl\Chess\Domain\Piece\Color;
+use NicholasZyl\Chess\Domain\Color;
 
 abstract class Piece implements \NicholasZyl\Chess\Domain\Piece
 {

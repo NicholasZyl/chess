@@ -19,7 +19,6 @@ use NicholasZyl\Chess\Domain\Rules;
 
 final class KnightMoves implements PieceMovesRule
 {
-    private const DISTANCE_TO_THE_NEAREST_COORDINATES = 2;
     private const AVAILABLE_MOVES = [
         [1, 2,],
         [2, 1,],

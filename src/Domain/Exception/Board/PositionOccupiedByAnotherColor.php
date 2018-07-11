@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Exception\Board;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
-use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class PositionOccupiedByAnotherColor extends BoardException
 {

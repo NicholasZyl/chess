@@ -5,10 +5,17 @@ namespace Helper;
 
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\GameArrangement;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Rules;
 
-class PieceTestPositions implements Piece\InitialPositions
+class TestArrangement implements GameArrangement
 {
+    /**
+     * @var GameArrangement
+     */
+    private $arrangement;
+
     /**
      * @var \SplObjectStorage|Coordinates[]|Piece[]
      */
@@ -16,10 +23,21 @@ class PieceTestPositions implements Piece\InitialPositions
 
     /**
      * Initialise board setup for test purposes.
+     *
+     * @param GameArrangement $arrangement
      */
-    public function __construct()
+    public function __construct(GameArrangement $arrangement)
     {
+        $this->arrangement = $arrangement;
         $this->initialPositions = new \SplObjectStorage();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules(): Rules
+    {
+        return $this->arrangement->rules();
     }
 
     /**
@@ -40,8 +58,12 @@ class PieceTestPositions implements Piece\InitialPositions
      */
     public function initialiseBoard(Board $board): void
     {
-        foreach ($this->initialPositions as $at) {
-            $board->placePieceAt($this->initialPositions[$at], $at);
+        if ($this->initialPositions->count() === 0) {
+            $this->arrangement->initialiseBoard($board);
+        } else {
+            foreach ($this->initialPositions as $at) {
+                $board->placePieceAt($this->initialPositions[$at], $at);
+            }
         }
     }
 }

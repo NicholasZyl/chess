@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Event;
 
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Piece\Color;
 
 final class Checkmated implements Event
 {

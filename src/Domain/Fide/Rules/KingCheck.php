@@ -7,11 +7,11 @@ use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
-use NicholasZyl\Chess\Domain\Piece\Color;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
 

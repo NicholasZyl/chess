@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
@@ -235,6 +236,6 @@ final class KingMoves implements PieceMovesRule
 
     private function getStartingPositionForKing(Piece $king): Coordinates
     {
-        return CoordinatePair::fromFileAndRank('e', $king->color()->is(Piece\Color::white()) ? Chessboard::LOWEST_RANK : Chessboard::HIGHEST_RANK);
+        return CoordinatePair::fromFileAndRank('e', $king->color()->is(Color::white()) ? Chessboard::LOWEST_RANK : Chessboard::HIGHEST_RANK);
     }
 }

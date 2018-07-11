@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -91,11 +92,11 @@ final class Square
     /**
      * Check if there is a piece in given color placed on the square.
      *
-     * @param Piece\Color $color
+     * @param Color $color
      *
      * @return bool
      */
-    public function isOccupiedBy(Piece\Color $color): bool
+    public function isOccupiedBy(Color $color): bool
     {
         return $this->isOccupied() && $this->placedPiece->hasColor($color);
     }

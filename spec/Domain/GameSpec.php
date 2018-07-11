@@ -6,6 +6,7 @@ namespace spec\NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
@@ -20,22 +21,29 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Game;
-use NicholasZyl\Chess\Domain\Piece\Color;
-use NicholasZyl\Chess\Domain\Piece\InitialPositions;
+use NicholasZyl\Chess\Domain\GameArrangement;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 
 class GameSpec extends ObjectBehavior
 {
-    function let(Board $board, InitialPositions $initialPositions, Rules $rules)
+    function let(Board $board, GameArrangement $arrangement, Rules $rules)
     {
-        $this->beConstructedWith($board, $initialPositions, $rules);
-        $initialPositions->initialiseBoard($board);
+        $this->beConstructedWith($board, $arrangement, $rules);
+        $arrangement->initialiseBoard($board)->will(function() {});
+        $arrangement->rules()->willReturn($rules);
     }
 
-    function it_initialises_board_with_provided_initial_positions_of_pieces(Board $board, InitialPositions $initialPositions)
+    function it_initialises_board_with_provided_initial_positions_of_pieces(Board $board, GameArrangement $arrangement)
     {
-        $initialPositions->initialiseBoard($board)->shouldBeCalled();
+        $arrangement->initialiseBoard($board)->shouldBeCalled();
+
+        $this->shouldHaveType(Game::class);
+    }
+
+    function it_uses_rules_from_the_arrangement(GameArrangement $arrangement, Rules $rules)
+    {
+        $arrangement->rules()->shouldBeCalled()->willReturn($rules);
 
         $this->shouldHaveType(Game::class);
     }

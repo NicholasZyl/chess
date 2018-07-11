@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
@@ -12,7 +13,6 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
-use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
@@ -109,7 +109,7 @@ class RulesSpec extends ObjectBehavior
 
     function it_gets_all_currently_available_destinations_for_a_piece_placed_at_position_according_to_applicable_rule(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board)
     {
-        $piece = Rook::forColor(Piece\Color::white());
+        $piece = Rook::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 1);
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($piece);
@@ -144,7 +144,7 @@ class RulesSpec extends ObjectBehavior
 
     function it_fails_if_there_are_no_applicable_rules_to_get_legal_moves_for_a_piece(Board $board)
     {
-        $piece = Knight::forColor(Piece\Color::white());
+        $piece = Knight::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 1);
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($piece);
         $board->placePieceAt($piece, $source)->shouldBeCalled();

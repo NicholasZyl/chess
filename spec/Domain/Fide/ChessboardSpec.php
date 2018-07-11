@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Fide;
 
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
@@ -18,7 +19,6 @@ use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
-use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
 
@@ -38,7 +38,7 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_allows_placing_piece_at_given_coordinates()
     {
-        $whitePawn = Pawn::forColor(Piece\Color::white());
+        $whitePawn = Pawn::forColor(Color::white());
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
         $this->placePieceAt($whitePawn, $coordinates)->shouldBeLike([]);
@@ -46,8 +46,8 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_knows_when_opponents_piece_was_captured()
     {
-        $whiteRook = Rook::forColor(Piece\Color::white());
-        $blackPawn = Pawn::forColor(Piece\Color::black());
+        $whiteRook = Rook::forColor(Color::white());
+        $blackPawn = Pawn::forColor(Color::black());
 
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
@@ -59,8 +59,8 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_does_not_allow_placing_piece_on_coordinates_occupied_by_same_color()
     {
-        $whiteRook = Rook::forColor(Piece\Color::white());
-        $whitePawn = Pawn::forColor(Piece\Color::white());
+        $whiteRook = Rook::forColor(Color::white());
+        $whitePawn = Pawn::forColor(Color::white());
 
         $coordinates = CoordinatePair::fromFileAndRank('b', 2);
 
@@ -72,7 +72,7 @@ class ChessboardSpec extends ObjectBehavior
     function it_allows_picking_up_piece_from_coordinates()
     {
         $position = CoordinatePair::fromFileAndRank('a', 2);
-        $pawn = Pawn::forColor(Piece\Color::white());
+        $pawn = Pawn::forColor(Color::white());
         $this->placePieceAt($pawn, $position);
 
         $this->pickPieceFrom($position)->shouldBe($pawn);
@@ -94,7 +94,7 @@ class ChessboardSpec extends ObjectBehavior
     {
         $position = CoordinatePair::fromFileAndRank('a', 2);
         $this->placePieceAt(
-            Pawn::forColor(Piece\Color::white()),
+            Pawn::forColor(Color::white()),
             $position
         );
 
@@ -103,70 +103,70 @@ class ChessboardSpec extends ObjectBehavior
 
     function it_knows_when_position_is_occupied_by_piece_in_given_color()
     {
-        $blackPawn = Pawn::forColor(Piece\Color::black());
+        $blackPawn = Pawn::forColor(Color::black());
         $position = CoordinatePair::fromFileAndRank('c', 4);
         $this->placePieceAt($blackPawn, $position);
 
-        $this->isPositionOccupiedBy($position, Piece\Color::black())->shouldBe(true);
+        $this->isPositionOccupiedBy($position, Color::black())->shouldBe(true);
     }
 
     function it_knows_when_position_is_not_occupied_by_given_color_if_piece_has_same_color()
     {
-        $blackPawn = Pawn::forColor(Piece\Color::black());
+        $blackPawn = Pawn::forColor(Color::black());
         $position = CoordinatePair::fromFileAndRank('c', 4);
         $this->placePieceAt($blackPawn, $position);
 
-        $this->isPositionOccupiedBy($position, Piece\Color::white())->shouldBe(false);
+        $this->isPositionOccupiedBy($position, Color::white())->shouldBe(false);
     }
 
     function it_knows_when_position_is_not_occupied_by_color_if_piece_is_unoccupied()
     {
         $position = CoordinatePair::fromFileAndRank('c', 4);
 
-        $this->isPositionOccupiedBy($position, Piece\Color::black())->shouldBe(false);
+        $this->isPositionOccupiedBy($position, Color::black())->shouldBe(false);
     }
 
     function it_knows_when_square_is_attacked_by_given_color(Rules $rules)
     {
         $position = CoordinatePair::fromFileAndRank('b', 3);
-        $opponentsPiece = Pawn::forColor(Piece\Color::black());
+        $opponentsPiece = Pawn::forColor(Color::black());
         $opponentsPiecePosition = CoordinatePair::fromFileAndRank('c', 4);
         $this->placePieceAt($opponentsPiece, $opponentsPiecePosition);
-        $this->placePieceAt(Pawn::forColor(Piece\Color::white()), $position);
+        $this->placePieceAt(Pawn::forColor(Color::white()), $position);
 
         $rules->applyRulesTo(new Move($opponentsPiece, $opponentsPiecePosition, $position), $this->getWrappedObject())->shouldBeCalled();
 
-        $this->isPositionAttackedBy($position, Piece\Color::black(), $rules)->shouldBe(true);
+        $this->isPositionAttackedBy($position, Color::black(), $rules)->shouldBe(true);
     }
 
     function it_knows_when_square_is_not_attacked_by_opponents_piece(Rules $rules)
     {
-        $blackPawn = Pawn::forColor(Piece\Color::black());
+        $blackPawn = Pawn::forColor(Color::black());
         $blackPawnPosition = CoordinatePair::fromFileAndRank('a', 3);
         $this->placePieceAt($blackPawn, $blackPawnPosition);
-        $blackRook = Rook::forColor(Piece\Color::black());
+        $blackRook = Rook::forColor(Color::black());
         $blackRookPosition = CoordinatePair::fromFileAndRank('a', 8);
         $this->placePieceAt($blackRook, $blackRookPosition);
-        $this->placePieceAt(Bishop::forColor(Piece\Color::white()), CoordinatePair::fromFileAndRank('b', 3));
+        $this->placePieceAt(Bishop::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 3));
 
         $position = CoordinatePair::fromFileAndRank('a', 2);
 
         $rules->applyRulesTo(new Move($blackPawn, $blackPawnPosition, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new class extends IllegalAction {});
         $rules->applyRulesTo(new Move($blackRook, $blackRookPosition, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new class extends IllegalAction {});
 
-        $this->isPositionAttackedBy($position, Piece\Color::black(), $rules)->shouldBe(false);
+        $this->isPositionAttackedBy($position, Color::black(), $rules)->shouldBe(false);
     }
 
     function it_cannot_check_if_square_out_of_board_is_attacked(Coordinates $outOfBoardCoordinates, Rules $rules)
     {
         $outOfBoardCoordinates->__toString()->willReturn('');
-        $this->shouldThrow(OutOfBoard::class)->during('isPositionAttackedBy', [$outOfBoardCoordinates, Piece\Color::white(), $rules,]);
+        $this->shouldThrow(OutOfBoard::class)->during('isPositionAttackedBy', [$outOfBoardCoordinates, Color::white(), $rules,]);
     }
 
     function it_removes_piece_from_given_position()
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->placePieceAt($piece, $position);
 
         $this->removePieceFrom($position)->shouldBe($piece);
@@ -184,10 +184,10 @@ class ChessboardSpec extends ObjectBehavior
     function it_exchanges_piece_on_given_position()
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->placePieceAt($piece, $position);
 
-        $exchangedPiece = Queen::forColor(Piece\Color::white());
+        $exchangedPiece = Queen::forColor(Color::white());
 
         $this->exchangePieceOnPositionTo($position, $exchangedPiece)->shouldBeLike([new PieceWasExchanged($piece, $exchangedPiece, $position),]);
 
@@ -197,7 +197,7 @@ class ChessboardSpec extends ObjectBehavior
     function it_fails_when_trying_to_exchange_piece_outside_of_board(Coordinates $outOfBoardCoordinates)
     {
         $outOfBoardCoordinates->__toString()->willReturn('');
-        $exchangedPiece = Queen::forColor(Piece\Color::white());
+        $exchangedPiece = Queen::forColor(Color::white());
 
         $this->shouldThrow(OutOfBoard::class)->during('exchangePieceOnPositionTo', [$outOfBoardCoordinates, $exchangedPiece,]);
     }
@@ -205,7 +205,7 @@ class ChessboardSpec extends ObjectBehavior
     function it_fails_when_trying_to_exchange_on_unoccupied_position()
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
-        $exchangedPiece = Queen::forColor(Piece\Color::white());
+        $exchangedPiece = Queen::forColor(Color::white());
 
         $this->shouldThrow(new SquareIsUnoccupied($position))->during('exchangePieceOnPositionTo', [$position, $exchangedPiece,]);
     }
@@ -213,26 +213,26 @@ class ChessboardSpec extends ObjectBehavior
     function it_fails_when_trying_to_exchange_with_another_color()
     {
         $position = CoordinatePair::fromFileAndRank('b', 2);
-        $piece = Pawn::forColor(Piece\Color::white());
+        $piece = Pawn::forColor(Color::white());
         $this->placePieceAt($piece, $position);
 
-        $exchangedPiece = Queen::forColor(Piece\Color::black());
+        $exchangedPiece = Queen::forColor(Color::black());
 
         $this->shouldThrow(PositionOccupiedByAnotherColor::class)->during('exchangePieceOnPositionTo', [$position, $exchangedPiece,]);
     }
 
     function it_confirms_that_color_has_valid_move_if_any_piece_has_it(Rules $rules)
     {
-        $pawn = Pawn::forColor(Piece\Color::white());
+        $pawn = Pawn::forColor(Color::white());
         $pawnPosition = CoordinatePair::fromFileAndRank('d', 2);
         $this->placePieceAt($pawn, $pawnPosition);
-        $king = King::forColor(Piece\Color::white());
+        $king = King::forColor(Color::white());
         $kingPosition = CoordinatePair::fromFileAndRank('b', 4);
         $this->placePieceAt($king, $kingPosition);
 
         $rules->getLegalDestinationsFrom($pawnPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([CoordinatePair::fromFileAndRank('d', 3),]);
         $rules->getLegalDestinationsFrom($kingPosition, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
 
-        $this->hasLegalMove(Piece\Color::white(), $rules)->shouldBe(true);
+        $this->hasLegalMove(Color::white(), $rules)->shouldBe(true);
     }
 }
