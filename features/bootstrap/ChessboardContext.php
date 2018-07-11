@@ -125,18 +125,19 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should (?P<not>not )?be moved (from|to) (?P<coordinates>[a-h][0-8])/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) should (?P<not>not )?be moved (?P<direction>from|to) (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param bool $not
+     * @param string $direction
      * @param CoordinatePair $coordinates
      */
-    public function pieceShouldBeMovedTo(Piece $piece, bool $not, CoordinatePair $coordinates)
+    public function pieceShouldBeMovedTo(Piece $piece, bool $not, string $direction, CoordinatePair $coordinates)
     {
         if ($not) {
-            expect($this->occurredEvents)->toNotContainEventThatPieceMovedTo($piece, $coordinates);
+            expect($this->occurredEvents)->toNotContainEventThatPieceMoved($piece, $direction, $coordinates);
         } else {
-            expect($this->occurredEvents)->toContainEventThatPieceMovedTo($piece, $coordinates);
+            expect($this->occurredEvents)->toContainEventThatPieceMoved($piece, $direction, $coordinates);
         }
     }
 
@@ -263,10 +264,14 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
 
                 return false;
             },
-            'containEventThatPieceMovedTo' => function (array $occurredEvents, Piece $piece, Coordinates $coordinates) {
+            'containEventThatPieceMoved' => function (array $occurredEvents, Piece $piece, string $direction, Coordinates $coordinates) {
                 foreach ($occurredEvents as $occurredEvent) {
-                    if ($occurredEvent instanceof Event\PieceWasMoved && $occurredEvent->piece()->isSameAs($piece) && $occurredEvent->destination()->equals($coordinates)) {
-                        return true;
+                    if ($occurredEvent instanceof Event\PieceWasMoved && $occurredEvent->piece()->isSameAs($piece)) {
+                        $expectedCoordinates = $direction === 'from' ? $occurredEvent->source() : $occurredEvent->destination();
+
+                        if ($expectedCoordinates->equals($coordinates)) {
+                            return true;
+                        }
                     }
                 }
 
