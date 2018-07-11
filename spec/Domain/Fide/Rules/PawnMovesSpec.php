@@ -8,10 +8,12 @@ use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\ActionNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Event\PawnReachedPromotion;
+use NicholasZyl\Chess\Domain\Fide\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
@@ -609,7 +611,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('c', 8)), $board, $rules,]);
     }
 
-    function it_allows_exchange_when_white_pawn_reaches_rank_furthes_from_its_starting_position(Board $board, Rules $rules)
+    function it_allows_exchange_when_white_pawn_reaches_rank_furthest_from_its_starting_position(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -626,7 +628,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->apply(new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('d', 8)), $board, $rules);
     }
 
-    function it_allows_exchange_when_black_pawn_reaches_rank_furthes_from_its_starting_position(Board $board, Rules $rules)
+    function it_allows_exchange_when_black_pawn_reaches_rank_furthest_from_its_starting_position(Board $board, Rules $rules)
     {
         $this->applyAfter(
             new PieceWasMoved(
@@ -641,6 +643,23 @@ class PawnMovesSpec extends ObjectBehavior
         );
 
         $this->apply(new Exchange(Queen::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $board, $rules);
+    }
+
+    function it_disallows_another_color_exchange(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(Queen::forColor(Color::white()), CoordinatePair::fromFileAndRank('g', 1)), $board, $rules,]);
     }
 
     function it_disallows_exchange_if_another_piece_reaches_furthest_position(Board $board, Rules $rules)
@@ -710,5 +729,39 @@ class PawnMovesSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('apply', [new Exchange(King::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 1)), $board, $rules,]);
+    }
+
+    function it_is_applicable_to_every_action_after_promotion_square_was_reached(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $this->isApplicableTo(new Move(Bishop::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 3), CoordinatePair::fromFileAndRank('b', 4)))->shouldBe(true);
+    }
+
+    function it_disallows_any_other_action_when_exchange_is_needed(Board $board, Rules $rules)
+    {
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    $this->blackPawn,
+                    CoordinatePair::fromFileAndRank('g', 2),
+                    CoordinatePair::fromFileAndRank('g', 1)
+                )
+            ),
+            $board,
+            $rules
+        );
+
+        $this->shouldThrow(ActionNotAllowed::class)->during('apply', [new Move(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 2), CoordinatePair::fromFileAndRank('a', 3)), $board, $rules]);
     }
 }

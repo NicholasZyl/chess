@@ -10,6 +10,7 @@ use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction\ActionNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToIllegalPosition;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\RuleIsNotApplicable;
@@ -114,7 +115,8 @@ final class PawnMoves implements PieceMovesRule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Pawn
+        return $this->promotionPosition !== null
+            || $action instanceof Move && $action->piece() instanceof Pawn
             || $action instanceof Exchange;
     }
 
@@ -123,7 +125,9 @@ final class PawnMoves implements PieceMovesRule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
-        if ($action instanceof Move) {
+        if ($this->promotionPosition !== null && !$action instanceof Exchange) {
+            throw new ActionNotAllowed('pawn that reached promotion square must be exchanged');
+        } elseif ($action instanceof Move) {
             $this->applyToMove($action, $board);
         } elseif ($action instanceof Exchange) {
             $this->applyToExchange($action);
@@ -159,7 +163,7 @@ final class PawnMoves implements PieceMovesRule
      */
     private function applyToExchange(Exchange $exchange): void
     {
-        if (!$exchange->position()->equals($this->promotionPosition) || $exchange->pieceToExchangeWith() instanceof Pawn || $exchange->pieceToExchangeWith() instanceof King) {
+        if (!$exchange->position()->equals($this->promotionPosition) || $this->promotionPosition->rank() !== self::FURTHEST_RANKS[(string)$exchange->pieceToExchangeWith()->color()] || $exchange->pieceToExchangeWith() instanceof Pawn || $exchange->pieceToExchangeWith() instanceof King) {
             throw new ExchangeIsNotAllowed($exchange->position());
         }
         $this->promotionPosition = null;
