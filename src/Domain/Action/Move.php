@@ -6,10 +6,11 @@ namespace NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 use NicholasZyl\Chess\Domain\Piece;
 
-final class Move implements Action
+class Move implements Action
 {
     /**
      * @var Piece
@@ -27,6 +28,11 @@ final class Move implements Action
     private $destination;
 
     /**
+     * @var Color
+     */
+    private $player;
+
+    /**
      * Create a piece move from one position to another.
      *
      * @param Piece $piece
@@ -38,6 +44,15 @@ final class Move implements Action
         $this->piece = $piece;
         $this->source = $source;
         $this->destination = $destination;
+        $this->player = $piece->color();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function player(): Color
+    {
+        return $this->player;
     }
 
     /**

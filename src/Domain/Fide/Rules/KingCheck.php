@@ -26,11 +26,6 @@ final class KingCheck implements Rule
     private $kingsPositions;
 
     /**
-     * @var bool Rule shouldn't be applied for consequent checks when being already applied for a move
-     */
-    private $isApplying = false;
-
-    /**
      * Create rules for checks.
      */
     public function __construct()
@@ -70,7 +65,7 @@ final class KingCheck implements Rule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return !$this->isApplying && $action instanceof Move;
+        return $action instanceof Move && !$action instanceof Action\Attack;
     }
 
     /**
@@ -81,21 +76,16 @@ final class KingCheck implements Rule
         if (!$this->isApplicableTo($action)) {
             throw new IllegalAction\RuleIsNotApplicable();
         }
-        $this->isApplying = true;
-        /** @var Move $action */
 
+        /** @var Move $action */
         $color = $action->piece()->color();
         $kingPosition = $this->kingsPositions[(string)$color];
         if ($action->piece() instanceof King) {
             $kingPosition = $action->destination();
         }
 
-        try {
-            if ($board->isPositionAttackedBy($kingPosition, $color->opponent(), $rules)) {
-                throw new IllegalAction\MoveExposesToCheck();
-            }
-        } finally {
-            $this->isApplying = false;
+        if ($board->isPositionAttackedBy($kingPosition, $color->opponent(), $rules)) {
+            throw new IllegalAction\MoveExposesToCheck();
         }
     }
 }

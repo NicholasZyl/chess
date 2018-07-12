@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
@@ -63,6 +64,17 @@ class PawnMovesSpec extends ObjectBehavior
             $this->whitePawn,
             CoordinatePair::fromFileAndRank('b', 2),
             CoordinatePair::fromFileAndRank('b', 3)
+        );
+
+        $this->isApplicableTo($move)->shouldBe(true);
+    }
+
+    function it_is_applicable_to_bishop_attack()
+    {
+        $move = new Attack(
+            $this->blackPawn,
+            CoordinatePair::fromFileAndRank('d', 5),
+            CoordinatePair::fromFileAndRank('e', 4)
         );
 
         $this->isApplicableTo($move)->shouldBe(true);
@@ -763,5 +775,19 @@ class PawnMovesSpec extends ObjectBehavior
         );
 
         $this->shouldThrow(ActionNotAllowed::class)->during('apply', [new Move(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 2), CoordinatePair::fromFileAndRank('a', 3)), $board, $rules]);
+    }
+
+    function it_disallows_attack_not_along_diagonal(Board $board, Rules $rules)
+    {
+        $attack = new Attack(
+            $this->whitePawn,
+            CoordinatePair::fromFileAndRank('a', 2),
+            CoordinatePair::fromFileAndRank('a', 3)
+        );
+
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(true);
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$attack, $board, $rules,]);
     }
 }

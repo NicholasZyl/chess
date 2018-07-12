@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
+use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
@@ -37,6 +38,12 @@ class KingCheckSpec extends ObjectBehavior
     {
         $exchange = new Exchange(Knight::forColor(Color::white()), CoordinatePair::fromFileAndRank('f', 4));
         $this->isApplicableTo($exchange)->shouldBe(false);
+    }
+
+    function it_is_not_applicable_to_attacks()
+    {
+        $attack = new Attack(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank('e', 5), CoordinatePair::fromFileAndRank('e', 4));
+        $this->isApplicableTo($attack)->shouldBe(false);
     }
 
     function it_is_applicable_to_every_move()

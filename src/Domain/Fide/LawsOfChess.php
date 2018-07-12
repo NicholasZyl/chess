@@ -19,6 +19,7 @@ use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\PawnMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\QueenMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\RookMoves;
+use NicholasZyl\Chess\Domain\Fide\Rules\Turns;
 use NicholasZyl\Chess\Domain\GameArrangement;
 use NicholasZyl\Chess\Domain\Rules;
 
@@ -38,6 +39,7 @@ final class LawsOfChess implements GameArrangement
                 new QueenMoves(),
                 new KingMoves(),
                 new KingCheck(),
+                new Turns(),
             ]
         );
     }

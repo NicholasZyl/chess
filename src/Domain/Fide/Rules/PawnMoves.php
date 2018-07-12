@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
@@ -125,14 +126,36 @@ final class PawnMoves implements PieceMovesRule
      */
     public function apply(Action $action, Board $board, Rules $rules): void
     {
+        if (!$this->isApplicableTo($action)) {
+            throw new RuleIsNotApplicable();
+        }
+
         if ($this->promotionPosition !== null && !$action instanceof Exchange) {
             throw new ActionNotAllowed('pawn that reached promotion square must be exchanged');
+        } elseif ($action instanceof Attack) {
+            $this->applyToAttack($action, $board);
         } elseif ($action instanceof Move) {
             $this->applyToMove($action, $board);
         } elseif ($action instanceof Exchange) {
             $this->applyToExchange($action);
         } else {
             throw new RuleIsNotApplicable();
+        }
+    }
+
+    /**
+     * Apply rules to the attack.
+     *
+     * @param Attack $attack
+     * @param Board $board
+     *
+     * @return void
+     */
+    private function applyToAttack(Attack $attack, Board $board): void
+    {
+        $this->applyToMove($attack, $board);
+        if (!$attack->inDirection(new AlongDiagonal())) {
+            throw new MoveToIllegalPosition($attack);
         }
     }
 
@@ -146,9 +169,6 @@ final class PawnMoves implements PieceMovesRule
      */
     private function applyToMove(Move $move, Board $board): void
     {
-        if (!$this->isApplicableTo($move)) {
-            throw new MoveToIllegalPosition($move);
-        }
         if (!in_array($move->destination(), iterator_to_array($this->getLegalDestinationsFrom($move->piece(), $move->source(), $board)))) {
             throw new MoveToIllegalPosition($move);
         }

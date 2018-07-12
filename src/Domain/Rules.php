@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
 
@@ -93,12 +94,15 @@ class Rules
      * @param Coordinates $position
      * @param Board $board
      *
+     * @throws SquareIsUnoccupied
+     *
      * @return Coordinates[]
      */
     public function getLegalDestinationsFrom(Coordinates $position, Board $board): array
     {
+        $piece = $board->pickPieceFrom($position);
+
         try {
-            $piece = $board->pickPieceFrom($position);
             if (!array_key_exists(get_class($piece), $this->moveRules)) {
                 throw new NoApplicableRule();
             }

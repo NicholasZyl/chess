@@ -34,8 +34,9 @@ Feature: The capture of opponent's piece
   Scenario: A pawn occupying a square on the same rank as and on an adjacent file to an opponent’s pawn which has just advanced two squares in one move from its original square may capture this opponent’s pawn as though the latter had been moved only one square - such capture is called an 'en passant' capture
     Given there is a chessboard with placed pieces
       | piece      | location |
-      | white pawn | d5       |
+      | white pawn | d4       |
       | black pawn | e7       |
+    And I moved piece from d4 to d5
     And opponent moved piece from e7 to e5
     When I move piece from d5 to e6
     Then black pawn on e5 should be captured

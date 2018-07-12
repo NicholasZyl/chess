@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
+use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
@@ -53,7 +54,15 @@ class RulesSpec extends ObjectBehavior
 
     function it_applies_all_applicable_rules_to_action(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board)
     {
-        $action = new class implements Action {};
+        $action = new class implements Action {
+            /**
+             * {@inheritdoc}
+             */
+            public function player(): Color
+            {
+                return Color::white();
+            }
+        };
 
         $firstRule->isApplicableTo($action)->shouldBeCalled()->willReturn(true);
         $secondRule->isApplicableTo($action)->shouldBeCalled()->willReturn(true);
@@ -67,7 +76,15 @@ class RulesSpec extends ObjectBehavior
 
     function it_fails_if_there_is_no_applicable_rule_to_action(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board)
     {
-        $action = new class implements Action {};
+        $action = new class implements Action {
+            /**
+             * {@inheritdoc}
+             */
+            public function player(): Color
+            {
+                return Color::white();
+            }
+        };
 
         $firstRule->isApplicableTo($action)->shouldBeCalled()->willReturn(false);
         $secondRule->isApplicableTo($action)->shouldBeCalled()->willReturn(false);
@@ -142,7 +159,7 @@ class RulesSpec extends ObjectBehavior
         $this->getLegalDestinationsFrom($source, $board)->shouldBeLike([$legalDestination,]);
     }
 
-    function it_fails_if_there_are_no_applicable_rules_to_get_legal_moves_for_a_piece(Board $board)
+    function it_fails_if_there_is_no_applicable_rule_to_get_legal_moves_for_a_piece(Board $board)
     {
         $piece = Knight::forColor(Color::white());
         $source = CoordinatePair::fromFileAndRank('a', 1);
@@ -150,5 +167,13 @@ class RulesSpec extends ObjectBehavior
         $board->placePieceAt($piece, $source)->shouldBeCalled();
 
         $this->shouldThrow(NoApplicableRule::class)->during('getLegalDestinationsFrom', [$source, $board,]);
+    }
+
+    function it_fails_if_there_is_no_piece_at_position(Board $board)
+    {
+        $source = CoordinatePair::fromFileAndRank('a', 1);
+        $board->pickPieceFrom($source)->shouldBeCalled()->willThrow(SquareIsUnoccupied::class);
+
+        $this->shouldThrow(SquareIsUnoccupied::class)->during('getLegalDestinationsFrom', [$source, $board,]);
     }
 }

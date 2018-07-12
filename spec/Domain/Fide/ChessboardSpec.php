@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
@@ -134,7 +134,7 @@ class ChessboardSpec extends ObjectBehavior
         $this->placePieceAt($opponentsPiece, $opponentsPiecePosition);
         $this->placePieceAt(Pawn::forColor(Color::white()), $position);
 
-        $rules->applyRulesTo(new Move($opponentsPiece, $opponentsPiecePosition, $position), $this->getWrappedObject())->shouldBeCalled();
+        $rules->applyRulesTo(new Attack($opponentsPiece, $opponentsPiecePosition, $position), $this->getWrappedObject())->shouldBeCalled();
 
         $this->isPositionAttackedBy($position, Color::black(), $rules)->shouldBe(true);
     }
@@ -151,8 +151,8 @@ class ChessboardSpec extends ObjectBehavior
 
         $position = CoordinatePair::fromFileAndRank('a', 2);
 
-        $rules->applyRulesTo(new Move($blackPawn, $blackPawnPosition, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new class extends IllegalAction {});
-        $rules->applyRulesTo(new Move($blackRook, $blackRookPosition, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new class extends IllegalAction {});
+        $rules->applyRulesTo(new Attack($blackPawn, $blackPawnPosition, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new class extends IllegalAction {});
+        $rules->applyRulesTo(new Attack($blackRook, $blackRookPosition, $position), $this->getWrappedObject())->shouldBeCalled()->willThrow(new class extends IllegalAction {});
 
         $this->isPositionAttackedBy($position, Color::black(), $rules)->shouldBe(false);
     }

@@ -59,14 +59,14 @@ Feature: The moves of the pieces
   Scenario: The knight may move over intervening pieces
     Given there is a chessboard with placed pieces
       | piece        | location |
-      | black knight | g8       |
-      | black rook   | h8       |
-      | black king   | f8       |
-      | black pawn   | f7       |
-      | black pawn   | g7       |
-      | black pawn   | h7       |
+      | white knight | g8       |
+      | white rook   | h8       |
+      | white king   | f8       |
+      | white pawn   | f7       |
+      | white pawn   | g7       |
+      | white pawn   | h7       |
     When I move piece from g8 to f6
-    Then black knight should be moved to f6
+    Then white knight should be moved to f6
 
   Scenario: The pawn may move forward to the square immediately in front of it on the same file, provided that this square is unoccupied
     Given there is a chessboard with white pawn placed on d4
@@ -83,10 +83,12 @@ Feature: The moves of the pieces
       | piece        | location |
       | white pawn   | c2       |
       | white knight | c3       |
+      | black knight | g5       |
     And I tried to move piece from c2 to c4
     But the move was illegal
-    When I moved piece from c3 to e4
-    And I move piece from c2 to c4
+    And I moved piece from c3 to e4
+    And opponent moved piece from g5 to h7
+    When I move piece from c2 to c4
     Then white pawn should be moved to c4
 
   Scenario: The pawn may not move forward if the square is occupied
@@ -202,9 +204,19 @@ Feature: The moves of the pieces
     When I exchange piece on b8 to white queen
     Then white pawn on b8 should be exchanged with white queen
 
-  Scenario: Pawn's promotion
+  Scenario: Pawn's promotion can happen only on the promotion square
     Given there is a chessboard with white pawn placed on b6
     And I moved piece from b6 to b7
     When I try to exchange piece on b7 to white queen
     Then the exchange is illegal
-    And white pawn on b8 should not be exchanged with white queen
+    And white pawn on b7 should not be exchanged with white queen
+
+  Scenario: Pawn's promotion has to be done as part of the move
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | white pawn   | b7       |
+      | black pawn   | d7       |
+    And I moved piece from b7 to b8
+    When opponent tries to move piece from d7 to d6
+    Then the move is illegal
+    And black pawn should not be moved from d7

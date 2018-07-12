@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
@@ -131,6 +132,10 @@ final class KingMoves implements PieceMovesRule
         }
         /** @var Move $action */
         if (!in_array($action->destination(), iterator_to_array($this->getLegalDestinationsFrom($action->piece(), $action->source(), $board)))) {
+            throw new MoveToIllegalPosition($action);
+        }
+
+        if ($action instanceof Attack && $action->isOverDistanceOf(self::CASTLING_MOVE_DISTANCE)) {
             throw new MoveToIllegalPosition($action);
         }
 

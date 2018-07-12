@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
-use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Attack;
+use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Color;
@@ -76,11 +77,21 @@ class KingMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(false);
     }
 
-    function it_is_not_applicable_to_not_move_action()
+    function it_is_applicable_to_king_attack()
     {
-        $action = new class implements Action {};
+        $move = new Attack(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 2)
+        );
 
-        $this->isApplicableTo($action)->shouldBe(false);
+        $this->isApplicableTo($move)->shouldBe(true);
+    }
+
+    function it_is_not_applicable_to_exchanges()
+    {
+        $exchange = new Exchange(Knight::forColor(Color::white()), CoordinatePair::fromFileAndRank('f', 4));
+        $this->isApplicableTo($exchange)->shouldBe(false);
     }
 
     function it_may_move_to_any_adjoining_square(Board $board)
@@ -244,6 +255,21 @@ class KingMovesSpec extends ObjectBehavior
         $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
 
         $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$move, $board, $rules,]);
+    }
+
+    function it_does_not_allow_attack_with_castling(Board $board, Rules $rules)
+    {
+        $attack = new Attack(
+            $this->blackKing,
+            CoordinatePair::fromFileAndRank('e', 8),
+            CoordinatePair::fromFileAndRank('c', 8)
+        );
+
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+        $board->isPositionOccupied(Argument::any())->willReturn(false);
+        $board->isPositionAttackedBy(Argument::cetera())->willReturn(false);
+
+        $this->shouldThrow(MoveToIllegalPosition::class)->during('apply', [$attack, $board, $rules,]);
     }
 
     function it_allows_king_castling_move(Board $board, Rules $rules)

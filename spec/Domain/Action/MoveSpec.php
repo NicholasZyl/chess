@@ -50,6 +50,11 @@ class MoveSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Action::class);
     }
 
+    function it_is_for_player_whom_piece_is_moved()
+    {
+        $this->player()->shouldBeLike(Color::white());
+    }
+
     function it_is_for_piece()
     {
         $this->piece()->shouldBeLike($this->piece);

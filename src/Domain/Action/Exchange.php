@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\Domain\Action;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece;
 
 final class Exchange implements Action
@@ -20,6 +21,11 @@ final class Exchange implements Action
     private $position;
 
     /**
+     * @var Color
+     */
+    private $player;
+
+    /**
      * Create an exchange action to happen on given position.
      *
      * @param Piece $pieceToExchangeWith
@@ -29,6 +35,15 @@ final class Exchange implements Action
     {
         $this->pieceToExchangeWith = $pieceToExchangeWith;
         $this->position = $position;
+        $this->player = $pieceToExchangeWith->color();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function player(): Color
+    {
+        return $this->player;
     }
 
     /**

@@ -91,7 +91,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @When I/opponent (tried to) (try to) move(d) piece from :source to :destination
+     * @When I/opponent (tried to) (try to) (tries to) move(d) piece from :source to :destination
      *
      * @param CoordinatePair $source
      * @param CoordinatePair $destination

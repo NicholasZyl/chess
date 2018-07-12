@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Fide\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Color;
@@ -55,6 +56,17 @@ class KnightMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(true);
     }
 
+    function it_is_applicable_to_knight_attack()
+    {
+        $move = new Action\Attack(
+            $this->knight,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('c', 2)
+        );
+
+        $this->isApplicableTo($move)->shouldBe(true);
+    }
+
     function it_is_not_applicable_to_other_piece_move()
     {
         $move = new Move(
@@ -66,11 +78,10 @@ class KnightMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(false);
     }
 
-    function it_is_not_applicable_to_not_move_action()
+    function it_is_not_applicable_to_exchanges()
     {
-        $action = new class implements Action {};
-
-        $this->isApplicableTo($action)->shouldBe(false);
+        $exchange = new Exchange(Knight::forColor(Color::white()), CoordinatePair::fromFileAndRank('f', 4));
+        $this->isApplicableTo($exchange)->shouldBe(false);
     }
 
     function it_may_move_to_nearest_position_not_on_same_file_nor_rank_nor_diagonal(Board $board)

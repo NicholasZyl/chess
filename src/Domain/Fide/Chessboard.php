@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain\Fide;
 
-use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Color;
@@ -106,14 +106,14 @@ final class Chessboard implements Board
         $isAttacked = false;
         $piecesSet = $this->pieces[(string)$color];
         foreach ($piecesSet as $piece) {
-            $isAttacked = $isAttacked || $this->mayPieceMove($piece, $piecesSet[$piece], $position, $rules);
+            $isAttacked = $isAttacked || $this->isAttacking($piece, $piecesSet[$piece], $position, $rules);
         }
 
         return $isAttacked;
     }
 
     /**
-     * May piece move to given position.
+     * Check if piece is attacking given position.
      *
      * @param Piece $piece
      * @param Coordinates $source
@@ -122,10 +122,10 @@ final class Chessboard implements Board
      *
      * @return bool
      */
-    private function mayPieceMove(Piece $piece, Coordinates $source, Coordinates $destination, Rules $rules): bool
+    private function isAttacking(Piece $piece, Coordinates $source, Coordinates $destination, Rules $rules): bool
     {
         try {
-            $rules->applyRulesTo(new Move($piece, $source, $destination), $this);
+            $rules->applyRulesTo(new Attack($piece, $source, $destination), $this);
         } catch (IllegalAction $illegalAction) {
             return false;
         }

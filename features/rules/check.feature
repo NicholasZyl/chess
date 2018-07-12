@@ -34,8 +34,9 @@ Feature: The king's check
   Scenario: If opponent's king is in check and opponent has no legal move then it's checkmated
     Given there is a chessboard with placed pieces
       | piece       | location |
-      | white king  | e1       |
+      | white king  | f1       |
       | black rook  | a8       |
       | black rook  | g2       |
+    And opponent moved piece from f1 to e1
     When I move piece from a8 to a1
     Then white is checkmated

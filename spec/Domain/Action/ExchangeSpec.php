@@ -45,6 +45,11 @@ class ExchangeSpec extends ObjectBehavior
         $this->shouldBeAnInstanceOf(Action::class);
     }
 
+    function it_is_for_player_whom_piece_is_exchanged()
+    {
+        $this->player()->shouldBeLike(Color::white());
+    }
+
     function it_is_to_happen_on_position()
     {
         $this->position()->shouldBe($this->position);
