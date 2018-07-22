@@ -230,10 +230,10 @@ final class KingMoves implements PieceMovesRule
             }
         }
         if ($actualPosition->equals($this->getStartingPositionForKing($piece)) && !$this->movedKings->contains($piece)) {
-            if (array_key_exists('a'.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
+            if (array_key_exists(Chessboard::FILE_MOST_QUEENSIDE.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
                 yield CoordinatePair::fromFileAndRank('c', $actualPosition->rank());
             }
-            if (array_key_exists('h'.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
+            if (array_key_exists(Chessboard::FILE_MOST_KINGSIDE.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
                 yield CoordinatePair::fromFileAndRank('g', $actualPosition->rank());
             }
         }

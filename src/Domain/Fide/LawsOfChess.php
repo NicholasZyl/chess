@@ -57,7 +57,7 @@ final class LawsOfChess implements GameArrangement
         $board->placePieceAt(Bishop::forColor(Color::white()), CoordinatePair::fromFileAndRank('f', 1));
         $board->placePieceAt(Knight::forColor(Color::white()), CoordinatePair::fromFileAndRank('g', 1));
         $board->placePieceAt(Rook::forColor(Color::white()), CoordinatePair::fromFileAndRank('h', 1));
-        for ($file = 'a'; $file <= 'h'; ++$file) {
+        for ($file = Chessboard::FILE_MOST_QUEENSIDE; $file <= Chessboard::FILE_MOST_KINGSIDE; ++$file) {
             $board->placePieceAt(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank($file, 2));
         }
 
@@ -69,7 +69,7 @@ final class LawsOfChess implements GameArrangement
         $board->placePieceAt(Bishop::forColor(Color::black()), CoordinatePair::fromFileAndRank('f', 8));
         $board->placePieceAt(Knight::forColor(Color::black()), CoordinatePair::fromFileAndRank('g', 8));
         $board->placePieceAt(Rook::forColor(Color::black()), CoordinatePair::fromFileAndRank('h', 8));
-        for ($file = 'a'; $file <= 'h'; ++$file) {
+        for ($file = Chessboard::FILE_MOST_QUEENSIDE; $file <= Chessboard::FILE_MOST_KINGSIDE; ++$file) {
             $board->placePieceAt(Pawn::forColor(Color::black()), CoordinatePair::fromFileAndRank($file, 7));
         }
     }
