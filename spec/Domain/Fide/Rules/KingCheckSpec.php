@@ -21,9 +21,20 @@ use NicholasZyl\Chess\Domain\Fide\Rules\KingCheck;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 
 class KingCheckSpec extends ObjectBehavior
 {
+    function let(Board $board)
+    {
+        $this->beConstructedWith(
+            CoordinatePair::fromFileAndRank('e', 1),
+            CoordinatePair::fromFileAndRank('e', 8)
+        );
+
+        $board->isPositionOccupiedBy(Argument::cetera())->willReturn(false);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(KingCheck::class);
@@ -134,6 +145,28 @@ class KingCheckSpec extends ObjectBehavior
                     Rook::forColor(Color::white()),
                     CoordinatePair::fromFileAndRank('e', 3),
                     CoordinatePair::fromFileAndRank('f', 3)
+                ),
+                $board,
+                $rules,
+            ]
+        );
+    }
+
+    function it_temporarily_removes_captured_piece_for_check(Board $board, Rules $rules)
+    {
+        $destination = CoordinatePair::fromFileAndRank('f', 3);
+        $board->isPositionOccupiedBy($destination, Color::black())->willReturn(true);
+        $capturedPiece = Pawn::forColor(Color::black());
+        $board->pickPieceFrom($destination)->shouldBeCalled()->willReturn($capturedPiece);
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 1), Color::black(), $rules)->shouldBeCalled()->willReturn(true);
+        $board->placePieceAt($capturedPiece, $destination);
+
+        $this->shouldThrow(MoveExposesToCheck::class)->during('apply',
+            [
+                new Move(
+                    Rook::forColor(Color::white()),
+                    CoordinatePair::fromFileAndRank('e', 3),
+                    $destination
                 ),
                 $board,
                 $rules,

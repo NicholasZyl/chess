@@ -77,7 +77,10 @@ final class Chessboard implements Board
      */
     public function pickPieceFrom(Coordinates $position): Piece
     {
-        return $this->getSquareAt($position)->pick();
+        $pickedPiece = $this->getSquareAt($position)->pick();
+        $this->pieces[(string)$pickedPiece->color()]->detach($pickedPiece);
+
+        return $pickedPiece;
     }
 
     /**
@@ -204,8 +207,9 @@ final class Chessboard implements Board
     public function hasLegalMove(Color $color, Rules $rules): bool
     {
         $legalMoves = [];
-        foreach ($this->pieces[(string)$color] as $piece) {
-            $legalMoves = array_merge($legalMoves, $rules->getLegalDestinationsFrom($this->pieces[(string)$color][$piece], $this));
+        $piecesSet = clone $this->pieces[(string)$color];
+        foreach ($piecesSet as $piece) {
+            $legalMoves = array_merge($legalMoves, $rules->getLegalDestinationsFrom($piecesSet[$piece], $this));
         }
 
         return !empty($legalMoves);

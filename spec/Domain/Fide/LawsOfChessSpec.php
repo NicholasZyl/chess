@@ -46,8 +46,18 @@ class LawsOfChessSpec extends ObjectBehavior
                 new BishopMoves(),
                 new RookMoves(),
                 new QueenMoves(),
-                new KingMoves(),
-                new KingCheck(),
+                new KingMoves(
+                    [
+                        CoordinatePair::fromFileAndRank('a', 1),
+                        CoordinatePair::fromFileAndRank('h', 1),
+                        CoordinatePair::fromFileAndRank('a', 8),
+                        CoordinatePair::fromFileAndRank('h', 8),
+                    ]
+                ),
+                new KingCheck(
+                    CoordinatePair::fromFileAndRank('e', 1),
+                    CoordinatePair::fromFileAndRank('e', 8)
+                ),
                 new Turns(),
             ])
         );

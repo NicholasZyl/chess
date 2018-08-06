@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
+use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Gherkin\Node\TableNode;
 use Helper\PieceFactory;
 use Helper\TestArrangement;
@@ -11,6 +12,7 @@ use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Chessboard;
+use NicholasZyl\Chess\Domain\Fide\LawsOfChess;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\Piece;
 
@@ -51,7 +53,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function __construct(PieceFactory $pieceFactory)
     {
         $this->pieceFactory = $pieceFactory;
-        $this->testArrangement = new TestArrangement(new \NicholasZyl\Chess\Domain\Fide\LawsOfChess());
+        $this->testArrangement = new TestArrangement(new LawsOfChess());
     }
 
     /**
@@ -66,8 +68,6 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
                 $this->castToCoordinates($pieceAtLocation['location'])
             );
         }
-
-        $this->theGameIsSetUp();
     }
 
     /**
@@ -79,7 +79,6 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function thereIsAChessboardWithPiecePlacedOnSquare(Piece $piece, CoordinatePair $coordinates)
     {
         $this->testArrangement->placePieceAt($piece, $coordinates);
-        $this->theGameIsSetUp();
     }
 
     /**
@@ -91,6 +90,16 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
+     * @Given it is :color turn
+     *
+     * @param Color $color
+     */
+    public function itIsColorsTurn(Color $color): void
+    {
+        $this->testArrangement->setTurn($color);
+    }
+
+    /**
      * @When I/opponent (tried to) (try to) (tries to) move(d) piece from :source to :destination
      *
      * @param CoordinatePair $source
@@ -99,7 +108,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function iMovePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
     {
         try {
-            $this->occurredEvents = $this->game->playMove($source, $destination);
+            $this->occurredEvents = $this->getCurrentGame()->playMove($source, $destination);
             $this->caughtException = null;
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
@@ -116,12 +125,26 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function iExchangePieceOnPositionTo(Piece $piece, CoordinatePair $coordinates)
     {
         try {
-            $this->occurredEvents = $this->game->exchangePieceOnBoardTo($coordinates, $piece);
+            $this->occurredEvents = $this->getCurrentGame()->exchangePieceOnBoardTo($coordinates, $piece);
             $this->caughtException = null;
         } catch (\RuntimeException $exception) {
             $this->caughtException = $exception;
             $this->occurredEvents = [];
         }
+    }
+
+    /**
+     * Get the currently tested game.
+     *
+     * @return Game
+     */
+    private function getCurrentGame(): Game
+    {
+        if (is_null($this->game)) {
+            $this->theGameIsSetUp();
+        }
+
+        return $this->game;
     }
 
     /**
@@ -137,9 +160,6 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
         if ($not) {
             expect($this->occurredEvents)->toNotContainEventThatPieceMoved($piece, $direction, $coordinates);
         } else {
-            if ($this->caughtException) {
-                throw $this->caughtException;
-            }
             expect($this->occurredEvents)->toContainEventThatPieceMoved($piece, $direction, $coordinates);
         }
     }
@@ -150,6 +170,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function actionIsIllegal()
     {
         expect($this->caughtException)->shouldBeAnInstanceOf(IllegalAction::class);
+        $this->caughtException = null;
     }
 
     /**
@@ -165,9 +186,6 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
         if ($not) {
             expect($this->occurredEvents)->toNotContainEvent($pieceWasCaptured);
         } else {
-            if ($this->caughtException) {
-                throw $this->caughtException;
-            }
             expect($this->occurredEvents)->toContainEvent($pieceWasCaptured);
         }
     }
@@ -186,9 +204,6 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
         if ($not) {
             expect($this->occurredEvents)->toNotContainEvent($pieceWasExchanged);
         } else {
-            if ($this->caughtException) {
-                throw $this->caughtException;
-            }
             expect($this->occurredEvents)->toContainEvent($pieceWasExchanged);
         }
     }
@@ -253,6 +268,17 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function castToColor(string $color): Color
     {
         return Color::fromString($color);
+    }
+
+    /**
+     * @BeforeStep
+     * @param BeforeStepScope $scope
+     */
+    public function checkForExceptionBetweenSteps(BeforeStepScope $scope): void
+    {
+        if ($this->caughtException && strpos($scope->getStep()->getText(), 'illegal') === false) {
+            throw $this->caughtException;
+        }
     }
 
     /**

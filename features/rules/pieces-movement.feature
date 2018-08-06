@@ -158,11 +158,13 @@ Feature: The moves of the pieces
   Scenario: The right to castle has been lost if king has already moved
     Given there is a chessboard with placed pieces
       | piece        | location |
-      | black king   | e8       |
+      | black king   | e7       |
       | black rook   | h8       |
-    And I moved piece from e8 to e7
-    And I moved piece from e7 to e8
-    When I try to move piece from e8 to g8
+      | white bishop | b1       |
+    And it is black turn
+    And opponent moved piece from e7 to e8
+    And I moved piece from b1 to c2
+    When opponent tries to move piece from e8 to g8
     Then the move is illegal
     And black king should not be moved from e8
 
@@ -170,10 +172,12 @@ Feature: The moves of the pieces
     Given there is a chessboard with placed pieces
       | piece        | location |
       | black king   | e8       |
-      | black rook   | a8       |
-    And I moved piece from a8 to b8
-    And I moved piece from b8 to a8
-    When I try to move piece from e8 to c8
+      | black rook   | b8       |
+      | white king   | e1       |
+    And it is black turn
+    And opponent moved piece from b8 to a8
+    And I moved piece from e1 to e2
+    When opponent tries to move piece from e8 to c8
     Then the move is illegal
     And black king should not be moved from e8
 
@@ -181,10 +185,12 @@ Feature: The moves of the pieces
     Given there is a chessboard with placed pieces
       | piece        | location |
       | white king   | e1       |
+      | white rook   | a5       |
       | white rook   | a1       |
       | black queen  | a4       |
+    And it is black turn
     And opponent moved piece from a4 to a1
-    And opponent moved piece from a1 to a2
+    And I moved piece from a5 to a1
     When I try to move piece from e1 to c1
     Then the move is illegal
     And white king should not be moved from e1

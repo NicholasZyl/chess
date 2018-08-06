@@ -1,6 +1,6 @@
 Feature: Making moves
   In order to play the chess
-  As a player
+  As players
   We need to make our moves
 
   Scenario: White makes the first move
@@ -20,4 +20,4 @@ Feature: Making moves
     And opponent moved piece from g7 to g5
     When opponent tries to move piece from c7 to c6
     Then the move is illegal
-    And black pawn should not be moved from d7
+    And black pawn should not be moved from c7

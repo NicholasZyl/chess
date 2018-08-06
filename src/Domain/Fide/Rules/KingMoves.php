@@ -29,12 +29,6 @@ use NicholasZyl\Chess\Domain\Rules;
 final class KingMoves implements PieceMovesRule
 {
     private const CASTLING_MOVE_DISTANCE = 2;
-    private const INITIAL_ROOK_POSITIONS = [
-        'a1',
-        'h1',
-        'a8',
-        'h8',
-    ];
 
     /**
      * @var \SplObjectStorage
@@ -48,11 +42,14 @@ final class KingMoves implements PieceMovesRule
 
     /**
      * Create Castling Move rules.
+     * @param array $initialRookPositions
      */
-    public function __construct()
+    public function __construct(array $initialRookPositions)
     {
         $this->movedKings = new \SplObjectStorage();
-        $this->rookPositionsAvailableForCastling = array_flip(self::INITIAL_ROOK_POSITIONS);
+        $this->rookPositionsAvailableForCastling = array_flip(array_map(function (Coordinates $position) {
+            return (string)$position;
+        }, $initialRookPositions));
     }
 
     /**
@@ -230,10 +227,10 @@ final class KingMoves implements PieceMovesRule
             }
         }
         if ($actualPosition->equals($this->getStartingPositionForKing($piece)) && !$this->movedKings->contains($piece)) {
-            if (array_key_exists(Chessboard::FILE_MOST_QUEENSIDE.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
+            if (array_key_exists(Chessboard::FILE_MOST_QUEENSIDE . $actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
                 yield CoordinatePair::fromFileAndRank('c', $actualPosition->rank());
             }
-            if (array_key_exists(Chessboard::FILE_MOST_KINGSIDE.$actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
+            if (array_key_exists(Chessboard::FILE_MOST_KINGSIDE . $actualPosition->rank(), $this->rookPositionsAvailableForCastling)) {
                 yield CoordinatePair::fromFileAndRank('g', $actualPosition->rank());
             }
         }

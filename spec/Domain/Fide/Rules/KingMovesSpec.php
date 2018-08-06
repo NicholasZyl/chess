@@ -38,6 +38,13 @@ class KingMovesSpec extends ObjectBehavior
     {
         $this->whiteKing = King::forColor(Color::white());
         $this->blackKing = King::forColor(Color::black());
+
+        $this->beConstructedWith(
+            [
+                CoordinatePair::fromFileAndRank('a', 1), CoordinatePair::fromFileAndRank('h', 1),
+                CoordinatePair::fromFileAndRank('a', 8), CoordinatePair::fromFileAndRank('h', 8),
+            ]
+        );
     }
 
     function it_is_initializable()

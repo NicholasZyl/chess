@@ -49,6 +49,7 @@ Feature: The capture of opponent's piece
       | white pawn | a2       |
       | black pawn | e7       |
       | black pawn | f7       |
+    And it is black turn
     And opponent moved piece from e7 to e5
     And I moved piece from a2 to a3
     And opponent moved piece from f7 to f6

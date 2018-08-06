@@ -10,16 +10,12 @@ use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
 
 final class KingCheck implements Rule
 {
-    private const WHITE_KING_INITIAL_POSITION = 'e1';
-    private const BLACK_KING_INITIAL_POSITION = 'e8';
-
     /**
      * @var Coordinates[]
      */
@@ -27,12 +23,15 @@ final class KingCheck implements Rule
 
     /**
      * Create rules for checks.
+     *
+     * @param Coordinates $whiteKingPosition
+     * @param Coordinates $blackKingPosition
      */
-    public function __construct()
+    public function __construct(Coordinates $whiteKingPosition, Coordinates $blackKingPosition)
     {
         $this->kingsPositions = [
-            Color::WHITE => CoordinatePair::fromString(self::WHITE_KING_INITIAL_POSITION),
-            Color::BLACK => CoordinatePair::fromString(self::BLACK_KING_INITIAL_POSITION),
+            Color::WHITE => $whiteKingPosition,
+            Color::BLACK => $blackKingPosition,
         ];
     }
 
@@ -80,12 +79,22 @@ final class KingCheck implements Rule
         /** @var Move $action */
         $color = $action->piece()->color();
         $kingPosition = $this->kingsPositions[(string)$color];
+        $moveDestination = $action->destination();
         if ($action->piece() instanceof King) {
-            $kingPosition = $action->destination();
+            $kingPosition = $moveDestination;
+        }
+        if ($board->isPositionOccupiedBy($moveDestination, $color->opponent())) {
+            $pieceToCapture = $board->pickPieceFrom($moveDestination);
         }
 
-        if ($board->isPositionAttackedBy($kingPosition, $color->opponent(), $rules)) {
-            throw new IllegalAction\MoveExposesToCheck();
+        try {
+            if ($board->isPositionAttackedBy($kingPosition, $color->opponent(), $rules)) {
+                throw new IllegalAction\MoveExposesToCheck();
+            }
+        } finally {
+            if (isset($pieceToCapture)) {
+                $board->placePieceAt($pieceToCapture, $moveDestination);
+            }
         }
     }
 }

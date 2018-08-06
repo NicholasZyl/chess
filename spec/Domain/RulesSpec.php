@@ -14,6 +14,8 @@ use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
 use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
+use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
+use NicholasZyl\Chess\Domain\Fide\Rules\Turns;
 use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
@@ -175,5 +177,16 @@ class RulesSpec extends ObjectBehavior
         $board->pickPieceFrom($source)->shouldBeCalled()->willThrow(SquareIsUnoccupied::class);
 
         $this->shouldThrow(SquareIsUnoccupied::class)->during('getLegalDestinationsFrom', [$source, $board,]);
+    }
+
+    function it_allows_to_replace_rule()
+    {
+        $rule = new Turns();
+        $replacedRule = new Turns(Color::black());
+        $nonReplacedRule = new BishopMoves();
+
+        $this->beConstructedWith([$nonReplacedRule, $rule,]);
+
+        $this->replace([$replacedRule,])->shouldBeLike(new Rules([$nonReplacedRule, $replacedRule,]));
     }
 }

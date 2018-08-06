@@ -20,10 +20,11 @@ final class Turns implements Rule
 
     /**
      * Create rules for players to move alternately.
+     * @param Color|null $startingColor
      */
-    public function __construct()
+    public function __construct(Color $startingColor = null)
     {
-        $this->player = Color::white();
+        $this->player = $startingColor ?? Color::white();
     }
 
     /**

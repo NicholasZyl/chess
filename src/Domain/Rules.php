@@ -32,7 +32,7 @@ class Rules
             if (!$rule instanceof Rule) {
                 throw new \InvalidArgumentException('Rules can consists only of rule objects.');
             }
-            $this->rules[] = $rule;
+            $this->rules[get_class($rule)] = $rule;
             if ($rule instanceof PieceMovesRule) {
                 if (array_key_exists($rule->isFor(), $this->moveRules)) {
                     throw new \InvalidArgumentException('Rules cannot contain more than one rule for a piece rank.');
@@ -123,5 +123,22 @@ class Rules
         } finally {
             $board->placePieceAt($piece, $position);
         }
+    }
+
+    /**
+     * Replace current rules with given set.
+     *
+     * @param array $rules
+     *
+     * @return Rules
+     */
+    public function replace(array $rules): Rules
+    {
+        $replacingRules = [];
+        foreach ($rules as $rule) {
+            $replacingRules[get_class($rule)] = $rule;
+        }
+
+        return new Rules(array_merge($this->rules, $replacingRules));
     }
 }
