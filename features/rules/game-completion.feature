@@ -40,3 +40,16 @@ Feature: The completion of game
     And I moved piece from f1 to e1
     When opponent move piece from a8 to a1
     Then white is checkmated
+    And black won the game
+
+  Scenario: If player has no legal move and his king is not in checkmate then the game ends with stalemate
+    Given there is a chessboard with placed pieces
+      | piece        | location |
+      | white king   | e1       |
+      | black bishop | g4       |
+      | black rook   | a8       |
+      | black rook   | d7       |
+    And it is black turn
+    When opponent move piece from a8 to f8
+    Then it is stalemate
+    And the game ends with drawn

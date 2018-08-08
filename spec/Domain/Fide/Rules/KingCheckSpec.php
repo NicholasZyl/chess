@@ -11,6 +11,7 @@ use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\Checkmated;
 use NicholasZyl\Chess\Domain\Event\InCheck;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
+use NicholasZyl\Chess\Domain\Event\Stalemate;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
 use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Fide\Piece\King;
@@ -63,23 +64,6 @@ class KingCheckSpec extends ObjectBehavior
         $this->isApplicableTo($exchange)->shouldBe(true);
     }
 
-    function it_does_nothing_if_king_is_not_attacked_after_move(Board $board, Rules $rules)
-    {
-        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 8), Color::white(), $rules)->shouldBeCalled()->willReturn(false);
-
-        $this->applyAfter(
-            new PieceWasMoved(
-                new Move(
-                    Rook::forColor(Color::white()),
-                    CoordinatePair::fromFileAndRank('c', 4),
-                    CoordinatePair::fromFileAndRank('d', 4)
-                )
-            ),
-            $board,
-            $rules
-        )->shouldBeLike([]);
-    }
-
     function it_notices_when_opponents_king_is_in_check_after_move(Board $board, Rules $rules)
     {
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 8), Color::white(), $rules)->shouldBeCalled()->willReturn(true);
@@ -116,6 +100,25 @@ class KingCheckSpec extends ObjectBehavior
             $board,
             $rules
         )->shouldBeLike([new InCheck(Color::black()), new Checkmated(Color::black()),]);
+    }
+
+    function it_notices_when_opponent_has_no_valid_move_after_move_and_is_not_checked(Board $board, Rules $rules)
+    {
+        $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 8), Color::white(), $rules)->shouldBeCalled()->willReturn(false);
+
+        $board->hasLegalMove(Color::black(), $rules)->shouldBeCalled()->willReturn(false);
+
+        $this->applyAfter(
+            new PieceWasMoved(
+                new Move(
+                    Rook::forColor(Color::white()),
+                    CoordinatePair::fromFileAndRank('c', 4),
+                    CoordinatePair::fromFileAndRank('e', 4)
+                )
+            ),
+            $board,
+            $rules
+        )->shouldBeLike([new Stalemate(),]);
     }
 
     function it_disallows_move_when_kings_move_is_exposing_it_to_check(Board $board, Rules $rules)
@@ -177,6 +180,8 @@ class KingCheckSpec extends ObjectBehavior
     function it_traces_kings_moves(Board $board, Rules $rules)
     {
         $board->isPositionAttackedBy(CoordinatePair::fromFileAndRank('e', 8), Color::white(), $rules)->shouldBeCalled()->willReturn(false);
+
+        $board->hasLegalMove(Color::black(), $rules)->shouldBeCalled()->willReturn(true);
 
         $this->applyAfter(
             new PieceWasMoved(

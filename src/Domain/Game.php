@@ -59,8 +59,6 @@ class Game
             $this->rules->applyRulesTo($move, $this->board);
             $events = $this->board->placePieceAt($piece, $to);
             $events[] = new PieceWasMoved($move);
-
-            $events = array_merge($events, $this->onEventsOccurred($events));
         } catch (NoApplicableRule $noApplicableRule) {
             $this->board->placePieceAt($piece, $from);
             throw new MoveToIllegalPosition($move);
@@ -72,15 +70,13 @@ class Game
             throw new MoveToOccupiedPosition($squareIsOccupied->coordinates());
         }
 
-        return $events;
+        return array_merge($events, $this->onEventsOccurred($events));
     }
 
     /**
      * Act on events that just occurred.
      *
      * @param array $events
-     *
-     * @throws IllegalAction\MoveExposesToCheck
      *
      * @return Event[]
      */
@@ -89,6 +85,9 @@ class Game
         $firedEvents = [];
         foreach ($events as $event) {
             $firedEvents = array_merge($firedEvents, $this->rules->applyAfter($event, $this->board));
+        }
+        if ($firedEvents) {
+            $firedEvents = array_merge($firedEvents, $this->onEventsOccurred($firedEvents));
         }
 
         return $firedEvents;

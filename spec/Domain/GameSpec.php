@@ -107,6 +107,7 @@ class GameSpec extends ObjectBehavior
         $board->placePieceAt($pawn, $destination)->shouldBeCalled()->willReturn([]);
         $anotherEvent = new PieceWasMoved(new Move(Rook::forColor(Color::white()), CoordinatePair::fromFileAndRank('b', 3), $source));
         $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$anotherEvent]);
+        $rules->applyAfter($anotherEvent, $board)->shouldBeCalled()->willReturn([]);
 
         $this->playMove($source, $destination)->shouldBeLike([new PieceWasMoved($move), $anotherEvent,]);
     }

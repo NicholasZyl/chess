@@ -14,6 +14,7 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
+use NicholasZyl\Chess\Domain\Fide\Rules\GameCompletion;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingCheck;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
@@ -59,6 +60,7 @@ class LawsOfChessSpec extends ObjectBehavior
                     CoordinatePair::fromFileAndRank('e', 8)
                 ),
                 new Turns(),
+                new GameCompletion(),
             ])
         );
     }

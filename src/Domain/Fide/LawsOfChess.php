@@ -13,6 +13,7 @@ use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
 use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
+use NicholasZyl\Chess\Domain\Fide\Rules\GameCompletion;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingCheck;
 use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
 use NicholasZyl\Chess\Domain\Fide\Rules\KnightMoves;
@@ -75,6 +76,7 @@ final class LawsOfChess implements GameArrangement
                 new KingMoves(array_values($this->rooksPositions)),
                 new KingCheck($this->whiteKingInitialPosition, $this->blackKingInitialPosition),
                 new Turns(Color::white()),
+                new GameCompletion(),
             ]
         );
     }

@@ -140,7 +140,7 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     private function getCurrentGame(): Game
     {
-        if (is_null($this->game)) {
+        if (!$this->game) {
             $this->theGameIsSetUp();
         }
 
@@ -229,6 +229,31 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
+     * @Then it is stalemate
+     */
+    public function itIsStalemate()
+    {
+        expect($this->occurredEvents)->toContainEvent(new Event\Stalemate());
+    }
+
+    /**
+     * @Then :color won the game
+     * @param Color $color
+     */
+    public function playerWonTheGame(Color $color)
+    {
+        expect($this->occurredEvents)->toContainEvent(new Event\GameEnded($color));
+    }
+
+    /**
+     * @Then the game ends with drawn
+     */
+    public function theGameEndsWithDrawn()
+    {
+        expect($this->occurredEvents)->toContainEvent(new Event\GameEnded());
+    }
+
+    /**
      * @Transform :piece
      * @Transform :exchangedWithPiece
      *
@@ -271,6 +296,8 @@ class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
+     * Check if any unexpected exception occurred.
+     *
      * @BeforeStep
      * @param BeforeStepScope $scope
      */
