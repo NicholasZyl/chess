@@ -9,7 +9,6 @@ use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Color;
-use NicholasZyl\Chess\Domain\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ActionNotAllowed;
@@ -601,21 +600,6 @@ class PawnMovesSpec extends ObjectBehavior
             $board,
             $rules
         )->shouldBeLike([new PieceWasCaptured($this->whitePawn, CoordinatePair::fromFileAndRank('d', 4)),]);
-    }
-
-    function it_is_to_be_promoted_when_reaches_furhtest_rank_from_its_starting_position(Board $board, Rules $rules)
-    {
-        $this->applyAfter(
-            new PieceWasMoved(
-                new Move(
-                    $this->blackPawn,
-                    CoordinatePair::fromFileAndRank('g', 2),
-                    CoordinatePair::fromFileAndRank('g', 1)
-                )
-            ),
-            $board,
-            $rules
-        )->shouldBeLike([new PawnReachedPromotion($this->blackPawn, CoordinatePair::fromFileAndRank('g', 1))]);
     }
 
     function it_disallows_exchange_by_default(Board $board, Rules $rules)

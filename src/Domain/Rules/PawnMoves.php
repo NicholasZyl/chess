@@ -15,7 +15,6 @@ use NicholasZyl\Chess\Domain\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
-use NicholasZyl\Chess\Domain\Event\PawnReachedPromotion;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ActionNotAllowed;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\ExchangeIsNotAllowed;
@@ -106,7 +105,6 @@ final class PawnMoves implements PieceMovesRule
         }
         if ($event->destination()->rank() === self::FURTHEST_RANKS[(string)$event->piece()->color()]) {
             $this->promotionPosition = $event->destination();
-            $events[] = new PawnReachedPromotion($event->piece(), $this->promotionPosition);
         }
 
         return $events;
