@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain;
+namespace NicholasZyl\Chess\Domain\Board;
 
-use NicholasZyl\Chess\Domain\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
+use NicholasZyl\Chess\Domain\Piece;
 
 final class Square
 {

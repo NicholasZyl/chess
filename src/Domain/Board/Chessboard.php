@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Domain;
+namespace NicholasZyl\Chess\Domain\Board;
 
 use NicholasZyl\Chess\Domain\Action\Attack;
-use NicholasZyl\Chess\Domain\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
@@ -13,6 +13,8 @@ use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
+use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Rules;
 
 final class Chessboard implements Board
 {

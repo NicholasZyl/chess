@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Piece\King;

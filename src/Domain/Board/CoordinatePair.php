@@ -6,7 +6,6 @@ namespace NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Direction\AlongDiagonal;
 use NicholasZyl\Chess\Domain\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Board\Direction\AlongRank;
-use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\UnknownDirection;
 

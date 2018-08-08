@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace spec\NicholasZyl\Chess\Domain;
+namespace spec\NicholasZyl\Chess\Domain\Board;
 
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
