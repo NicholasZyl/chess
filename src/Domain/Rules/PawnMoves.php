@@ -7,6 +7,7 @@ use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Action\Movement;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction\AlongDiagonal;
@@ -117,7 +118,7 @@ final class PawnMoves implements PieceMovesRule
     public function isApplicableTo(Action $action): bool
     {
         return $this->promotionPosition !== null
-            || $action instanceof Move && $action->piece() instanceof Pawn
+            || $action instanceof Movement && $action->piece() instanceof Pawn
             || $action instanceof Exchange;
     }
 
@@ -162,12 +163,12 @@ final class PawnMoves implements PieceMovesRule
     /**
      * Apply rules to the move.
      *
-     * @param Move $move
+     * @param Movement $move
      * @param Board $board
      *
      * @return void
      */
-    private function applyToMove(Move $move, Board $board): void
+    private function applyToMove(Movement $move, Board $board): void
     {
         if (!in_array($move->destination(), iterator_to_array($this->getLegalDestinationsFrom($move->piece(), $move->source(), $board)))) {
             throw new MoveToIllegalPosition($move);

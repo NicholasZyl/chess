@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
-use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Action\Movement;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction\AlongDiagonal;
@@ -36,7 +36,7 @@ final class QueenMoves implements PieceMovesRule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move && $action->piece() instanceof Queen;
+        return $action instanceof Movement && $action->piece() instanceof Queen;
     }
 
     /**
@@ -47,7 +47,7 @@ final class QueenMoves implements PieceMovesRule
         if (!$this->isApplicableTo($action)) {
             throw new RuleIsNotApplicable();
         }
-        /** @var Move $action */
+        /** @var Movement $action */
         if (!in_array($action->destination(), iterator_to_array($this->getLegalDestinationsFrom($action->piece(), $action->source(), $board)))) {
             throw new MoveToIllegalPosition($action);
         }

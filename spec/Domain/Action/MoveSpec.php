@@ -5,6 +5,7 @@ namespace spec\NicholasZyl\Chess\Domain\Action;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Action\Movement;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Board\Direction\AlongFile;
@@ -48,6 +49,11 @@ class MoveSpec extends ObjectBehavior
     function it_is_game_action()
     {
         $this->shouldBeAnInstanceOf(Action::class);
+    }
+
+    function it_is_piece_movement_action()
+    {
+        $this->shouldBeAnInstanceOf(Movement::class);
     }
 
     function it_is_for_player_whom_piece_is_moved()

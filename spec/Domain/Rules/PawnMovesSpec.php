@@ -69,7 +69,7 @@ class PawnMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(true);
     }
 
-    function it_is_applicable_to_bishop_attack()
+    function it_is_applicable_to_pawn_attack()
     {
         $move = new Attack(
             $this->blackPawn,

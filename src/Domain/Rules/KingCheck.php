@@ -65,7 +65,7 @@ final class KingCheck implements Rule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move && !$action instanceof Action\Attack;
+        return $action instanceof Move;
     }
 
     /**
