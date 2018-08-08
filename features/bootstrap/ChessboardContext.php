@@ -6,14 +6,14 @@ use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Gherkin\Node\TableNode;
 use Helper\PieceFactory;
 use Helper\TestArrangement;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Chessboard;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Chessboard;
-use NicholasZyl\Chess\Domain\Fide\LawsOfChess;
 use NicholasZyl\Chess\Domain\Game;
+use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\Piece;
 
 /**

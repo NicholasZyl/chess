@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\CastlingPrevented;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\King;
+use NicholasZyl\Chess\Domain\Piece\King;
 use PhpSpec\ObjectBehavior;
 
 class CastlingPreventedSpec extends ObjectBehavior

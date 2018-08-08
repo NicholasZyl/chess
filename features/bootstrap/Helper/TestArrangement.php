@@ -4,17 +4,17 @@ declare(strict_types=1);
 namespace Helper;
 
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Color;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\King;
-use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
-use NicholasZyl\Chess\Domain\Fide\Rules\KingCheck;
-use NicholasZyl\Chess\Domain\Fide\Rules\KingMoves;
-use NicholasZyl\Chess\Domain\Fide\Rules\Turns;
 use NicholasZyl\Chess\Domain\GameArrangement;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\King;
+use NicholasZyl\Chess\Domain\Piece\Rook;
 use NicholasZyl\Chess\Domain\Rules;
+use NicholasZyl\Chess\Domain\Rules\KingCheck;
+use NicholasZyl\Chess\Domain\Rules\KingMoves;
+use NicholasZyl\Chess\Domain\Rules\Turns;
 
 class TestArrangement implements GameArrangement
 {

@@ -5,20 +5,20 @@ namespace spec\NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Board;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveExposesToCheck;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\NoApplicableRule;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\Knight;
-use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
-use NicholasZyl\Chess\Domain\Fide\Piece\Rook;
-use NicholasZyl\Chess\Domain\Fide\Rules\BishopMoves;
-use NicholasZyl\Chess\Domain\Fide\Rules\Turns;
+use NicholasZyl\Chess\Domain\Piece\Knight;
+use NicholasZyl\Chess\Domain\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Piece\Rook;
 use NicholasZyl\Chess\Domain\PieceMovesRule;
 use NicholasZyl\Chess\Domain\Rule;
 use NicholasZyl\Chess\Domain\Rules;
+use NicholasZyl\Chess\Domain\Rules\BishopMoves;
+use NicholasZyl\Chess\Domain\Rules\Turns;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -54,18 +54,8 @@ class RulesSpec extends ObjectBehavior
         $this->shouldThrow(\InvalidArgumentException::class)->duringInstantiation();
     }
 
-    function it_applies_all_applicable_rules_to_action(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board)
+    function it_applies_all_applicable_rules_to_action(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board, Action $action)
     {
-        $action = new class implements Action {
-            /**
-             * {@inheritdoc}
-             */
-            public function player(): Color
-            {
-                return Color::white();
-            }
-        };
-
         $firstRule->isApplicableTo($action)->shouldBeCalled()->willReturn(true);
         $secondRule->isApplicableTo($action)->shouldBeCalled()->willReturn(true);
         $otherRule->isApplicableTo($action)->shouldBeCalled()->willReturn(true);
@@ -76,18 +66,8 @@ class RulesSpec extends ObjectBehavior
         $this->applyRulesTo($action, $board);
     }
 
-    function it_fails_if_there_is_no_applicable_rule_to_action(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board)
+    function it_fails_if_there_is_no_applicable_rule_to_action(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board, Action $action)
     {
-        $action = new class implements Action {
-            /**
-             * {@inheritdoc}
-             */
-            public function player(): Color
-            {
-                return Color::white();
-            }
-        };
-
         $firstRule->isApplicableTo($action)->shouldBeCalled()->willReturn(false);
         $secondRule->isApplicableTo($action)->shouldBeCalled()->willReturn(false);
         $otherRule->isApplicableTo($action)->shouldBeCalled()->willReturn(false);
@@ -98,27 +78,8 @@ class RulesSpec extends ObjectBehavior
         $this->shouldThrow(NoApplicableRule::class)->during('applyRulesTo', [$action, $board,]);
     }
 
-    function it_applies_rules_to_occurred_event(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board)
+    function it_applies_rules_to_occurred_event(PieceMovesRule $firstRule, PieceMovesRule $secondRule, Rule $otherRule, Board $board, Event $event, Event $otherEvent)
     {
-        $event = new class implements Event {
-            /**
-             * {@inheritdoc}
-             */
-            public function equals(?Event $anotherEvent): bool
-            {
-                return false;
-            }
-        };
-        $otherEvent = new class implements Event {
-            /**
-             * {@inheritdoc}
-             */
-            public function equals(?Event $anotherEvent): bool
-            {
-                return false;
-            }
-        };
-
         $firstRule->applyAfter($event, $board, $this->getWrappedObject())->shouldBeCalled()->willReturn([$otherEvent,]);
         $secondRule->applyAfter($event, $board, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);
         $otherRule->applyAfter($event, $board, $this->getWrappedObject())->shouldBeCalled()->willReturn([]);

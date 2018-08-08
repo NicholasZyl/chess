@@ -5,11 +5,11 @@ namespace spec\NicholasZyl\Chess\Domain\Action;
 
 use NicholasZyl\Chess\Domain\Action;
 use NicholasZyl\Chess\Domain\Action\Exchange;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Color;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\Queen;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\Piece\Queen;
 use PhpSpec\ObjectBehavior;
 
 class ExchangeSpec extends ObjectBehavior

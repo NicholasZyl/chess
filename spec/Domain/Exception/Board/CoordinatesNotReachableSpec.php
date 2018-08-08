@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Exception\Board;
 
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Board\Direction\AlongFile;
 use NicholasZyl\Chess\Domain\Exception\Board\CoordinatesNotReachable;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Board\Direction\AlongFile;
 use PhpSpec\ObjectBehavior;
 
 class CoordinatesNotReachableSpec extends ObjectBehavior

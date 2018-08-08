@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Exception\IllegalAction;
 
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction\MoveToOccupiedPosition;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
 use PhpSpec\ObjectBehavior;
 
 class MoveToOccupiedPositionSpec extends ObjectBehavior

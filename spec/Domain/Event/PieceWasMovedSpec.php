@@ -4,11 +4,11 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Event;
 
 use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
-use NicholasZyl\Chess\Domain\Fide\Board\CoordinatePair;
-use NicholasZyl\Chess\Domain\Fide\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Piece\Pawn;
 use PhpSpec\ObjectBehavior;
 
 class PieceWasMovedSpec extends ObjectBehavior
