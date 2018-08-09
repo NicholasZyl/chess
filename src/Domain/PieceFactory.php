@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace Helper;
+namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Color;
-use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\Piece\Bishop;
 use NicholasZyl\Chess\Domain\Piece\King;
 use NicholasZyl\Chess\Domain\Piece\Knight;
@@ -12,7 +10,7 @@ use NicholasZyl\Chess\Domain\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Queen;
 use NicholasZyl\Chess\Domain\Piece\Rook;
 
-final class PieceFactory
+class PieceFactory
 {
     /**
      * @var callable[]
@@ -47,7 +45,7 @@ final class PieceFactory
     }
 
     /**
-     * Helper for creating piece object from piece's name.
+     * Create a piece object from piece's name and color.
      *
      * @param string $name
      * @param Color $color
@@ -63,5 +61,24 @@ final class PieceFactory
         }
 
         return $this->pieceFactories[$name]($color);
+    }
+
+    /**
+     * Create a piece object from its description.
+     *
+     * @param string $pieceDescription
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return Piece
+     */
+    public function createPieceFromDescription(string $pieceDescription): Piece
+    {
+        $explodedDescription = explode(' ', $pieceDescription);
+        if (count($explodedDescription) !== 2) {
+            throw new \InvalidArgumentException(sprintf('Piece description "%s" is missing either rank or color', $pieceDescription));
+        }
+
+        return $this->createPieceNamedForColor($explodedDescription[1], Color::fromString($explodedDescription[0]));
     }
 }

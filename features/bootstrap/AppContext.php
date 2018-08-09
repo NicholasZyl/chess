@@ -3,11 +3,29 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Helper\InMemoryGames;
+use Helper\TestArrangement;
 use NicholasZyl\Chess\Application\GameService;
+use NicholasZyl\Chess\Domain\Board\Chessboard;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
+use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
+use NicholasZyl\Chess\Domain\LawsOfChess;
+use NicholasZyl\Chess\Domain\PieceFactory;
+use PhpSpec\Exception\Example\FailureException;
 
 class AppContext implements Context
 {
+    /**
+     * @var PieceFactory
+     */
+    private $pieceFactory;
+
+    /**
+     * @var TestArrangement
+     */
+    private $testArrangement;
+
     /**
      * @var InMemoryGames
      */
@@ -33,9 +51,12 @@ class AppContext implements Context
      */
     public function __construct()
     {
+        $this->pieceFactory = new PieceFactory();
+        $this->testArrangement = new TestArrangement(new LawsOfChess());
         $this->games = new InMemoryGames();
         $this->gameService = new GameService(
-            $this->games
+            $this->games,
+            $this->pieceFactory
         );
     }
 
@@ -49,7 +70,21 @@ class AppContext implements Context
     }
 
     /**
-     * @When I/opponent (tries to) move piece from :source to :destination
+     * @Given /there is a chessboard with (?P<piece>[a-z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
+     * @param string $piece
+     * @param string $position
+     */
+    public function thereIsAChessboardWithPiecePlacedOnPosition(string $piece, string $position)
+    {
+        $piece = $this->pieceFactory->createPieceFromDescription($piece);
+        $this->testArrangement->placePieceAt($piece, CoordinatePair::fromString($position));
+
+        $this->gameId = GameId::generate();
+        $this->games->add($this->gameId, new Game(new Chessboard(), $this->testArrangement));
+    }
+
+    /**
+     * @When I/opponent (tries to) move(d) piece from :source to :destination
      * @param string $source
      * @param string $destination
      */
@@ -63,52 +98,82 @@ class AppContext implements Context
     }
 
     /**
+     * @When /I exchange piece on (?P<position>[a-h][0-8]) to (?P<piece>[a-z]+ [a-z]+)/
+     * @param string $position
+     * @param string $piece
+     */
+    public function iExchangePieceOnPositionTo(string $position, string $piece)
+    {
+        try {
+            $this->gameService->exchangePieceInGame($this->gameId, $position, $piece);
+        } catch (\Exception $e) {
+            $this->caughtException = $e;
+        }
+    }
+
+    /**
      * @Then /(?P<piece>[a-z]+ [a-z]+) should be moved to (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
-     * @throws \PhpSpec\Exception\Example\FailureException
+     * @throws FailureException
      */
     public function pieceShouldBeMovedToPosition(string $piece, string $position)
     {
-        $board = $this->gameService->find($this->gameId);
-        $actualPiece = $board->position($position[0], (int)$position[1]);
-
-        if ($piece !== $actualPiece) {
-            throw new \PhpSpec\Exception\Example\FailureException(
-                sprintf('%s should be moved to %s but it was not.', $piece, $position)
-            );
-        }
+        $this->pieceShouldBePlacedOnPosition($piece, $position);
     }
 
     /**
      * @Then /(?P<piece>[a-z]+ [a-z]+) should not be moved from (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
-     * @throws \PhpSpec\Exception\Example\FailureException
+     * @throws FailureException
      */
     public function pieceShouldNotBeMovedFromPosition(string $piece, string $position)
+    {
+        $this->pieceShouldBePlacedOnPosition($piece, $position);
+    }
+
+    /**
+     * @Then the move is illegal
+     * @throws FailureException
+     */
+    public function theMoveIsIllegal()
+    {
+        if (!$this->caughtException instanceof IllegalAction) {
+            throw new FailureException(
+                sprintf('Expected move to be illegal but got "%s"', $this->caughtException ? $this->caughtException->getMessage() : 'none')
+            );
+        }
+        $this->caughtException = null;
+    }
+
+    /**
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged with (?P<exchangedPiece>[a-z]+ [a-z]+)/
+     * @param string $position
+     * @param string $exchangedPiece
+     * @throws FailureException
+     */
+    public function pieceOnPositionShouldBeExchangedWith(string $position, string $exchangedPiece)
+    {
+        $this->pieceShouldBePlacedOnPosition($exchangedPiece, $position);
+    }
+
+    /**
+     * @param string $piece
+     * @param string $position
+     *
+     * @throws FailureException
+     * @return void
+     */
+    private function pieceShouldBePlacedOnPosition(string $piece, string $position): void
     {
         $board = $this->gameService->find($this->gameId);
         $actualPiece = $board->position($position[0], (int)$position[1]);
 
         if ($piece !== $actualPiece) {
-            throw new \PhpSpec\Exception\Example\FailureException(
-                sprintf('%s should not be moved from %s but it was.', $piece, $position)
+            throw new FailureException(
+                sprintf('%s should be placed on %s but it is not.', $piece, $position)
             );
         }
-    }
-
-    /**
-     * @Then the move is illegal
-     * @throws \PhpSpec\Exception\Example\FailureException
-     */
-    public function theMoveIsIllegal()
-    {
-        if (!$this->caughtException instanceof  \NicholasZyl\Chess\Domain\Exception\IllegalAction) {
-            throw new \PhpSpec\Exception\Example\FailureException(
-                sprintf('Expected move to be illegal but got "%s"', $this->caughtException ? $this->caughtException->getMessage() : 'none')
-            );
-        }
-        $this->caughtException = null;
     }
 }

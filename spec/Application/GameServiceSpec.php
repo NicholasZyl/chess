@@ -6,17 +6,20 @@ namespace spec\NicholasZyl\Chess\Application;
 use NicholasZyl\Chess\Application\GameDto;
 use NicholasZyl\Chess\Application\GameService;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\GamesRepository;
+use NicholasZyl\Chess\Domain\Piece\Queen;
+use NicholasZyl\Chess\Domain\PieceFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class GameServiceSpec extends ObjectBehavior
 {
-    function let(GamesRepository $gamesRepository)
+    function let(GamesRepository $gamesRepository, PieceFactory $pieceFactory)
     {
-        $this->beConstructedWith($gamesRepository);
+        $this->beConstructedWith($gamesRepository, $pieceFactory);
     }
 
     function it_is_initializable()
@@ -54,5 +57,20 @@ class GameServiceSpec extends ObjectBehavior
         $gamesRepository->add($gameId, $game)->shouldBeCalled();
 
         $this->movePieceInGame($gameId, 'c2', 'c3');
+    }
+
+    function it_allows_exchanging_piece_in_a_game(GamesRepository $gamesRepository, PieceFactory $pieceFactory, Game $game)
+    {
+        $gameId = GameId::generate();
+        $gamesRepository->find($gameId)->shouldBeCalled()->willReturn($game);
+        $queen = Queen::forColor(Color::white());
+        $pieceFactory->createPieceFromDescription('white queen')->shouldBeCalled()->willReturn($queen);
+        $game->exchangePieceOnBoardTo(
+            CoordinatePair::fromString('d8'),
+            $queen
+        )->shouldBeCalled();
+        $gamesRepository->add($gameId, $game)->shouldBeCalled();
+
+        $this->exchangePieceInGame($gameId, 'd8', 'white queen');
     }
 }

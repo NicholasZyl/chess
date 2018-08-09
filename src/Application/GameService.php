@@ -5,10 +5,13 @@ namespace NicholasZyl\Chess\Application;
 
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Exception\BoardException;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\GamesRepository;
 use NicholasZyl\Chess\Domain\LawsOfChess;
+use NicholasZyl\Chess\Domain\PieceFactory;
 
 final class GameService
 {
@@ -18,13 +21,20 @@ final class GameService
     private $games;
 
     /**
+     * @var PieceFactory
+     */
+    private $pieceFactory;
+
+    /**
      * Create Game Service to interact with the application.
      *
      * @param GamesRepository $games
+     * @param PieceFactory $pieceFactory
      */
-    public function __construct(GamesRepository $games)
+    public function __construct(GamesRepository $games, PieceFactory $pieceFactory)
     {
         $this->games = $games;
+        $this->pieceFactory = $pieceFactory;
     }
 
     /**
@@ -65,6 +75,9 @@ final class GameService
      * @param string $from
      * @param string $to
      *
+     * @throws BoardException
+     * @throws IllegalAction
+     *
      * @return void
      */
     public function movePieceInGame(GameId $identifier, string $from, string $to): void
@@ -73,6 +86,28 @@ final class GameService
         $game->playMove(
             CoordinatePair::fromString($from),
             CoordinatePair::fromString($to)
+        );
+        $this->games->add($identifier, $game);
+    }
+
+    /**
+     * Exchange piece in a game with given identifier.
+     *
+     * @param GameId $identifier
+     * @param string $position
+     * @param string $pieceDescription
+     *
+     * @throws BoardException
+     * @throws IllegalAction
+     *
+     * @return void
+     */
+    public function exchangePieceInGame(GameId $identifier, string $position, string $pieceDescription)
+    {
+        $game = $this->games->find($identifier);
+        $game->exchangePieceOnBoardTo(
+            CoordinatePair::fromString($position),
+            $this->pieceFactory->createPieceFromDescription($pieceDescription)
         );
         $this->games->add($identifier, $game);
     }

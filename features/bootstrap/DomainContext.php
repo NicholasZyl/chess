@@ -4,7 +4,6 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Gherkin\Node\TableNode;
-use Helper\PieceFactory;
 use Helper\TestArrangement;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
@@ -15,6 +14,7 @@ use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\Piece;
+use NicholasZyl\Chess\Domain\PieceFactory;
 
 /**
  * Defines application features from the specific context.
@@ -48,11 +48,10 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
 
     /**
      * ChessboardContext constructor.
-     * @param PieceFactory $pieceFactory
      */
-    public function __construct(PieceFactory $pieceFactory)
+    public function __construct()
     {
-        $this->pieceFactory = $pieceFactory;
+        $this->pieceFactory = new PieceFactory();
         $this->testArrangement = new TestArrangement(new LawsOfChess());
     }
 
@@ -262,12 +261,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
      */
     public function castToPiece(string $pieceDescription): Piece
     {
-        $pieceDescription = explode(' ', $pieceDescription);
-        if (count($pieceDescription) !== 2) {
-            throw new \InvalidArgumentException(sprintf('Piece description "%s" is missing either rank or color'));
-        }
-
-        return $this->pieceFactory->createPieceNamedForColor($pieceDescription[1], Color::fromString($pieceDescription[0]));
+        return $this->pieceFactory->createPieceFromDescription($pieceDescription);
     }
 
     /**

@@ -204,6 +204,7 @@ Feature: The moves of the pieces
     Then the move is illegal
     And white bishop should not be moved from b3
 
+  @application
   Scenario: Pawn's promotion
     Given there is a chessboard with white pawn placed on b7
     And I moved piece from b7 to b8

@@ -2,10 +2,7 @@ default:
   suites:
     domain:
       contexts:
-        - DomainContext:
-          - '@chess_piece_factory'
-      services:
-        chess_piece_factory: Helper\PieceFactory
+        - DomainContext
     application:
       contexts:
         - AppContext
