@@ -8,6 +8,9 @@ use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Color;
+use NicholasZyl\Chess\Domain\Event\Checkmated;
+use NicholasZyl\Chess\Domain\Event\GameEnded;
+use NicholasZyl\Chess\Domain\Event\InCheck;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
@@ -214,5 +217,126 @@ class GameSpec extends ObjectBehavior
                 ],
             ]
         );
+    }
+
+    function it_is_not_ended_if_rules_do_not_state_so()
+    {
+        $this->hasEnded()->shouldBe(false);
+    }
+
+    function it_is_ended_when_rules_say_so(Board $board, Rules $rules)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $from = CoordinatePair::fromFileAndRank('c', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 3);
+        $move = new Move($pawn, $from, $to);
+
+        $board->pickPieceFrom($from)->shouldBeCalled()->willReturn($pawn);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
+
+        $board->placePieceAt($pawn, $to)->shouldBeCalled()->willReturn([]);
+        $gameEnded = new GameEnded(Color::white());
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$gameEnded,]);
+        $rules->applyAfter($gameEnded, $board)->shouldBeCalled()->willReturn([]);
+        $this->playMove($from, $to);
+
+        $this->hasEnded()->shouldBe(true);
+    }
+
+    function it_has_no_winner_before_game_ends()
+    {
+        $this->winner()->shouldBeNull();
+    }
+
+    function it_knows_the_winner_of_the_game(Board $board, Rules $rules)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $from = CoordinatePair::fromFileAndRank('c', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 3);
+        $move = new Move($pawn, $from, $to);
+
+        $board->pickPieceFrom($from)->shouldBeCalled()->willReturn($pawn);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
+
+        $board->placePieceAt($pawn, $to)->shouldBeCalled()->willReturn([]);
+        $gameEnded = new GameEnded(Color::white());
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$gameEnded,]);
+        $rules->applyAfter($gameEnded, $board)->shouldBeCalled()->willReturn([]);
+        $this->playMove($from, $to);
+
+        $this->winner()->shouldBeLike(Color::white());
+    }
+
+    function it_knows_when_none_is_checked()
+    {
+        $this->checked()->shouldBeNull();
+    }
+
+    function it_knows_the_player_who_is_currently_checked(Board $board, Rules $rules)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $from = CoordinatePair::fromFileAndRank('c', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 3);
+        $move = new Move($pawn, $from, $to);
+
+        $board->pickPieceFrom($from)->shouldBeCalled()->willReturn($pawn);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
+
+        $board->placePieceAt($pawn, $to)->shouldBeCalled()->willReturn([]);
+        $checked = new InCheck(Color::white());
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$checked,]);
+        $rules->applyAfter($checked, $board)->shouldBeCalled()->willReturn([]);
+        $this->playMove($from, $to);
+
+        $this->checked()->shouldBeLike(Color::white());
+    }
+
+    function it_knows_the_player_who_is_checkmated(Board $board, Rules $rules)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $from = CoordinatePair::fromFileAndRank('c', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 3);
+        $move = new Move($pawn, $from, $to);
+
+        $board->pickPieceFrom($from)->shouldBeCalled()->willReturn($pawn);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
+
+        $board->placePieceAt($pawn, $to)->shouldBeCalled()->willReturn([]);
+        $checked = new Checkmated(Color::white());
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$checked,]);
+        $rules->applyAfter($checked, $board)->shouldBeCalled()->willReturn([]);
+        $this->playMove($from, $to);
+
+        $this->checked()->shouldBeLike(Color::white());
+    }
+
+    function it_knows_when_player_is_no_longer_checked(Board $board, Rules $rules)
+    {
+        $pawn = Pawn::forColor(Color::white());
+        $from = CoordinatePair::fromFileAndRank('c', 2);
+        $to = CoordinatePair::fromFileAndRank('c', 3);
+        $move = new Move($pawn, $from, $to);
+
+        $board->pickPieceFrom($from)->shouldBeCalled()->willReturn($pawn);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
+
+        $board->placePieceAt($pawn, $to)->shouldBeCalled()->willReturn([]);
+        $checked = new InCheck(Color::white());
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([$checked,]);
+        $rules->applyAfter($checked, $board)->shouldBeCalled()->willReturn([]);
+        $this->playMove($from, $to);
+
+        $from = CoordinatePair::fromFileAndRank('c', 3);
+        $to = CoordinatePair::fromFileAndRank('c', 4);
+        $move = new Move($pawn, $from, $to);
+
+        $board->pickPieceFrom($from)->shouldBeCalled()->willReturn($pawn);
+        $rules->applyRulesTo($move, $board)->shouldBeCalled();
+
+        $board->placePieceAt($pawn, $to)->shouldBeCalled()->willReturn([]);
+        $rules->applyAfter(new PieceWasMoved($move), $board)->shouldBeCalled()->willReturn([]);
+        $this->playMove($from, $to);
+
+        $this->checked()->shouldBeNull();
     }
 }

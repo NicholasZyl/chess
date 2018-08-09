@@ -31,6 +31,7 @@ Feature: The completion of game
     Then the move is illegal
     And black rook should not be moved from f8
 
+  @application
   Scenario: If opponent's king is in check and opponent has no legal move then it's checkmated
     Given there is a chessboard with placed pieces
       | piece       | location |

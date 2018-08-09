@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Application;
 
+use NicholasZyl\Chess\Application\Dto\BoardDto;
+use NicholasZyl\Chess\Application\Dto\GameDto;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
@@ -65,7 +67,12 @@ final class GameService
     {
         $game = $this->games->find($identifier);
 
-        return new GameDto($game->board());
+        return new GameDto(
+            new BoardDto($game->board()),
+            (string)$game->checked(),
+            $game->hasEnded(),
+            (string)$game->winner()
+        );
     }
 
     /**

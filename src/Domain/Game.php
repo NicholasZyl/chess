@@ -6,6 +6,9 @@ namespace NicholasZyl\Chess\Domain;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Event\Checkmated;
+use NicholasZyl\Chess\Domain\Event\GameEnded;
+use NicholasZyl\Chess\Domain\Event\InCheck;
 use NicholasZyl\Chess\Domain\Event\PieceWasMoved;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
@@ -26,6 +29,21 @@ class Game
      * @var Rules
      */
     private $rules;
+
+    /**
+     * @var bool
+     */
+    private $hasEnded = false;
+
+    /**
+     * @var Color|null
+     */
+    private $winner;
+
+    /**
+     * @var Color|null
+     */
+    private $checked;
 
     /**
      * Create a new game.
@@ -85,12 +103,32 @@ class Game
         $firedEvents = [];
         foreach ($events as $event) {
             $firedEvents = array_merge($firedEvents, $this->rules->applyAfter($event, $this->board));
+            $this->onEventOccurred($event);
         }
         if ($firedEvents) {
             $firedEvents = array_merge($firedEvents, $this->onEventsOccurred($firedEvents));
         }
 
         return $firedEvents;
+    }
+
+    /**
+     * Change game state if needed on event that just happened.
+     *
+     * @param Event $event
+     *
+     * @return void
+     */
+    private function onEventOccurred(Event $event): void
+    {
+        if ($event instanceof GameEnded) {
+            $this->hasEnded = true;
+            $this->winner = $event->winner();
+        } elseif ($event instanceof InCheck || $event instanceof Checkmated) {
+            $this->checked = $event->color();
+        } elseif ($event instanceof PieceWasMoved) {
+            $this->checked = null;
+        }
     }
 
     /**
@@ -116,7 +154,7 @@ class Game
     }
 
     /**
-     *
+     * Get the current representation of the board with pieces on it.
      *
      * @return Piece[]
      */
@@ -130,5 +168,35 @@ class Game
         }
 
         return $board;
+    }
+
+    /**
+     * Has the game already ended.
+     *
+     * @return bool
+     */
+    public function hasEnded(): bool
+    {
+        return $this->hasEnded;
+    }
+
+    /**
+     * Get the winner.
+     *
+     * @return Color|null
+     */
+    public function winner(): ?Color
+    {
+        return $this->winner;
+    }
+
+    /**
+     * Get the player that's checked.
+     *
+     * @return Color|null
+     */
+    public function checked(): ?Color
+    {
+        return $this->checked;
     }
 }

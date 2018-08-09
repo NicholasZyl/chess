@@ -1,25 +1,29 @@
 <?php
 declare(strict_types=1);
 
-namespace NicholasZyl\Chess\Application;
+namespace NicholasZyl\Chess\Application\Dto;
 
 use NicholasZyl\Chess\Domain\Piece;
 
-final class GameDto
+final class BoardDto
 {
     /**
-     * @var Piece[][]|null[][]
+     * @var string[][]
      */
     private $board;
 
     /**
-     * Create Data Transfer Object for the game.
+     * Create Data Transfer Object for the board.
      *
      * @param Piece[][]|null[][] $board
      */
     public function __construct(array $board)
     {
-        $this->board = $board;
+        foreach ($board as $file => $ranks) {
+            foreach ($ranks as $rank => $piece) {
+                $this->board[$file][$rank] = $piece ? sprintf('%s %s', strtolower((string)$piece->color()), (string)$piece) : '';
+            }
+        }
     }
 
     /**
@@ -32,11 +36,6 @@ final class GameDto
      */
     public function position(string $file, int $rank): string
     {
-        $piece = $this->board[$file][$rank];
-        if (!$piece) {
-            return '';
-        }
-
-        return sprintf('%s %s', strtolower((string)$piece->color()), (string)$piece);
+        return $this->board[$file][$rank];
     }
 }

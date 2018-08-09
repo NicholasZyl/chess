@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Application;
 
-use NicholasZyl\Chess\Application\GameDto;
+use NicholasZyl\Chess\Application\Dto\BoardDto;
+use NicholasZyl\Chess\Application\Dto\GameDto;
 use NicholasZyl\Chess\Application\GameService;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Color;
@@ -41,7 +42,13 @@ class GameServiceSpec extends ObjectBehavior
         $gamesRepository->find($gameId)->shouldBeCalled()->willReturn($game);
         $grid = ['a' => [1 => null,],];
         $game->board()->willReturn($grid);
-        $dto = new GameDto($grid);
+        $game->checked()->willReturn(Color::black());
+        $game->hasEnded()->willReturn(false);
+        $game->winner()->willReturn(null);
+        $dto = new GameDto(
+            new BoardDto($grid),
+            'Black'
+        );
 
         $this->find($gameId)->shouldBeLike($dto);
     }
