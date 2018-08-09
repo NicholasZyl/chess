@@ -19,7 +19,7 @@ use NicholasZyl\Chess\Domain\Piece;
 /**
  * Defines application features from the specific context.
  */
-class ChessboardContext implements Context, \PhpSpec\Matcher\MatchersProvider
+class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
 {
     /**
      * @var PieceFactory

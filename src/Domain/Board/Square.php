@@ -88,6 +88,18 @@ final class Square
     }
 
     /**
+     * Peek what piece is placed on the square.
+     *
+     * @throws SquareIsUnoccupied
+     *
+     * @return Piece|null
+     */
+    public function peek(): ?Piece
+    {
+        return $this->placedPiece;
+    }
+
+    /**
      * Check if there is a piece in given color placed on the square.
      *
      * @param Color $color

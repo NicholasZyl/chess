@@ -54,6 +54,14 @@ class SquareSpec extends ObjectBehavior
         $this->shouldThrow(new SquareIsUnoccupied($this->coordinates))->during('pick');
     }
 
+    function it_allows_to_peek_what_piece_is_placed_on_it()
+    {
+        $piece = Pawn::forColor(Color::white());
+        $this->place($piece);
+        $this->peek()->shouldBe($piece);
+        $this->pick()->shouldBe($piece);
+    }
+
     function it_knows_when_is_occupied()
     {
         $piece = Pawn::forColor(Color::white());

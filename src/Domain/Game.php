@@ -114,4 +114,21 @@ class Game
             throw new ExchangeIsNotAllowed($position);
         }
     }
+
+    /**
+     *
+     *
+     * @return Piece[]
+     */
+    public function board(): array
+    {
+        $board = [];
+        $grid = $this->board->grid();
+        foreach ($grid as $square) {
+            $coordinates = $square->coordinates();
+            $board[$coordinates->file()][$coordinates->rank()] = $square->peek();
+        }
+
+        return $board;
+    }
 }

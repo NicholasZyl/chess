@@ -188,4 +188,31 @@ class GameSpec extends ObjectBehavior
 
         $this->shouldThrow(ExchangeIsNotAllowed::class)->during('exchangePieceOnBoardTo', [$position, $piece,]);
     }
+
+    function it_gets_the_current_state_of_the_board(Board $board)
+    {
+        $occupiedSquare = Board\Square::forCoordinates(CoordinatePair::fromFileAndRank('a', 2));
+        $piece = Pawn::forColor(Color::white());
+        $occupiedSquare->place($piece);
+        $grid = [
+            Board\Square::forCoordinates(CoordinatePair::fromFileAndRank('a', 1)),
+            $occupiedSquare,
+            Board\Square::forCoordinates(CoordinatePair::fromFileAndRank('b', 1)),
+            Board\Square::forCoordinates(CoordinatePair::fromFileAndRank('b', 2)),
+        ];
+        $board->grid()->shouldBeCalled()->willReturn($grid);
+
+        $this->board()->shouldBeLike(
+            [
+                'a' => [
+                    1 => null,
+                    2 => $piece,
+                ],
+                'b' => [
+                    1 => null,
+                    2 => null,
+                ],
+            ]
+        );
+    }
 }

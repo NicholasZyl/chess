@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain;
 
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Square;
 use NicholasZyl\Chess\Domain\Exception\Board\OutOfBoard;
 use NicholasZyl\Chess\Domain\Exception\Board\PositionOccupiedByAnotherColor;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsOccupied;
@@ -106,4 +107,11 @@ interface Board
      * @return bool
      */
     public function hasLegalMove(Color $color, Rules $rules): bool;
+
+    /**
+     * Get the grid of squares board consists of.
+     *
+     * @return Square[]
+     */
+    public function grid(): array;
 }

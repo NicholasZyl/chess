@@ -3,11 +3,13 @@ Feature: Making moves
   As players
   We need to make our moves
 
+  @application
   Scenario: White makes the first move
     Given the game is set up
     When I move piece from b1 to a3
     Then white knight should be moved to a3
 
+  @application
   Scenario: Black cannot make the first move
     Given the game is set up
     When opponent tries to move piece from d7 to d5

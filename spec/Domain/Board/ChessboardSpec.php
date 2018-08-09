@@ -6,6 +6,7 @@ namespace spec\NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Action\Attack;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
+use NicholasZyl\Chess\Domain\Board\Square;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Event\PieceWasCaptured;
 use NicholasZyl\Chess\Domain\Event\PieceWasExchanged;
@@ -26,8 +27,14 @@ class ChessboardSpec extends ObjectBehavior
 {
     function it_is_composed_of_sixty_four_squares()
     {
-        $coordinates = CoordinatePair::fromFileAndRank('h', 8);
-        $this->isPositionOccupied($coordinates);
+        $grid = [];
+        for ($file = 'a'; $file <= 'h'; ++$file) {
+            for ($rank = 1; $rank <= 8; ++$rank) {
+                $grid[$file.$rank] = Square::forCoordinates(CoordinatePair::fromFileAndRank($file, $rank));
+            }
+        }
+
+        $this->grid()->shouldBeLike($grid);
     }
 
     function it_does_not_allow_interacting_with_position_out_of_board(Coordinates $outOfBoardCoordinates)

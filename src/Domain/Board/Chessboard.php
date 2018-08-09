@@ -195,12 +195,7 @@ final class Chessboard implements Board
     }
 
     /**
-     * Check if given color has any legal move.
-     *
-     * @param Color $color
-     * @param Rules $rules
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasLegalMove(Color $color, Rules $rules): bool
     {
@@ -211,5 +206,13 @@ final class Chessboard implements Board
         }
 
         return !empty($legalMoves);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function grid(): array
+    {
+        return $this->grid;
     }
 }

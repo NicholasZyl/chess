@@ -1,10 +1,15 @@
 default:
   suites:
-    game_rules:
+    domain:
       contexts:
-        - ChessboardContext:
+        - DomainContext:
           - '@chess_piece_factory'
       services:
         chess_piece_factory: Helper\PieceFactory
+    application:
+      contexts:
+        - AppContext
+      filters:
+        tags: '@application'
   formatters:
     pretty: true
