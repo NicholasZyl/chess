@@ -130,6 +130,7 @@ Feature: The moves of the pieces
     Then the move is illegal
     And white king should not be moved from d4
 
+  @ui @web
   Scenario: The king may move by 'castling'
     Given there is a chessboard with placed pieces
       | piece      | location |
@@ -139,6 +140,7 @@ Feature: The moves of the pieces
     Then white king should be moved to c1
     And white rook should be moved to d1
 
+  @ui @web
   Scenario: Castling is prevented temporarily if the square on which the king stands, or the square which it must cross, or the square which it is to occupy, is attacked by one or more of the opponent's pieces
     Given there is a chessboard with placed pieces
       | piece       | location |
@@ -208,20 +210,22 @@ Feature: The moves of the pieces
     Then the move is illegal
     And white bishop should not be moved from b3
 
-  @application
+  @application @ui @web
   Scenario: Pawn's promotion
     Given there is a chessboard with white pawn placed on b7
     And I moved piece from b7 to b8
-    When I exchange piece on b8 to white queen
-    Then white pawn on b8 should be exchanged with white queen
+    When I exchange piece on b8 for white queen
+    Then white pawn on b8 should be exchanged for white queen
 
+  @ui @web
   Scenario: Pawn's promotion can happen only on the promotion square
     Given there is a chessboard with white pawn placed on b6
     And I moved piece from b6 to b7
-    When I try to exchange piece on b7 to white queen
+    When I try to exchange piece on b7 for white queen
     Then the exchange is illegal
-    And white pawn on b7 should not be exchanged with white queen
+    And white pawn on b7 should not be exchanged for white queen
 
+  @ui @web
   Scenario: Pawn's promotion has to be done as part of the move
     Given there is a chessboard with placed pieces
       | piece        | location |

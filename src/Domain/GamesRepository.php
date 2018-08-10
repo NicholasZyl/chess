@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
+use NicholasZyl\Chess\Domain\Exception\GameNotFound;
+
 interface GamesRepository
 {
     /**
@@ -19,6 +21,8 @@ interface GamesRepository
      * Find the game stored with given identifier.
      *
      * @param GameId $identifier
+     *
+     * @throws GameNotFound
      *
      * @return Game
      */

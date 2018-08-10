@@ -19,6 +19,10 @@ services:
         tags:
             - { name: controller.argument_value_resolver, priority: 50 }
 
+    NicholasZyl\Chess\UI\Web\EventListener\ExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
     NicholasZyl\Chess\Domain\PieceFactory:
         public: false
 

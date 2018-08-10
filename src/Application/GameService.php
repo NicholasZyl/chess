@@ -8,6 +8,7 @@ use NicholasZyl\Chess\Application\Dto\GameDto;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Exception\BoardException;
+use NicholasZyl\Chess\Domain\Exception\GameNotFound;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
@@ -85,6 +86,7 @@ final class GameService
      *
      * @throws BoardException
      * @throws IllegalAction
+     * @throws GameNotFound
      *
      * @return void
      */
@@ -107,6 +109,7 @@ final class GameService
      *
      * @throws BoardException
      * @throws IllegalAction
+     * @throws GameNotFound
      *
      * @return void
      */

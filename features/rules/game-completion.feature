@@ -3,14 +3,14 @@ Feature: The completion of game
   As a player
   I need to check my opponent's king
 
-  @application
+  @application @ui @web
   Scenario: The king is checked after move when king is attacked
     Given there is a chessboard with placed pieces
       | piece       | location |
       | black king  | e8       |
       | white rook  | d3       |
     When I move piece from d3 to d8
-    Then black is in check
+    Then Black is in check
 
   Scenario: No piece can be moved that will expose the king of the same colour to check
     Given there is a chessboard with placed pieces
@@ -32,7 +32,7 @@ Feature: The completion of game
     Then the move is illegal
     And black rook should not be moved from f8
 
-  @application
+  @application @ui @web
   Scenario: If opponent's king is in check and opponent has no legal move then it's checkmated
     Given there is a chessboard with placed pieces
       | piece       | location |
@@ -41,8 +41,8 @@ Feature: The completion of game
       | black rook  | g2       |
     And I moved piece from f1 to e1
     When opponent move piece from a8 to a1
-    Then white is checkmated
-    And black won the game
+    Then White is checkmated
+    And Black won the game
 
   Scenario: If player has no legal move and his king is not in checkmate then the game ends with stalemate
     Given there is a chessboard with placed pieces

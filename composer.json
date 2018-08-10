@@ -15,7 +15,8 @@
         "symfony/routing": "^4.1",
         "symfony/framework-bundle": "^4.0",
         "symfony/dependency-injection": "^4.0",
-        "league/flysystem": "^1.0"
+        "league/flysystem": "^1.0",
+        "symfony/event-dispatcher": "^4.0"
     },
     "require-dev": {
         "behat/behat": "^3.4",

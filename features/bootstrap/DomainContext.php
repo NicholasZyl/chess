@@ -104,7 +104,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
      * @param CoordinatePair $source
      * @param CoordinatePair $destination
      */
-    public function iMovePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
+    public function movePieceFromSourceToDestination(CoordinatePair $source, CoordinatePair $destination)
     {
         try {
             $this->occurredEvents = $this->getCurrentGame()->playMove($source, $destination);
@@ -116,12 +116,12 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @When /I (try to )?exchange piece on (?P<coordinates>[a-h][0-8]) to (?P<piece>[a-z]+ [a-z]+)/
+     * @When /I (try to )?exchange piece on (?P<coordinates>[a-h][0-8]) for (?P<piece>[a-z]+ [a-z]+)/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
      */
-    public function iExchangePieceOnPositionTo(Piece $piece, CoordinatePair $coordinates)
+    public function exchangePieceOnPositionFor(Piece $piece, CoordinatePair $coordinates)
     {
         try {
             $this->occurredEvents = $this->getCurrentGame()->exchangePieceOnBoardTo($coordinates, $piece);
@@ -190,14 +190,14 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be exchanged with (?P<exchangedWithPiece>[a-z]+ [a-z]+)/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be exchanged for (?P<exchangedWithPiece>[a-z]+ [a-z]+)/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
      * @param bool $not
      * @param Piece $exchangedWithPiece
      */
-    public function pieceShouldBeExchangedWith(Piece $piece, CoordinatePair $coordinates, bool $not, Piece $exchangedWithPiece)
+    public function pieceShouldBeExchangedFor(Piece $piece, CoordinatePair $coordinates, bool $not, Piece $exchangedWithPiece)
     {
         $pieceWasExchanged = new Event\PieceWasExchanged($piece, $exchangedWithPiece, $coordinates);
         if ($not) {

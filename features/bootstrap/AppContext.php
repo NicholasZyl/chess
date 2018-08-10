@@ -115,11 +115,11 @@ class AppContext implements Context
     }
 
     /**
-     * @When /I exchange piece on (?P<position>[a-h][0-8]) to (?P<piece>[a-z]+ [a-z]+)/
+     * @When /I exchange piece on (?P<position>[a-h][0-8]) for (?P<piece>[a-z]+ [a-z]+)/
      * @param string $position
      * @param string $piece
      */
-    public function exchangePieceOnPositionTo(string $position, string $piece)
+    public function exchangePieceOnPositionFor(string $position, string $piece)
     {
         try {
             $this->gameService->exchangePieceInGame($this->gameId, $position, $piece);
@@ -165,12 +165,12 @@ class AppContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged with (?P<exchangedPiece>[a-z]+ [a-z]+)/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-z]+ [a-z]+)/
      * @param string $position
      * @param string $exchangedPiece
      * @throws FailureException
      */
-    public function pieceOnPositionShouldBeExchangedWith(string $position, string $exchangedPiece)
+    public function pieceOnPositionShouldBeExchangedFor(string $position, string $exchangedPiece)
     {
         $this->pieceShouldBePlacedOnPosition($exchangedPiece, $position);
     }
@@ -203,7 +203,7 @@ class AppContext implements Context
     {
         $game = $this->gameService->find($this->gameId);
 
-        if ($game->checked() !== ucfirst($color)) {
+        if ($game->checked() !== $color) {
             throw new FailureException(sprintf('%s should be checkmated.', $color));
         }
     }
@@ -221,7 +221,7 @@ class AppContext implements Context
             throw new FailureException('The game should be ended.');
         }
 
-        if ($game->winner() !== ucfirst($color)) {
+        if ($game->winner() !== $color) {
             throw new FailureException(sprintf('%s should be the winner.', $color));
         }
     }

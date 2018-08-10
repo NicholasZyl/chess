@@ -16,6 +16,7 @@ Feature: Making moves
     Then the move is illegal
     And black pawn should not be moved from d7
 
+  @ui @web
   Scenario: Players make moves alternately
     Given the game is set up
     And I moved piece from b1 to a3

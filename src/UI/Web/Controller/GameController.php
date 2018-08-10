@@ -12,6 +12,20 @@ use Symfony\Component\HttpFoundation\Response;
 class GameController
 {
     /**
+     * API action to setup a new game.
+     *
+     * @param GameService $gameService
+     *
+     * @return Response
+     */
+    public function start(GameService $gameService): Response
+    {
+        $gameId = $gameService->setupGame();
+
+        return JsonResponse::create(['identifier' => $gameId->id()], Response::HTTP_CREATED);
+    }
+
+    /**
      * API action to get a state of the game with passed identifier.
      *
      * @param GameId $identifier
@@ -46,17 +60,33 @@ class GameController
             );
         }
 
-        try {
-            $gameService->movePieceInGame($identifier, $request->get('from'), $request->get('to'));
+        $gameService->movePieceInGame($identifier, $request->get('from'), $request->get('to'));
 
-            return Response::create(null, Response::HTTP_NO_CONTENT);
-        } catch (\RuntimeException $exception) {
+        return Response::create(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * API action to exchange a piece in the game with passed identifier.
+     *
+     * @param GameId $identifier
+     * @param Request $request
+     * @param GameService $gameService
+     *
+     * @return Response
+     */
+    public function playExchange(GameId $identifier, Request $request, GameService $gameService): Response
+    {
+        if (!$request->request->has('on') || !$request->request->has('for')) {
             return JsonResponse::create(
                 [
-                    'message' => $exception->getMessage(),
+                    'message' => 'Request to exchange a piece requires "on" coordinates and "for" intended to be exchanged with to be passed.',
                 ],
                 Response::HTTP_BAD_REQUEST
             );
         }
+
+        $gameService->exchangePieceInGame($identifier, $request->get('on'), $request->get('for'));
+
+        return Response::create(null, Response::HTTP_NO_CONTENT);
     }
 }

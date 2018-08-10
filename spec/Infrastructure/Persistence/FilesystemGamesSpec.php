@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Infrastructure\Persistence;
 
+use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
+use NicholasZyl\Chess\Domain\Exception\GameNotFound;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\GamesRepository;
@@ -36,12 +38,12 @@ class FilesystemGamesSpec extends ObjectBehavior
             new Chessboard(),
             new LawsOfChess()
         );
-        $filesystem->put('/var/games/identifier', serialize($game))->shouldBeCalled();
+        $filesystem->put('identifier', serialize($game))->shouldBeCalled();
 
         $this->add($gameId, $game);
     }
 
-    function it_finds_a_game_with_by_file_with_serialised_game(Filesystem $filesystem)
+    function it_finds_a_game_by_file_with_serialised_game(Filesystem $filesystem)
     {
         $gameId = new GameId('identifier');
         $game = new Game(
@@ -49,8 +51,18 @@ class FilesystemGamesSpec extends ObjectBehavior
             new LawsOfChess()
         );
         $serialisedGame = serialize($game);
-        $filesystem->read('/var/games/identifier')->shouldBeCalled()->willReturn($serialisedGame);
+        $filesystem->read('identifier')->shouldBeCalled()->willReturn($serialisedGame);
 
-        $this->find($gameId)->shouldBeLike($game);
+        $returnedGame = $this->find($gameId);
+        $returnedGame->shouldBeAnInstanceOf(Game::class);
+        $returnedGame->board()->shouldBeLike($game->board());
+    }
+
+    function it_fails_if_file_for_given_identifier_does_not_exist(Filesystem $filesystem)
+    {
+        $gameId = new GameId('identifier');
+        $filesystem->read('identifier')->shouldBeCalled()->willThrow(FileNotFoundException::class);
+
+        $this->shouldThrow(GameNotFound::class)->during('find', [$gameId,]);
     }
 }

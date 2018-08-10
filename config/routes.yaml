@@ -1,3 +1,8 @@
+game_start:
+  path: /
+  controller: NicholasZyl\Chess\UI\Web\Controller\GameController::start
+  methods: ['POST']
+
 game_get_state:
   path: /{gameId}
   controller: NicholasZyl\Chess\UI\Web\Controller\GameController::getState
@@ -8,6 +13,13 @@ game_get_state:
 game_play_move:
   path: /{gameId}/move
   controller: NicholasZyl\Chess\UI\Web\Controller\GameController::playMove
+  methods: ['POST']
+  requirements:
+    gameId: '[a-z0-9\-\.]+'
+
+game_play_exchange:
+  path: /{gameId}/exchange
+  controller: NicholasZyl\Chess\UI\Web\Controller\GameController::playExchange
   methods: ['POST']
   requirements:
     gameId: '[a-z0-9\-\.]+'
