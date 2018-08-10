@@ -103,7 +103,7 @@ class AppContext implements Context
 
 
     /**
-     * @When I/opponent (tries to) move(d) piece from :source to :destination
+     * @When I/opponent (try to) (tries to) move(d) piece from :source to :destination
      * @param string $source
      * @param string $destination
      */
@@ -197,11 +197,11 @@ class AppContext implements Context
     }
 
     /**
-     * @Then :color is checkmated
+     * @Then :color is (in) check(mated)
      * @param string $color
      * @throws FailureException
      */
-    public function playerIsCheckmated(string $color)
+    public function playerIsChecked(string $color)
     {
         $game = $this->gameService->find($this->gameId);
 

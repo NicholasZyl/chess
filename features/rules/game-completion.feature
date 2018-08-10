@@ -3,6 +3,7 @@ Feature: The completion of game
   As a player
   I need to check my opponent's king
 
+  @application
   Scenario: The king is checked after move when king is attacked
     Given there is a chessboard with placed pieces
       | piece       | location |

@@ -36,6 +36,7 @@ Feature: The moves of the pieces
     Then the move is illegal
     And black queen should not be moved from d4
 
+  @application
   Scenario: When making moves, the bishop, rook or queen may not move over any intervening pieces
     Given there is a chessboard with placed pieces
       | piece        | location |
@@ -45,6 +46,7 @@ Feature: The moves of the pieces
     Then the move is illegal
     And white bishop should not be moved from d5
 
+  @application
   Scenario: The knight may move to one of the squares nearest to that on which it stands but not on the same rank, file or diagonal
     Given there is a chessboard with white knight placed on d4
     When I move piece from d4 to e6
