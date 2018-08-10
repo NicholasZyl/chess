@@ -8,12 +8,19 @@ use Helper\TestArrangement;
 use NicholasZyl\Chess\Application\GameService;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Color;
+use NicholasZyl\Chess\Domain\Exception\GameNotFound;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\LawsOfChess;
+use NicholasZyl\Chess\Domain\Piece\Bishop;
+use NicholasZyl\Chess\Domain\Piece\King;
+use NicholasZyl\Chess\Domain\Piece\Knight;
+use NicholasZyl\Chess\Domain\Piece\Pawn;
+use NicholasZyl\Chess\Domain\Piece\Queen;
+use NicholasZyl\Chess\Domain\Piece\Rook;
 use NicholasZyl\Chess\Domain\PieceFactory;
-use PhpSpec\Exception\Example\FailureException;
 
 class AppContext implements Context
 {
@@ -63,6 +70,7 @@ class AppContext implements Context
 
     /**
      * @Given the game is set up
+     * @When I setup the game
      */
     public function theGameIsSetUp()
     {
@@ -108,7 +116,7 @@ class AppContext implements Context
     public function movePieceFromSourceToDestination(string $from, string $to)
     {
         try {
-            $this->gameService->movePieceInGame($this->gameId, $from, $to);
+            $this->gameService->movePieceInGame($this->gameId ?? GameId::generate(), $from, $to);
         } catch (\Exception $e) {
             $this->caughtException = $e;
         }
@@ -122,7 +130,19 @@ class AppContext implements Context
     public function exchangePieceOnPositionFor(string $position, string $piece)
     {
         try {
-            $this->gameService->exchangePieceInGame($this->gameId, $position, $piece);
+            $this->gameService->exchangePieceInGame($this->gameId ?? GameId::generate(), $position, $piece);
+        } catch (\Exception $e) {
+            $this->caughtException = $e;
+        }
+    }
+
+    /**
+     * @When I try to find a non existing game
+     */
+    public function iTryToFindANonExistingGame()
+    {
+        try {
+            $this->gameService->find(new GameId('not-existing'));
         } catch (\Exception $e) {
             $this->caughtException = $e;
         }
@@ -132,7 +152,6 @@ class AppContext implements Context
      * @Then /(?P<piece>[a-z]+ [a-z]+) should be moved to (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
-     * @throws FailureException
      */
     public function pieceShouldBeMovedToPosition(string $piece, string $position)
     {
@@ -143,7 +162,6 @@ class AppContext implements Context
      * @Then /(?P<piece>[a-z]+ [a-z]+) should not be moved from (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
-     * @throws FailureException
      */
     public function pieceShouldNotBeMovedFromPosition(string $piece, string $position)
     {
@@ -152,15 +170,10 @@ class AppContext implements Context
 
     /**
      * @Then the move is illegal
-     * @throws FailureException
      */
     public function theMoveIsIllegal()
     {
-        if (!$this->caughtException instanceof IllegalAction) {
-            throw new FailureException(
-                sprintf('Expected move to be illegal but got "%s"', $this->caughtException ? $this->caughtException->getMessage() : 'none')
-            );
-        }
+        expect($this->caughtException)->shouldBeAnInstanceOf(IllegalAction::class);
         $this->caughtException = null;
     }
 
@@ -168,7 +181,6 @@ class AppContext implements Context
      * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-z]+ [a-z]+)/
      * @param string $position
      * @param string $exchangedPiece
-     * @throws FailureException
      */
     public function pieceOnPositionShouldBeExchangedFor(string $position, string $exchangedPiece)
     {
@@ -179,7 +191,6 @@ class AppContext implements Context
      * @param string $piece
      * @param string $position
      *
-     * @throws FailureException
      * @return void
      */
     private function pieceShouldBePlacedOnPosition(string $piece, string $position): void
@@ -187,43 +198,133 @@ class AppContext implements Context
         $board = $this->gameService->find($this->gameId)->board();
         $actualPiece = $board->position($position[0], (int)$position[1]);
 
-        if ($piece !== $actualPiece) {
-            throw new FailureException(
-                sprintf('%s should be placed on %s but it is not.', $piece, $position)
-            );
-        }
+        expect($actualPiece)->shouldBe($piece);
     }
 
     /**
      * @Then :color is (in) check(mated)
      * @param string $color
-     * @throws FailureException
      */
     public function playerIsChecked(string $color)
     {
         $game = $this->gameService->find($this->gameId);
 
-        if ($game->checked() !== $color) {
-            throw new FailureException(sprintf('%s should be checkmated.', $color));
-        }
+        expect($game->checked())->shouldBe($color);
     }
 
     /**
      * @Then :color won the game
      * @param string $color
-     * @throws FailureException
      */
     public function playerWonTheGame(string $color)
     {
         $game = $this->gameService->find($this->gameId);
 
-        if (!$game->isEnded()) {
-            throw new FailureException('The game should be ended.');
-        }
+        expect($game->isEnded())->shouldBe(true);
 
-        if ($game->winner() !== $color) {
-            throw new FailureException(sprintf('%s should be the winner.', $color));
-        }
+        expect($game->winner())->shouldBe($color);
     }
 
+
+    /**
+     * @Then game should be set with initial positions of the pieces on the chessboard
+     */
+    public function gameShouldBeSetWithInitialPositionsOfThePiecesOnTheChessboard()
+    {
+        $game = $this->gameService->find($this->gameId);
+
+        expect($game->board())->shouldBeLike(
+            new \NicholasZyl\Chess\Application\Dto\BoardDto(
+            [
+                'a' => [
+                    1 => Rook::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Rook::forColor(Color::black()),
+                ],
+                'b' => [
+                    1 => Knight::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Knight::forColor(Color::black()),
+                ],
+                'c' => [
+                    1 => Bishop::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Bishop::forColor(Color::black()),
+                ],
+                'd' => [
+                    1 => Queen::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Queen::forColor(Color::black()),
+                ],
+                'e' => [
+                    1 => King::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => King::forColor(Color::black()),
+                ],
+                'f' => [
+                    1 => Bishop::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Bishop::forColor(Color::black()),
+                ],
+                'g' => [
+                    1 => Knight::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Knight::forColor(Color::black()),
+                ],
+                'h' => [
+                    1 => Rook::forColor(Color::white()),
+                    2 => Pawn::forColor(Color::white()),
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => Pawn::forColor(Color::black()),
+                    8 => Rook::forColor(Color::black()),
+                ],
+            ])
+        );
+    }
+
+    /**
+     * @Then I should not find the game
+     */
+    public function iShouldNotFindGame()
+    {
+        expect($this->caughtException)->shouldBeAnInstanceOf(GameNotFound::class);
+    }
 }

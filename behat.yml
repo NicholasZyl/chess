@@ -3,6 +3,7 @@ default:
     domain:
       contexts:
         - DomainContext
+      paths: [ '%paths.base%/features/rules' ]
     application:
       contexts:
         - AppContext

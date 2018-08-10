@@ -1,7 +1,7 @@
 Feature: Making moves
   In order to play the chess
-  As players
-  We need to make our moves
+  As a player
+  I need to make my moves
 
   @application
   Scenario: White makes the first move

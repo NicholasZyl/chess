@@ -64,6 +64,7 @@ class WebContext implements Context
 
     /**
      * @Given the game is set up
+     * @When I setup the game
      * @throws FailureException
      * @throws Exception
      */
@@ -120,7 +121,15 @@ class WebContext implements Context
      */
     public function movePieceFromSourceToDestination(string $from, string $to)
     {
-        $this->response = $this->kernel->handle(Request::create(sprintf('/%s/move', $this->gameId), 'POST', ['from' => $from, 'to' => $to,]));
+        $this->response = $this->kernel->handle(Request::create(sprintf('/%s/move', $this->gameId ?? GameId::generate()), 'POST', ['from' => $from, 'to' => $to,]));
+    }
+
+    /**
+     * @When I try to find a non existing game
+     */
+    public function iTryToFindANonExistingGame()
+    {
+        $this->response = $this->kernel->handle(Request::create(sprintf('/%s', GameId::generate()), 'GET'));
     }
 
     /**
@@ -211,18 +220,12 @@ class WebContext implements Context
 
     /**
      * @Then the :action is illegal
-     * @param string $action
-     * @throws FailureException
      */
-    public function actionIsIllegal(string $action)
+    public function actionIsIllegal()
     {
-        if ($this->response->isSuccessful()) {
-            throw new FailureException("The %s shouldn't be possible but it was.\nAPI response: %s", $action, $this->response);
-        }
+        expect($this->response->isSuccessful())->shouldBe(false);
         $response = json_decode($this->response->getContent(), true);
-        if (!array_key_exists('message', $response)) {
-            throw new FailureException("API response is missing error message.\nAPI response: %s", $this->response);
-        }
+        expect($response)->shouldHaveKey('message');
     }
 
     /**
@@ -234,9 +237,7 @@ class WebContext implements Context
     {
         $game = $this->getGameState();
 
-        if ($game['checked'] !== $color) {
-            throw new FailureException(sprintf('%s should be in check.', $color));
-        }
+        expect($game)->shouldHaveKeyWithValue('checked', $color);
     }
 
     /**
@@ -248,9 +249,111 @@ class WebContext implements Context
     {
         $game = $this->getGameState();
 
-        if ($game['winner'] !== $color) {
-            throw new FailureException(sprintf('%s should be the winner.', $color));
-        }
+        expect($game)->shouldHaveKeyWithValue('winner', $color);
+    }
+
+    /**
+     * @Then game should be set with initial positions of the pieces on the chessboard
+     * @throws FailureException
+     */
+    public function gameShouldBeSetWithInitialPositionsOfThePiecesOnTheChessboard()
+    {
+        $game = $this->getGameState();
+
+        expect($game)->shouldHaveKeyWithValue(
+            'board',
+            [
+                'a' => [
+                    1 => 'white rook',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black rook',
+                ],
+                'b' => [
+                    1 => 'white knight',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black knight',
+                ],
+                'c' => [
+                    1 => 'white bishop',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black bishop',
+                ],
+                'd' => [
+                    1 => 'white queen',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black queen',
+                ],
+                'e' => [
+                    1 => 'white king',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black king',
+                ],
+                'f' => [
+                    1 => 'white bishop',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black bishop',
+                ],
+                'g' => [
+                    1 => 'white knight',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black knight',
+                ],
+                'h' => [
+                    1 => 'white rook',
+                    2 => 'white pawn',
+                    3 => '',
+                    4 => '',
+                    5 => '',
+                    6 => '',
+                    7 => 'black pawn',
+                    8 => 'black rook',
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @Then I should not find the game
+     */
+    public function iShouldNotFindGame()
+    {
+        expect($this->response->isSuccessful())->shouldBe(false);
+        expect($this->response->getStatusCode())->shouldBe(404);
     }
 
     /**
