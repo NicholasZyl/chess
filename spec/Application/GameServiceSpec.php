@@ -30,10 +30,9 @@ class GameServiceSpec extends ObjectBehavior
 
     function it_allows_setting_up_a_new_game(GamesRepository $gamesRepository)
     {
-        $gameId = GameId::generate();
-        $gamesRepository->add($gameId, Argument::type(Game::class))->shouldBeCalled();
+        $gamesRepository->add(Argument::type(GameId::class), Argument::type(Game::class))->shouldBeCalled();
 
-        $this->setupGame($gameId);
+        $this->setupGame()->shouldBeAnInstanceOf(GameId::class);
     }
 
     function it_finds_a_game_with_given_identifier_and_returns_its_current_representation(GamesRepository $gamesRepository, Game $game)

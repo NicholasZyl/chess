@@ -40,20 +40,21 @@ final class GameService
     }
 
     /**
-     * Setup a new game with given identifier.
+     * Setup a new game with generated identifier.
      *
-     * @param GameId $identifier
-     *
-     * @return void
+     * @return GameId
      */
-    public function setupGame(GameId $identifier): void
+    public function setupGame(): GameId
     {
+        $identifier = GameId::generate();
         $game = new Game(
             new Chessboard(),
             new LawsOfChess()
         );
 
         $this->games->add($identifier, $game);
+
+        return $identifier;
     }
 
     /**

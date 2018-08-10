@@ -66,8 +66,7 @@ class AppContext implements Context
      */
     public function theGameIsSetUp()
     {
-        $this->gameId = GameId::generate();
-        $this->gameService->setupGame($this->gameId);
+        $this->gameId = $this->gameService->setupGame();
     }
 
     /**
