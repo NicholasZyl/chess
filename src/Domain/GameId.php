@@ -39,4 +39,12 @@ final class GameId
     {
         return $this->id;
     }
+
+    /**
+     * Represent as a string.
+     */
+    public function __toString(): string
+    {
+        return $this->id();
+    }
 }

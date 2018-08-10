@@ -1,0 +1,15 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    NicholasZyl\Chess\:
+        resource: '../src/*'
+        exclude: '../src/{Application/Dto,Domain,UI/Kernel.php}'
+
+    #NicholasZyl\Chess\UI\Web\Controller\:
+    #    resource: '../src/UI\Web\Controller'
+    #    tags: ['controller.service_arguments']

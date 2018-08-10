@@ -15,11 +15,20 @@
     "require-dev": {
         "behat/behat": "^3.4",
         "phpspec/phpspec": "^4.3",
-        "bossa/phpspec2-expect": "^3.0"
+        "bossa/phpspec2-expect": "^3.0",
+        "symfony/flex": "^1.0",
+        "behat/symfony2-extension": "^2.1",
+        "symfony/dotenv": "^4.1"
     },
     "autoload": {
         "psr-4": {
             "NicholasZyl\\Chess\\": "src/"
+        }
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
         }
     }
 }

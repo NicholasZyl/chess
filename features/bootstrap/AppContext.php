@@ -100,16 +100,15 @@ class AppContext implements Context
         $this->games->add($this->gameId, new Game(new Chessboard(), $this->testArrangement));
     }
 
-
     /**
-     * @When I/opponent (try to) (tries to) move(d) piece from :source to :destination
-     * @param string $source
-     * @param string $destination
+     * @When I/opponent (try to) (tries to) move(d) piece from :from to :to
+     * @param string $from
+     * @param string $to
      */
-    public function iMovePieceFromSourceToDestination(string $source, string $destination)
+    public function movePieceFromSourceToDestination(string $from, string $to)
     {
         try {
-            $this->gameService->movePieceInGame($this->gameId, $source, $destination);
+            $this->gameService->movePieceInGame($this->gameId, $from, $to);
         } catch (\Exception $e) {
             $this->caughtException = $e;
         }
@@ -120,7 +119,7 @@ class AppContext implements Context
      * @param string $position
      * @param string $piece
      */
-    public function iExchangePieceOnPositionTo(string $position, string $piece)
+    public function exchangePieceOnPositionTo(string $position, string $piece)
     {
         try {
             $this->gameService->exchangePieceInGame($this->gameId, $position, $piece);

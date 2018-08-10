@@ -3,11 +3,13 @@ Feature: The moves of the pieces
   As a player
   I need to move my pieces
 
+  @ui @web
   Scenario: The bishop may move to any square along a diagonal on which it stands
     Given there is a chessboard with white bishop placed on d4
     When I move piece from d4 to g7
     Then white bishop should be moved to g7
 
+  @ui @web
   Scenario: The bishop may not move to a square along the file or the rank
     Given there is a chessboard with black bishop placed on d4
     When I try to move piece from d4 to d5
