@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Helper\TestArrangement;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\PieceFactory;
+use NicholasZyl\Chess\Infrastructure\Persistence\FilesystemGames;
 use PhpSpec\Exception\Example\FailureException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +35,7 @@ class WebContext implements Context
     private $testArrangement;
 
     /**
-     * @var \NicholasZyl\Chess\Domain\GamesRepository
+     * @var FilesystemGames
      */
     private $games;
 
@@ -55,7 +58,7 @@ class WebContext implements Context
         $this->kernel = $kernel;
         $this->pieceFactory = new PieceFactory();
         $this->testArrangement = new TestArrangement(new LawsOfChess());
-        $this->games = new \Helper\InMemoryGames();
+        $this->games = new FilesystemGames(new Filesystem(new Local(__DIR__.'/../../var/games/')));
     }
 
     /**
@@ -84,17 +87,18 @@ class WebContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should (not )?be moved (to|from) (?P<position>[a-h][0-8])/
+     * @Then /(?P<piece>[a-z]+ [a-z]+) should (?P<wasMoved>not )?be moved (to|from) (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
+     * @param bool $wasMoved
      * @throws FailureException
-     * @throws Exception
+     * @throws \Exception
      */
-    public function pieceShouldBeMoved(string $piece, string $position)
+    public function pieceShouldBeMoved(string $piece, string $position, bool $wasMoved)
     {
-        if (!$this->response->isSuccessful()) {
+        if ($this->response->isSuccessful() === $wasMoved) {
             throw new FailureException(
-                sprintf("Couldn't move the piece.\nAPI response: %s", $this->response)
+                sprintf("API call should end with %s.\nAPI response: %s", $wasMoved ? 'failure' : 'success', $this->response)
             );
         }
 
@@ -103,7 +107,7 @@ class WebContext implements Context
         if (!$response->isSuccessful()) {
             throw new FailureException("Couldn't get the current state of the game.");
         }
-        $game = json_decode($response->getContent());
+        $game = json_decode($response->getContent(), true);
         $board = $game['board'];
         $coordinates = CoordinatePair::fromString($position);
         if ($board[$coordinates->file()][$coordinates->rank()] !== $piece) {
@@ -122,7 +126,7 @@ class WebContext implements Context
         if ($this->response->isSuccessful()) {
             throw new FailureException("Move shouldn't be possible but it was.\nAPI response: %s", $this->response);
         }
-        $response = json_decode($this->response->getContent());
+        $response = json_decode($this->response->getContent(), true);
         if (!array_key_exists('message', $response)) {
             throw new FailureException("API response is missing error message.\nAPI response: %s", $this->response);
         }

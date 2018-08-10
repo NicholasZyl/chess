@@ -1,4 +1,5 @@
 parameters:
+    storage_path: '%kernel.project_dir%/var/games/'
 
 services:
     _defaults:
@@ -10,6 +11,26 @@ services:
         resource: '../src/*'
         exclude: '../src/{Application/Dto,Domain,UI/Kernel.php}'
 
-    #NicholasZyl\Chess\UI\Web\Controller\:
-    #    resource: '../src/UI\Web\Controller'
-    #    tags: ['controller.service_arguments']
+    NicholasZyl\Chess\UI\Web\Controller\:
+        resource: '../src/UI/Web/Controller'
+        tags: ['controller.service_arguments']
+
+    NicholasZyl\Chess\UI\Web\ArgumentResolver\GameIdResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 50 }
+
+    NicholasZyl\Chess\Domain\PieceFactory:
+        public: false
+
+    NicholasZyl\Chess\Domain\GamesRepository:
+        alias:  NicholasZyl\Chess\Infrastructure\Persistence\FilesystemGames
+
+    League\Flysystem\Adapter\Local:
+        arguments:
+            $root: '%storage_path%'
+
+    League\Flysystem\AdapterInterface:
+        alias: League\Flysystem\Adapter\Local
+
+    League\Flysystem\Filesystem:
+        public: false

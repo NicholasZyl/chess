@@ -1,0 +1,13 @@
+game_get_state:
+  path: /{gameId}
+  controller: NicholasZyl\Chess\UI\Web\Controller\GameController::getState
+  methods: ['GET']
+  requirements:
+    gameId: '[a-z0-9\-\.]+'
+
+game_play_move:
+  path: /{gameId}/move
+  controller: NicholasZyl\Chess\UI\Web\Controller\GameController::playMove
+  methods: ['POST']
+  requirements:
+    gameId: '[a-z0-9\-\.]+'

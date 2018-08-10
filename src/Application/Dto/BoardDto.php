@@ -5,7 +5,7 @@ namespace NicholasZyl\Chess\Application\Dto;
 
 use NicholasZyl\Chess\Domain\Piece;
 
-final class BoardDto
+final class BoardDto implements \JsonSerializable
 {
     /**
      * @var string[][]
@@ -37,5 +37,13 @@ final class BoardDto
     public function position(string $file, int $rank): string
     {
         return $this->board[$file][$rank];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->board;
     }
 }

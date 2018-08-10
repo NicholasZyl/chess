@@ -8,6 +8,9 @@
             "ref": "6b63fb76d3bb2dd16098f12adf6d6ca844e21862"
         }
     },
+    "league/flysystem": {
+        "version": "1.0.45"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
