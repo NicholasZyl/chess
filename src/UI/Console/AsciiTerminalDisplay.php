@@ -33,7 +33,7 @@ class AsciiTerminalDisplay implements Display
             $board .= '|'.PHP_EOL;
         }
         $board .= '  -------------------'.PHP_EOL;
-        $board .= '    A B C D E F G H'.PHP_EOL;
+        $board .= '    a b c d e f g h'.PHP_EOL;
 
         return $board;
     }

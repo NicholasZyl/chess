@@ -2,14 +2,19 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Helper\TestArrangement;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use NicholasZyl\Chess\Domain\Board\Chessboard;
+use NicholasZyl\Chess\Domain\Board\CoordinatePair;
+use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\LawsOfChess;
 use NicholasZyl\Chess\Domain\PieceFactory;
 use NicholasZyl\Chess\Infrastructure\Persistence\FilesystemGames;
 use NicholasZyl\Chess\UI\Console\Application;
+use NicholasZyl\Chess\UI\Console\AsciiTerminalDisplay;
 use Symfony\Component\Console\Tester\ApplicationTester;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -62,6 +67,7 @@ class ConsoleContext implements Context
     }
 
     /**
+     * @Given the game is set up
      * @When I setup the game
      */
     public function iSetupTheGame()
@@ -70,6 +76,56 @@ class ConsoleContext implements Context
         $output = $this->tester->getDisplay();
         [$identifier] = sscanf($output, 'Game was setup with id %s');
         $this->gameId = new GameId($identifier);
+    }
+
+    /**
+     * @Given /there is a chessboard with (?P<piece>[a-zA-Z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
+     * @param string $piece
+     * @param string $position
+     */
+    public function thereIsAChessboardWithPiecePlacedOnPosition(string $piece, string $position)
+    {
+        $piece = $this->pieceFactory->createPieceFromDescription($piece);
+        $this->testArrangement->placePieceAt($piece, CoordinatePair::fromString($position));
+
+        $this->gameId = GameId::generate();
+        $this->games->add($this->gameId, new Game(new Chessboard(), $this->testArrangement));
+    }
+
+    /**
+     * @Given there is a chessboard with placed pieces
+     * @param TableNode $table
+     */
+    public function thereIsAChessboardWithPlacedPieces(TableNode $table)
+    {
+        foreach ($table->getHash() as $pieceAtLocation) {
+            $this->testArrangement->placePieceAt(
+                $this->pieceFactory->createPieceFromDescription($pieceAtLocation['piece']),
+                CoordinatePair::fromString($pieceAtLocation['location'])
+            );
+        }
+
+        $this->gameId = GameId::generate();
+        $this->games->add($this->gameId, new Game(new Chessboard(), $this->testArrangement));
+    }
+
+    /**
+     * @When I try to find a non existing game
+     */
+    public function iTryToFindANonExistingGame()
+    {
+        $this->tester->run(['command' => 'display', '--id' => GameId::generate()->id(),]);
+    }
+
+    /**
+     * @When I/opponent (try to) (tries to) (tried to) move(d) piece from :from to :to
+     * @param string $from
+     * @param string $to
+     * @throws Exception
+     */
+    public function movePieceFromSourceToDestination(string $from, string $to)
+    {
+        $this->tester->run(['command' => 'move', 'from' => $from, 'to' => $to, '--id' => ($this->gameId ?? GameId::generate())->id(),]);
     }
 
     /**
@@ -92,8 +148,45 @@ class ConsoleContext implements Context
 2 | P P P P P P P P |
 1 | R N B Q K B N R |
   -------------------
-    A B C D E F G H
+    a b c d e f g h
 CHESS_END
         );
+    }
+
+    /**
+     * @Then I should not find the game
+     */
+    public function iShouldNotFindTheGame()
+    {
+        expect($this->tester->getDisplay())->shouldContain('Game was not found');
+    }
+
+    /**
+     * @Then the move is/was illegal
+     */
+    public function theMoveIsIllegal()
+    {
+        expect($this->tester->getDisplay())->shouldContain('Move was not possible');
+    }
+
+    /**
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) should (not )?be moved (to|from) (?P<position>[a-h][0-8])/
+     * @param string $piece
+     * @param string $position
+     */
+    public function pieceShouldBeMoved(string $piece, string $position)
+    {
+        $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
+        $output = $this->tester->getDisplay();
+
+        $board = explode(PHP_EOL, $output);
+        $rank = 8 - intval($position[1]) + 1;
+        $file = 4 + (ord($position[0]) - ord('a')) * 2;
+
+        $actualPiece = $board[$rank][$file];
+        $pieceDescription = explode(' ', $piece);
+        $expectedPiece = (new AsciiTerminalDisplay())->visualisePiece($pieceDescription[0], $pieceDescription[1]);
+
+        expect($actualPiece)->shouldBe($expectedPiece);
     }
 }

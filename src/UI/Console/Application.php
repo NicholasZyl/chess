@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\UI\Console;
 
 use NicholasZyl\Chess\UI\Console\Command\DisplayGameStateCommand;
+use NicholasZyl\Chess\UI\Console\Command\MoveCommand;
 use NicholasZyl\Chess\UI\Console\Command\SetupGameCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
@@ -26,6 +27,7 @@ final class Application extends BaseApplication
                 [
                     'start' => 'console.command.public_alias.'.SetupGameCommand::class,
                     'display' => 'console.command.public_alias.'.DisplayGameStateCommand::class,
+                    'move' => 'console.command.public_alias.'.MoveCommand::class,
                 ]
             )
         );

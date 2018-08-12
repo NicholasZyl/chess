@@ -4,19 +4,21 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\UI\Console\Command;
 
 use NicholasZyl\Chess\Application\GameService;
+use NicholasZyl\Chess\Domain\Exception\BoardException;
 use NicholasZyl\Chess\Domain\Exception\GameNotFound;
+use NicholasZyl\Chess\Domain\Exception\IllegalAction;
 use NicholasZyl\Chess\Domain\GameId;
-use NicholasZyl\Chess\UI\Console\AsciiTerminalDisplay;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class DisplayGameStateCommand extends Command
+class MoveCommand extends Command
 {
-    public const NAME = 'display';
+    public const NAME = 'move';
 
     /**
      * @var GameService
@@ -39,7 +41,9 @@ class DisplayGameStateCommand extends Command
      */
     protected function configure()
     {
-        $this->setDescription('Display the game state');
+        $this->setDescription('Move a piece in the game');
+        $this->addArgument('from', InputArgument::REQUIRED, 'Coordinates to move from');
+        $this->addArgument('to', InputArgument::REQUIRED, 'Coordinates to move to');
         $this->addOption('id', 'i', InputOption::VALUE_REQUIRED, 'Game identifier');
     }
 
@@ -69,14 +73,17 @@ class DisplayGameStateCommand extends Command
 
         try {
             $gameId = new GameId($input->getOption('id'));
-            $game = $this->gameService->find($gameId);
+            $this->gameService->movePieceInGame($gameId, $input->getArgument('from'), $input->getArgument('to'));
+        } catch (IllegalAction | BoardException $exception) {
+            $output->writeln('<error>Move was not possible due to</error>');
+            $output->writeln($exception->getMessage());
+
+            return 1;
         } catch (GameNotFound $gameNotFound) {
             $output->writeln(sprintf('<error>%s</error>', $gameNotFound->getMessage()));
 
             return 2;
         }
-
-        $output->write($game->board()->visualise(new AsciiTerminalDisplay()));
 
         return 0;
     }

@@ -27,11 +27,13 @@ Feature: The moves of the pieces
     Then the move is illegal
     And White rook should not be moved from d4
 
+  @ui @console
   Scenario: The queen may move to any square along the file, the rank or a diagonal on which it stands
     Given there is a chessboard with White queen placed on d4
     When I move piece from d4 to g1
     Then White queen should be moved to g1
 
+  @ui @console
   Scenario: The queen may not move in direction other than along the file, the rank or a diagonal
     Given there is a chessboard with Black queen placed on d4
     When I try to move piece from d4 to g2
@@ -77,11 +79,13 @@ Feature: The moves of the pieces
     When I move piece from d4 to d5
     Then White pawn should be moved to d5
 
+  @ui @console
   Scenario: On its first move the pawn may advance two squares along the same file, provided that both squares are unoccupied
     Given there is a chessboard with White pawn placed on b2
     When I move piece from b2 to b4
     Then White pawn should be moved to b4
 
+  @ui @console
   Scenario: The pawn may not advance two squares along the same file, if any square is occupied
     Given there is a chessboard with placed pieces
       | piece        | location |
@@ -140,7 +144,7 @@ Feature: The moves of the pieces
     Then White king should be moved to c1
     And White rook should be moved to d1
 
-  @ui @web
+  @ui @web @console
   Scenario: Castling is prevented temporarily if the square on which the king stands, or the square which it must cross, or the square which it is to occupy, is attacked by one or more of the opponent's pieces
     Given there is a chessboard with placed pieces
       | piece       | location |
@@ -151,6 +155,7 @@ Feature: The moves of the pieces
     Then the move is illegal
     And White king should not be moved from e1
 
+  @ui @console
   Scenario: Castling is prevented temporarily if there is any piece between the king and the rook with which castling is to be effected
     Given there is a chessboard with placed pieces
       | piece        | location |

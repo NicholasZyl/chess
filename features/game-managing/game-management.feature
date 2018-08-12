@@ -8,12 +8,12 @@ Feature: Managing games
     When I setup the game
     Then game should be set with initial positions of the pieces on the chessboard
 
-  @application @ui @web
+  @application @ui @web @console
   Scenario: Failing to find a game
     When I try to find a non existing game
     Then I should not find the game
 
-  @application @ui @web
+  @application @ui @web @console
   Scenario: Playing in non existing game
     When I try to move piece from c2 to c3
     Then I should not find the game

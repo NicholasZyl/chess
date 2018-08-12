@@ -81,7 +81,6 @@ class WebContext implements Context
         $this->gameId = $game['identifier'];
     }
 
-
     /**
      * @Given /there is a chessboard with (?P<piece>[a-zA-Z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
      * @param string $piece
@@ -126,6 +125,7 @@ class WebContext implements Context
 
     /**
      * @When I try to find a non existing game
+     * @throws Exception
      */
     public function iTryToFindANonExistingGame()
     {
