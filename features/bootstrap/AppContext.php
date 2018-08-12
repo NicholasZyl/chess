@@ -5,6 +5,7 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Helper\InMemoryGames;
 use Helper\TestArrangement;
+use NicholasZyl\Chess\Application\Dto\PieceDto;
 use NicholasZyl\Chess\Application\GameService;
 use NicholasZyl\Chess\Domain\Board\Chessboard;
 use NicholasZyl\Chess\Domain\Board\CoordinatePair;
@@ -78,7 +79,7 @@ class AppContext implements Context
     }
 
     /**
-     * @Given /there is a chessboard with (?P<piece>[a-z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
+     * @Given /there is a chessboard with (?P<piece>[a-zA-Z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
      */
@@ -123,7 +124,7 @@ class AppContext implements Context
     }
 
     /**
-     * @When /I exchange piece on (?P<position>[a-h][0-8]) for (?P<piece>[a-z]+ [a-z]+)/
+     * @When /I exchange piece on (?P<position>[a-h][0-8]) for (?P<piece>[a-zA-Z]+ [a-z]+)/
      * @param string $position
      * @param string $piece
      */
@@ -149,7 +150,7 @@ class AppContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should be moved to (?P<position>[a-h][0-8])/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) should be moved to (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
      */
@@ -159,7 +160,7 @@ class AppContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should not be moved from (?P<position>[a-h][0-8])/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) should not be moved from (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
      */
@@ -178,7 +179,7 @@ class AppContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-z]+ [a-z]+)/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
      * @param string $position
      * @param string $exchangedPiece
      */
@@ -198,7 +199,8 @@ class AppContext implements Context
         $board = $this->gameService->find($this->gameId)->board();
         $actualPiece = $board->position($position[0], (int)$position[1]);
 
-        expect($actualPiece)->shouldBe($piece);
+        $pieceDescription = explode(' ', $piece);
+        expect($actualPiece)->shouldBeLike(new PieceDto($pieceDescription[0], $pieceDescription[1]));
     }
 
     /**

@@ -5,6 +5,7 @@ namespace NicholasZyl\Chess\UI\Web\Controller;
 
 use NicholasZyl\Chess\Application\GameService;
 use NicholasZyl\Chess\Domain\GameId;
+use NicholasZyl\Chess\UI\Web\JsonApiDisplay;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +38,7 @@ class GameController
     {
         $game = $gameService->find($identifier);
 
-        return JsonResponse::create($game);
+        return JsonResponse::fromJsonString($game->visualise(new JsonApiDisplay()));
     }
 
     /**

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Application\Dto;
 
-final class GameDto implements \JsonSerializable
+final class GameDto
 {
     /**
      * @var BoardDto
@@ -82,15 +82,14 @@ final class GameDto implements \JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * Get visual representation of the game.
+     *
+     * @param Display $display
+     *
+     * @return string
      */
-    public function jsonSerialize(): array
+    public function visualise(Display $display): string
     {
-        return [
-            'board' => $this->board(),
-            'checked' => $this->checked(),
-            'is_ended' => $this->isEnded(),
-            'winner' => $this->winner(),
-        ];
+        return $display->visualiseGame($this);
     }
 }

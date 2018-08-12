@@ -83,7 +83,7 @@ class WebContext implements Context
 
 
     /**
-     * @Given /there is a chessboard with (?P<piece>[a-z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
+     * @Given /there is a chessboard with (?P<piece>[a-zA-Z]+ [a-z]+) placed on (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
      */
@@ -133,7 +133,7 @@ class WebContext implements Context
     }
 
     /**
-     * @When /I (try to )?exchange piece on (?P<position>[a-h][0-8]) for (?P<piece>[a-z]+ [a-z]+)/
+     * @When /I (try to )?exchange piece on (?P<position>[a-h][0-8]) for (?P<piece>[a-zA-Z]+ [a-z]+)/
      * @param string $position
      * @param string $piece
      * @throws Exception
@@ -144,7 +144,7 @@ class WebContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should (?P<wasMoved>not )?be moved (to|from) (?P<position>[a-h][0-8])/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) should (?P<wasMoved>not )?be moved (to|from) (?P<position>[a-h][0-8])/
      * @param string $piece
      * @param string $position
      * @param bool $wasMoved
@@ -163,7 +163,7 @@ class WebContext implements Context
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-z]+ [a-z]+)/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
      * @param string $position
      * @param string $exchangedPiece
      * @throws FailureException
@@ -180,7 +180,7 @@ class WebContext implements Context
     }
 
     /**
-     * @Then  /(?P<piece>[a-z]+ [a-z]+) on (?P<position>[a-h][0-8]) should not be exchanged for (?P<exchangedPiece>[a-z]+ [a-z]+)/
+     * @Then  /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should not be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
      * @param string $position
      * @param string $piece
      * @throws FailureException
@@ -264,84 +264,84 @@ class WebContext implements Context
             'board',
             [
                 'a' => [
-                    1 => 'white rook',
-                    2 => 'white pawn',
+                    1 => 'White rook',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black rook',
+                    7 => 'Black pawn',
+                    8 => 'Black rook',
                 ],
                 'b' => [
-                    1 => 'white knight',
-                    2 => 'white pawn',
+                    1 => 'White knight',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black knight',
+                    7 => 'Black pawn',
+                    8 => 'Black knight',
                 ],
                 'c' => [
-                    1 => 'white bishop',
-                    2 => 'white pawn',
+                    1 => 'White bishop',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black bishop',
+                    7 => 'Black pawn',
+                    8 => 'Black bishop',
                 ],
                 'd' => [
-                    1 => 'white queen',
-                    2 => 'white pawn',
+                    1 => 'White queen',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black queen',
+                    7 => 'Black pawn',
+                    8 => 'Black queen',
                 ],
                 'e' => [
-                    1 => 'white king',
-                    2 => 'white pawn',
+                    1 => 'White king',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black king',
+                    7 => 'Black pawn',
+                    8 => 'Black king',
                 ],
                 'f' => [
-                    1 => 'white bishop',
-                    2 => 'white pawn',
+                    1 => 'White bishop',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black bishop',
+                    7 => 'Black pawn',
+                    8 => 'Black bishop',
                 ],
                 'g' => [
-                    1 => 'white knight',
-                    2 => 'white pawn',
+                    1 => 'White knight',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black knight',
+                    7 => 'Black pawn',
+                    8 => 'Black knight',
                 ],
                 'h' => [
-                    1 => 'white rook',
-                    2 => 'white pawn',
+                    1 => 'White rook',
+                    2 => 'White pawn',
                     3 => '',
                     4 => '',
                     5 => '',
                     6 => '',
-                    7 => 'black pawn',
-                    8 => 'black rook',
+                    7 => 'Black pawn',
+                    8 => 'Black rook',
                 ],
             ]
         );

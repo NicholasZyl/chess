@@ -70,7 +70,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Given /there is a chessboard with (?P<piece>[a-z]+ [a-z]+) placed on (?P<coordinates>[a-h][0-8])/
+     * @Given /there is a chessboard with (?P<piece>[a-zA-Z]+ [a-z]+) placed on (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
@@ -116,7 +116,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @When /I (try to )?exchange piece on (?P<coordinates>[a-h][0-8]) for (?P<piece>[a-z]+ [a-z]+)/
+     * @When /I (try to )?exchange piece on (?P<coordinates>[a-h][0-8]) for (?P<piece>[a-zA-Z]+ [a-z]+)/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
@@ -147,7 +147,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) should (?P<not>not )?be moved (?P<direction>from|to) (?P<coordinates>[a-h][0-8])/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) should (?P<not>not )?be moved (?P<direction>from|to) (?P<coordinates>[a-h][0-8])/
      *
      * @param Piece $piece
      * @param bool $not
@@ -173,7 +173,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be captured/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be captured/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates
@@ -190,7 +190,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then /(?P<piece>[a-z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be exchanged for (?P<exchangedWithPiece>[a-z]+ [a-z]+)/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<coordinates>[a-h][0-8]) should (?P<not>not )?be exchanged for (?P<exchangedWithPiece>[a-zA-Z]+ [a-z]+)/
      *
      * @param Piece $piece
      * @param CoordinatePair $coordinates

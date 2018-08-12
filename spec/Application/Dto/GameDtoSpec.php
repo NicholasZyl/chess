@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Application\Dto;
 
 use NicholasZyl\Chess\Application\Dto\BoardDto;
+use NicholasZyl\Chess\Application\Dto\Display;
 use NicholasZyl\Chess\Application\Dto\GameDto;
 use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Piece\Pawn;
@@ -88,5 +89,12 @@ class GameDtoSpec extends ObjectBehavior
             'black'
         );
         $this->winner()->shouldBe('black');
+    }
+
+    function it_is_visualised_by_display(Display $display)
+    {
+        $display->visualiseGame($this->getWrappedObject())->shouldBeCalled()->willReturn('visualisation');
+
+        $this->visualise($display)->shouldBe('visualisation');
     }
 }

@@ -5,10 +5,10 @@ namespace NicholasZyl\Chess\Application\Dto;
 
 use NicholasZyl\Chess\Domain\Piece;
 
-final class BoardDto implements \JsonSerializable
+final class BoardDto
 {
     /**
-     * @var string[][]
+     * @var PieceDto[][]
      */
     private $board;
 
@@ -21,7 +21,7 @@ final class BoardDto implements \JsonSerializable
     {
         foreach ($board as $file => $ranks) {
             foreach ($ranks as $rank => $piece) {
-                $this->board[$file][$rank] = $piece ? sprintf('%s %s', strtolower((string)$piece->color()), (string)$piece) : '';
+                $this->board[$file][$rank] = $piece ? new PieceDto((string)$piece->color(), (string)$piece) : '';
             }
         }
     }
@@ -32,18 +32,22 @@ final class BoardDto implements \JsonSerializable
      * @param string $file
      * @param int $rank
      *
-     * @return string
+     * @return PieceDto
      */
-    public function position(string $file, int $rank): string
+    public function position(string $file, int $rank): PieceDto
     {
         return $this->board[$file][$rank];
     }
 
     /**
-     * {@inheritdoc}
+     * Get visual representation of the board.
+     *
+     * @param Display $display
+     *
+     * @return string
      */
-    public function jsonSerialize(): array
+    public function visualise(Display $display): string
     {
-        return $this->board;
+        return $display->visualiseBoard($this->board);
     }
 }

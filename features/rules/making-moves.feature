@@ -7,14 +7,14 @@ Feature: Making moves
   Scenario: White makes the first move
     Given the game is set up
     When I move piece from b1 to a3
-    Then white knight should be moved to a3
+    Then White knight should be moved to a3
 
   @application
   Scenario: Black cannot make the first move
     Given the game is set up
     When opponent tries to move piece from d7 to d5
     Then the move is illegal
-    And black pawn should not be moved from d7
+    And Black pawn should not be moved from d7
 
   @ui @web
   Scenario: Players make moves alternately
@@ -23,4 +23,4 @@ Feature: Making moves
     And opponent moved piece from g7 to g5
     When opponent tries to move piece from c7 to c6
     Then the move is illegal
-    And black pawn should not be moved from c7
+    And Black pawn should not be moved from c7

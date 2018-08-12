@@ -3,7 +3,7 @@ Feature: Managing games
   As a player
   I need to be able to manage games
 
-  @application @ui @web
+  @application @ui @web @console
   Scenario: Setting up a new game
     When I setup the game
     Then game should be set with initial positions of the pieces on the chessboard
