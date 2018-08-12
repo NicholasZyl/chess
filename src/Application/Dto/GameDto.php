@@ -78,6 +78,10 @@ final class GameDto
      */
     public function winner(): ?string
     {
+        if ($this->isEnded && !$this->winner) {
+            return 'draw';
+        }
+
         return $this->winner;
     }
 

@@ -43,6 +43,6 @@ class SetupGameCommand extends Command
     {
         $gameId = $this->gameService->setupGame();
 
-        $output->writeln(sprintf('Game was setup with id %s', $gameId->id()));
+        $output->writeln($gameId->id());
     }
 }

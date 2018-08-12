@@ -22,12 +22,12 @@ class PieceFactorySpec extends ObjectBehavior
 
     function it_creates_piece_from_its_rank_and_color()
     {
-        $this->createPieceNamedForColor('pawn', Color::white())->shouldBeLike(Pawn::forColor(Color::white()));
-        $this->createPieceNamedForColor('knight', Color::white())->shouldBeLike(Knight::forColor(Color::white()));
-        $this->createPieceNamedForColor('bishop', Color::white())->shouldBeLike(Bishop::forColor(Color::white()));
-        $this->createPieceNamedForColor('rook', Color::white())->shouldBeLike(Rook::forColor(Color::white()));
-        $this->createPieceNamedForColor('queen', Color::white())->shouldBeLike(Queen::forColor(Color::white()));
-        $this->createPieceNamedForColor('king', Color::white())->shouldBeLike(King::forColor(Color::white()));
+        $this->createPieceNamedForColor('pawn', 'white')->shouldBeLike(Pawn::forColor(Color::white()));
+        $this->createPieceNamedForColor('knight', 'white')->shouldBeLike(Knight::forColor(Color::white()));
+        $this->createPieceNamedForColor('bishop', 'white')->shouldBeLike(Bishop::forColor(Color::white()));
+        $this->createPieceNamedForColor('rook', 'white')->shouldBeLike(Rook::forColor(Color::white()));
+        $this->createPieceNamedForColor('queen', 'white')->shouldBeLike(Queen::forColor(Color::white()));
+        $this->createPieceNamedForColor('king', 'white')->shouldBeLike(King::forColor(Color::white()));
     }
 
     function it_fails_to_create_piece_if_unknown_rank()

@@ -11,6 +11,7 @@ use NicholasZyl\Chess\Domain\Color;
 use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\GamesRepository;
+use NicholasZyl\Chess\Domain\Piece\Pawn;
 use NicholasZyl\Chess\Domain\Piece\Queen;
 use NicholasZyl\Chess\Domain\PieceFactory;
 use PhpSpec\ObjectBehavior;
@@ -70,13 +71,29 @@ class GameServiceSpec extends ObjectBehavior
         $gameId = GameId::generate();
         $gamesRepository->find($gameId)->shouldBeCalled()->willReturn($game);
         $queen = Queen::forColor(Color::white());
-        $pieceFactory->createPieceFromDescription('white queen')->shouldBeCalled()->willReturn($queen);
+        $pieceFactory->createPieceNamedForColor('queen', 'White')->shouldBeCalled()->willReturn($queen);
         $game->exchangePieceOnBoardTo(
             CoordinatePair::fromString('d8'),
             $queen
         )->shouldBeCalled();
         $gamesRepository->add($gameId, $game)->shouldBeCalled();
 
-        $this->exchangePieceInGame($gameId, 'd8', 'white queen');
+        $this->exchangePieceInGame($gameId, 'd8', 'White queen');
+    }
+
+    function it_exchanges_piece_to_same_color_if_not_provided(GamesRepository $gamesRepository, PieceFactory $pieceFactory, Game $game)
+    {
+        $gameId = GameId::generate();
+        $gamesRepository->find($gameId)->shouldBeCalled()->willReturn($game);
+        $queen = Queen::forColor(Color::white());
+        $game->board()->willReturn(['d' => [8 => Pawn::forColor(Color::white()),],]);
+        $pieceFactory->createPieceNamedForColor('queen', 'White')->shouldBeCalled()->willReturn($queen);
+        $game->exchangePieceOnBoardTo(
+            CoordinatePair::fromString('d8'),
+            $queen
+        )->shouldBeCalled();
+        $gamesRepository->add($gameId, $game)->shouldBeCalled();
+
+        $this->exchangePieceInGame($gameId, 'd8', 'queen');
     }
 }

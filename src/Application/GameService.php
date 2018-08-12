@@ -116,9 +116,16 @@ final class GameService
     public function exchangePieceInGame(GameId $identifier, string $position, string $pieceDescription)
     {
         $game = $this->games->find($identifier);
+        $coordinates = CoordinatePair::fromString($position);
+        [$color, $rank] = sscanf($pieceDescription, '%s %s');
+        if (!$rank) {
+            $rank = $color;
+            $color = (string)$game->board()[$coordinates->file()][$coordinates->rank()]->color();
+        }
+
         $game->exchangePieceOnBoardTo(
-            CoordinatePair::fromString($position),
-            $this->pieceFactory->createPieceFromDescription($pieceDescription)
+            $coordinates,
+            $this->pieceFactory->createPieceNamedForColor($rank, $color)
         );
         $this->games->add($identifier, $game);
     }

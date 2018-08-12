@@ -42,8 +42,8 @@ class MoveCommand extends Command
     protected function configure()
     {
         $this->setDescription('Move a piece in the game');
-        $this->addArgument('from', InputArgument::REQUIRED, 'Coordinates to move from');
-        $this->addArgument('to', InputArgument::REQUIRED, 'Coordinates to move to');
+        $this->addArgument('from', InputArgument::OPTIONAL, 'Coordinates to move from');
+        $this->addArgument('to', InputArgument::OPTIONAL, 'Coordinates to move to');
         $this->addOption('id', 'i', InputOption::VALUE_REQUIRED, 'Game identifier');
     }
 
@@ -52,11 +52,19 @@ class MoveCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
         if (!$input->getOption('id')) {
-            /** @var QuestionHelper $helper */
-            $helper = $this->getHelper('question');
             $identifier = $helper->ask($input, $output, new Question('Please provide the game identifier'));
             $input->setOption('id', $identifier);
+        }
+        if (!$input->getArgument('from')) {
+            $from = $helper->ask($input, $output, new Question('Please provide "from" coordinates'));
+            $input->setArgument('from', $from);
+        }
+        if (!$input->getArgument('to')) {
+            $to = $helper->ask($input, $output, new Question('Please provide "to" coordinates'));
+            $input->setArgument('to', $to);
         }
     }
 
@@ -75,8 +83,8 @@ class MoveCommand extends Command
             $gameId = new GameId($input->getOption('id'));
             $this->gameService->movePieceInGame($gameId, $input->getArgument('from'), $input->getArgument('to'));
         } catch (IllegalAction | BoardException $exception) {
-            $output->writeln('<error>Move was not possible due to</error>');
-            $output->writeln($exception->getMessage());
+            $output->writeln('<error>Move was not possible</error>');
+            $output->writeln(sprintf('<comment>%s</comment>', $exception->getMessage()));
 
             return 1;
         } catch (GameNotFound $gameNotFound) {

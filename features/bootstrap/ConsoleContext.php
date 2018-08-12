@@ -74,8 +74,7 @@ class ConsoleContext implements Context
     {
         $this->tester->run(['command' => 'start',]);
         $output = $this->tester->getDisplay();
-        [$identifier] = sscanf($output, 'Game was setup with id %s');
-        $this->gameId = new GameId($identifier);
+        $this->gameId = new GameId($output);
     }
 
     /**

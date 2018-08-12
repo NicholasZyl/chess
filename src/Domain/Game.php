@@ -156,7 +156,7 @@ class Game
     /**
      * Get the current representation of the board with pieces on it.
      *
-     * @return Piece[]
+     * @return Piece[][]
      */
     public function board(): array
     {

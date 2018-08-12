@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class ExchangeCommand extends Command
@@ -42,8 +43,8 @@ class ExchangeCommand extends Command
     protected function configure()
     {
         $this->setDescription('Exchange a piece in the game');
-        $this->addArgument('on', InputArgument::REQUIRED, 'Coordinates to exchange on');
-        $this->addArgument('for', InputArgument::REQUIRED, 'Piece to exchange to');
+        $this->addArgument('on', InputArgument::OPTIONAL, 'Coordinates to exchange on');
+        $this->addArgument('for', InputArgument::OPTIONAL, 'Piece to exchange to');
         $this->addOption('id', 'i', InputOption::VALUE_REQUIRED, 'Game identifier');
     }
 
@@ -52,11 +53,19 @@ class ExchangeCommand extends Command
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
+        /** @var QuestionHelper $helper */
+        $helper = $this->getHelper('question');
         if (!$input->getOption('id')) {
-            /** @var QuestionHelper $helper */
-            $helper = $this->getHelper('question');
             $identifier = $helper->ask($input, $output, new Question('Please provide the game identifier'));
             $input->setOption('id', $identifier);
+        }
+        if (!$input->getArgument('on')) {
+            $on = $helper->ask($input, $output, new Question('Please provide "on" coordinates'));
+            $input->setArgument('on', $on);
+        }
+        if (!$input->getArgument('for')) {
+            $for = $helper->ask($input, $output, new ChoiceQuestion('Please choose a piece to exchange for', ['bishop', 'knight', 'rook', 'queen',]));
+            $input->setArgument('for', $for);
         }
     }
 
@@ -75,8 +84,8 @@ class ExchangeCommand extends Command
             $gameId = new GameId($input->getOption('id'));
             $this->gameService->exchangePieceInGame($gameId, $input->getArgument('on'), $input->getArgument('for'));
         } catch (IllegalAction | BoardException $exception) {
-            $output->writeln('<error>Exchange was not possible due to</error>');
-            $output->writeln($exception->getMessage());
+            $output->writeln('<error>Exchange was not possible</error>');
+            $output->writeln(sprintf('<comment>%s</comment>', $exception->getMessage()));
 
             return 1;
         } catch (GameNotFound $gameNotFound) {

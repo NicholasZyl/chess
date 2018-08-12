@@ -47,20 +47,20 @@ class PieceFactory
     /**
      * Create a piece object from piece's name and color.
      *
-     * @param string $name
-     * @param Color $color
+     * @param string $rank
+     * @param string $color
      *
      * @throws \InvalidArgumentException
      *
      * @return Piece
      */
-    public function createPieceNamedForColor(string $name, Color $color): Piece
+    public function createPieceNamedForColor(string $rank, string $color): Piece
     {
-        if (!array_key_exists($name, $this->pieceFactories)) {
-            throw new \InvalidArgumentException(sprintf('Piece named "%s" does not exist!', $name));
+        if (!array_key_exists($rank, $this->pieceFactories)) {
+            throw new \InvalidArgumentException(sprintf('Piece named "%s" does not exist!', $rank));
         }
 
-        return $this->pieceFactories[$name]($color);
+        return $this->pieceFactories[$rank](Color::fromString($color));
     }
 
     /**
@@ -79,6 +79,6 @@ class PieceFactory
             throw new \InvalidArgumentException(sprintf('Piece description "%s" is missing either rank or color', $pieceDescription));
         }
 
-        return $this->createPieceNamedForColor($explodedDescription[1], Color::fromString($explodedDescription[0]));
+        return $this->createPieceNamedForColor($explodedDescription[1], $explodedDescription[0]);
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\UI\Console;
 
+use NicholasZyl\Chess\UI\Console\Command\PlayGameCommand;
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -23,5 +24,6 @@ final class Application extends BaseApplication
                 $this->add($container->get($id));
             }
         }
+        $this->setDefaultCommand(PlayGameCommand::NAME);
     }
 }

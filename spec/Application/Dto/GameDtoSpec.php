@@ -91,6 +91,16 @@ class GameDtoSpec extends ObjectBehavior
         $this->winner()->shouldBe('black');
     }
 
+    function it_is_a_draw_if_ended_but_no_winner()
+    {
+        $this->beConstructedWith(
+            $this->boardDto,
+            null,
+            true
+        );
+        $this->winner()->shouldBe('draw');
+    }
+
     function it_is_visualised_by_display(Display $display)
     {
         $display->visualiseGame($this->getWrappedObject())->shouldBeCalled()->willReturn('visualisation');
