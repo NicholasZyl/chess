@@ -210,4 +210,24 @@ CHESS_END
     {
         $this->pieceShouldBePlacedOn($exchangedPiece, $position);
     }
+
+    /**
+     * @Then :color is (in) check(mated)
+     * @param string $color
+     */
+    public function playerIsInCheck(string $color)
+    {
+        $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
+        expect($this->tester->getDisplay())->shouldContain(sprintf('In check: %s', $color));
+    }
+
+    /**
+     * @Then :color won the game
+     * @param string $color
+     */
+    public function playerWonTheGame(string $color)
+    {
+        $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
+        expect($this->tester->getDisplay())->shouldContain(sprintf('Winner: %s', $color));
+    }
 }

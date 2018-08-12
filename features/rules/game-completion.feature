@@ -3,7 +3,7 @@ Feature: The completion of game
   As a player
   I need to check my opponent's king
 
-  @application @ui @web
+  @application @ui @web @console
   Scenario: The king is checked after move when king is attacked
     Given there is a chessboard with placed pieces
       | piece       | location |
@@ -32,7 +32,7 @@ Feature: The completion of game
     Then the move is illegal
     And Black rook should not be moved from f8
 
-  @application @ui @web
+  @application @ui @web @console
   Scenario: If opponent's king is in check and opponent has no legal move then it's checkmated
     Given there is a chessboard with placed pieces
       | piece       | location |

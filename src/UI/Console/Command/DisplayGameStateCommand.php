@@ -76,7 +76,7 @@ class DisplayGameStateCommand extends Command
             return 2;
         }
 
-        $output->write($game->board()->visualise(new AsciiTerminalDisplay()));
+        $output->write($game->visualise(new AsciiTerminalDisplay()));
 
         return 0;
     }
