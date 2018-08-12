@@ -3,11 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\UI\Console;
 
-use NicholasZyl\Chess\UI\Console\Command\DisplayGameStateCommand;
-use NicholasZyl\Chess\UI\Console\Command\MoveCommand;
-use NicholasZyl\Chess\UI\Console\Command\SetupGameCommand;
 use Symfony\Component\Console\Application as BaseApplication;
-use Symfony\Component\Console\CommandLoader\ContainerCommandLoader;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class Application extends BaseApplication
@@ -21,15 +17,11 @@ final class Application extends BaseApplication
     {
         parent::__construct('Chess', '1.0');
         $kernel->boot();
-        $this->setCommandLoader(
-            new ContainerCommandLoader(
-                $kernel->getContainer(),
-                [
-                    'start' => 'console.command.public_alias.'.SetupGameCommand::class,
-                    'display' => 'console.command.public_alias.'.DisplayGameStateCommand::class,
-                    'move' => 'console.command.public_alias.'.MoveCommand::class,
-                ]
-            )
-        );
+        $container = $kernel->getContainer();
+        if ($container->hasParameter('console.command.ids')) {
+            foreach ($container->getParameter('console.command.ids') as $id) {
+                $this->add($container->get($id));
+            }
+        }
     }
 }

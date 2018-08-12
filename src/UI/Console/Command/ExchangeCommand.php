@@ -16,9 +16,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class MoveCommand extends Command
+class ExchangeCommand extends Command
 {
-    public const NAME = 'move';
+    public const NAME = 'exchange';
 
     /**
      * @var GameService
@@ -26,7 +26,7 @@ class MoveCommand extends Command
     private $gameService;
 
     /**
-     * Create a command to move a piece in the game.
+     * Create a command to exchange piece on the board.
      *
      * @param GameService $gameService
      */
@@ -41,9 +41,9 @@ class MoveCommand extends Command
      */
     protected function configure()
     {
-        $this->setDescription('Move a piece in the game');
-        $this->addArgument('from', InputArgument::REQUIRED, 'Coordinates to move from');
-        $this->addArgument('to', InputArgument::REQUIRED, 'Coordinates to move to');
+        $this->setDescription('Exchange a piece in the game');
+        $this->addArgument('on', InputArgument::REQUIRED, 'Coordinates to exchange on');
+        $this->addArgument('for', InputArgument::REQUIRED, 'Piece to exchange to');
         $this->addOption('id', 'i', InputOption::VALUE_REQUIRED, 'Game identifier');
     }
 
@@ -73,9 +73,9 @@ class MoveCommand extends Command
 
         try {
             $gameId = new GameId($input->getOption('id'));
-            $this->gameService->movePieceInGame($gameId, $input->getArgument('from'), $input->getArgument('to'));
+            $this->gameService->exchangePieceInGame($gameId, $input->getArgument('on'), $input->getArgument('for'));
         } catch (IllegalAction | BoardException $exception) {
-            $output->writeln('<error>Move was not possible due to</error>');
+            $output->writeln('<error>Exchange was not possible due to</error>');
             $output->writeln($exception->getMessage());
 
             return 1;

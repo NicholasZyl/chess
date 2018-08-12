@@ -215,14 +215,14 @@ Feature: The moves of the pieces
     Then the move is illegal
     And White bishop should not be moved from b3
 
-  @application @ui @web
+  @application @ui @web @console
   Scenario: Pawn's promotion
     Given there is a chessboard with White pawn placed on b7
     And I moved piece from b7 to b8
     When I exchange piece on b8 for White queen
     Then White pawn on b8 should be exchanged for White queen
 
-  @ui @web
+  @ui @web @console
   Scenario: Pawn's promotion can happen only on the promotion square
     Given there is a chessboard with White pawn placed on b6
     And I moved piece from b6 to b7
@@ -230,7 +230,7 @@ Feature: The moves of the pieces
     Then the exchange is illegal
     And White pawn on b7 should not be exchanged for White queen
 
-  @ui @web
+  @ui @web @console
   Scenario: Pawn's promotion has to be done as part of the move
     Given there is a chessboard with placed pieces
       | piece        | location |

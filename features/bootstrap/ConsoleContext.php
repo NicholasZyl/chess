@@ -121,11 +121,20 @@ class ConsoleContext implements Context
      * @When I/opponent (try to) (tries to) (tried to) move(d) piece from :from to :to
      * @param string $from
      * @param string $to
-     * @throws Exception
      */
     public function movePieceFromSourceToDestination(string $from, string $to)
     {
         $this->tester->run(['command' => 'move', 'from' => $from, 'to' => $to, '--id' => ($this->gameId ?? GameId::generate())->id(),]);
+    }
+
+    /**
+     * @When /I (try to )?exchange piece on (?P<position>[a-h][0-8]) for (?P<piece>[a-zA-Z]+ [a-z]+)/
+     * @param string $position
+     * @param string $piece
+     */
+    public function exchangePieceOnPositionFor(string $position, string $piece)
+    {
+        $this->tester->run(['command' => 'exchange', 'on' => $position, 'for' => $piece, '--id' => ($this->gameId ?? GameId::generate())->id(),]);
     }
 
     /**
@@ -162,19 +171,21 @@ CHESS_END
     }
 
     /**
-     * @Then the move is/was illegal
+     * @Then the :action is/was illegal
+     * @param string $action
      */
-    public function theMoveIsIllegal()
+    public function theActionIsIllegal(string $action)
     {
-        expect($this->tester->getDisplay())->shouldContain('Move was not possible');
+        expect($this->tester->getDisplay())->shouldContain(sprintf('%s was not possible', ucfirst($action)));
     }
 
     /**
      * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) should (not )?be moved (to|from) (?P<position>[a-h][0-8])/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should not be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
      * @param string $piece
      * @param string $position
      */
-    public function pieceShouldBeMoved(string $piece, string $position)
+    public function pieceShouldBePlacedOn(string $piece, string $position)
     {
         $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
         $output = $this->tester->getDisplay();
@@ -188,5 +199,15 @@ CHESS_END
         $expectedPiece = (new AsciiTerminalDisplay())->visualisePiece($pieceDescription[0], $pieceDescription[1]);
 
         expect($actualPiece)->shouldBe($expectedPiece);
+    }
+
+    /**
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
+     * @param string $position
+     * @param string $exchangedPiece
+     */
+    public function pieceOnPositionShouldBeExchangedFor(string $position, string $exchangedPiece)
+    {
+        $this->pieceShouldBePlacedOn($exchangedPiece, $position);
     }
 }

@@ -180,7 +180,7 @@ class WebContext implements Context
     }
 
     /**
-     * @Then  /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should not be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
+     * @Then /(?P<piece>[a-zA-Z]+ [a-z]+) on (?P<position>[a-h][0-8]) should not be exchanged for (?P<exchangedPiece>[a-zA-Z]+ [a-z]+)/
      * @param string $position
      * @param string $piece
      * @throws FailureException
@@ -195,7 +195,6 @@ class WebContext implements Context
 
         $this->pieceShouldBePlacedOnPosition($piece, $position);
     }
-
 
     /**
      * Check that piece is occupying given position.
