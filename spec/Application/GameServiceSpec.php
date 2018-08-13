@@ -96,4 +96,20 @@ class GameServiceSpec extends ObjectBehavior
 
         $this->exchangePieceInGame($gameId, 'd8', 'queen');
     }
+
+    function it_defaults_to_white_on_exchange_when_color_is_not_provided_and_there_is_no_piece_on_position(GamesRepository $gamesRepository, PieceFactory $pieceFactory, Game $game)
+    {
+        $gameId = GameId::generate();
+        $gamesRepository->find($gameId)->shouldBeCalled()->willReturn($game);
+        $queen = Queen::forColor(Color::white());
+        $game->board()->willReturn(['d' => [8 => null,],]);
+        $pieceFactory->createPieceNamedForColor('queen', 'White')->shouldBeCalled()->willReturn($queen);
+        $game->exchangePieceOnBoardTo(
+            CoordinatePair::fromString('d8'),
+            $queen
+        )->shouldBeCalled();
+        $gamesRepository->add($gameId, $game)->shouldBeCalled();
+
+        $this->exchangePieceInGame($gameId, 'd8', 'queen');
+    }
 }

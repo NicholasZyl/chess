@@ -55,15 +55,15 @@ class MoveCommand extends Command
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         if (!$input->getOption('id')) {
-            $identifier = $helper->ask($input, $output, new Question('Please provide the game identifier'));
+            $identifier = $helper->ask($input, $output, new Question("Please provide the game identifier\n"));
             $input->setOption('id', $identifier);
         }
         if (!$input->getArgument('from')) {
-            $from = $helper->ask($input, $output, new Question('Please provide "from" coordinates'));
+            $from = $helper->ask($input, $output, new Question("Please provide \"from\" coordinates\n"));
             $input->setArgument('from', $from);
         }
         if (!$input->getArgument('to')) {
-            $to = $helper->ask($input, $output, new Question('Please provide "to" coordinates'));
+            $to = $helper->ask($input, $output, new Question("Please provide \"to\" coordinates\n"));
             $input->setArgument('to', $to);
         }
     }

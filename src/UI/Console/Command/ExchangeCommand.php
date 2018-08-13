@@ -56,11 +56,11 @@ class ExchangeCommand extends Command
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         if (!$input->getOption('id')) {
-            $identifier = $helper->ask($input, $output, new Question('Please provide the game identifier'));
+            $identifier = $helper->ask($input, $output, new Question("Please provide the game identifier\n"));
             $input->setOption('id', $identifier);
         }
         if (!$input->getArgument('on')) {
-            $on = $helper->ask($input, $output, new Question('Please provide "on" coordinates'));
+            $on = $helper->ask($input, $output, new Question("Please provide \"on\" coordinates\n"));
             $input->setArgument('on', $on);
         }
         if (!$input->getArgument('for')) {

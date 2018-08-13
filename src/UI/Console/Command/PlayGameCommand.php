@@ -68,7 +68,7 @@ class PlayGameCommand extends Command
         if (!$this->gameId) {
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
-            if ($helper->ask($input, $output, new ConfirmationQuestion('Do you want to start a new game?'))) {
+            if ($helper->ask($input, $output, new ConfirmationQuestion("Do you want to start a new game?\n"))) {
                 $command = $this->getApplication()->find(SetupGameCommand::NAME);
                 $tempOutput = new BufferedOutput();
                 $command->run($input, $tempOutput);

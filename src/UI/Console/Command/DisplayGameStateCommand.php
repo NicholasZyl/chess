@@ -51,7 +51,7 @@ class DisplayGameStateCommand extends Command
         if (!$input->getOption('id')) {
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
-            $identifier = $helper->ask($input, $output, new Question('Please provide the game identifier'));
+            $identifier = $helper->ask($input, $output, new Question("Please provide the game identifier\n"));
             $input->setOption('id', $identifier);
         }
     }

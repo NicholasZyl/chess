@@ -14,6 +14,7 @@ use NicholasZyl\Chess\Domain\Game;
 use NicholasZyl\Chess\Domain\GameId;
 use NicholasZyl\Chess\Domain\GamesRepository;
 use NicholasZyl\Chess\Domain\LawsOfChess;
+use NicholasZyl\Chess\Domain\Piece;
 use NicholasZyl\Chess\Domain\PieceFactory;
 
 final class GameService
@@ -120,7 +121,9 @@ final class GameService
         [$color, $rank] = sscanf($pieceDescription, '%s %s');
         if (!$rank) {
             $rank = $color;
-            $color = (string)$game->board()[$coordinates->file()][$coordinates->rank()]->color();
+            /** @var Piece $piece */
+            $piece = $game->board()[$coordinates->file()][$coordinates->rank()];
+            $color = $piece ? (string)$piece->color() : 'White';
         }
 
         $game->exchangePieceOnBoardTo(
