@@ -56,9 +56,9 @@ class QueenMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(true);
     }
 
-    function it_is_applicable_to_queen_attack()
+    function it_is_applicable_to_queen_move_check()
     {
-        $move = new Action\Attack(
+        $move = new Action\CanMoveCheck(
             $this->queen,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('c', 3)

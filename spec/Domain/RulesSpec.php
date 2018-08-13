@@ -94,7 +94,7 @@ class RulesSpec extends ObjectBehavior
 
         $board->pickPieceFrom($source)->shouldBeCalled()->willReturn($piece);
 
-        $firstRule->isApplicableTo(Argument::type(Action\Move::class))->shouldBeCalled()->willReturn(false);
+        $firstRule->isApplicableTo(Argument::type(Action\CanMoveCheck::class))->shouldBeCalled()->willReturn(false);
         $firstRule->apply(Argument::cetera())->shouldNotBeCalled();
 
         $legalDestination = CoordinatePair::fromFileAndRank('a', 2);
@@ -104,11 +104,11 @@ class RulesSpec extends ObjectBehavior
             yield $illegalDestination;
         });
 
-        $moveToLegalDestination = new Action\Move($piece, $source, $legalDestination);
+        $moveToLegalDestination = new Action\CanMoveCheck($piece, $source, $legalDestination);
         $secondRule->isApplicableTo($moveToLegalDestination)->shouldBeCalled()->willReturn(true);
         $secondRule->apply($moveToLegalDestination, $board, $this->getWrappedObject())->shouldBeCalled();
 
-        $moveToIllegalDestination = new Action\Move($piece, $source, $illegalDestination);
+        $moveToIllegalDestination = new Action\CanMoveCheck($piece, $source, $illegalDestination);
         $secondRule->isApplicableTo($moveToIllegalDestination)->shouldBeCalled()->willReturn(true);
         $secondRule->apply($moveToIllegalDestination, $board, $this->getWrappedObject())->shouldBeCalled();
 

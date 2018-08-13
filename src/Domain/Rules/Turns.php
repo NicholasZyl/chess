@@ -19,7 +19,7 @@ final class Turns implements Rule
     private $player;
 
     /**
-     * Create rules for players to move alternately.
+     * Create rule for players to move alternately.
      * @param Color|null $startingColor
      */
     public function __construct(Color $startingColor = null)
@@ -44,7 +44,7 @@ final class Turns implements Rule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Action\Move && !$action instanceof Action\Attack;
+        return $action instanceof Action\Move;
     }
 
     /**

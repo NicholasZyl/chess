@@ -56,9 +56,9 @@ class KnightMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(true);
     }
 
-    function it_is_applicable_to_knight_attack()
+    function it_is_applicable_to_knight_move_check()
     {
-        $move = new Action\Attack(
+        $move = new Action\CanMoveCheck(
             $this->knight,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('c', 2)

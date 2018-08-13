@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Action;
+use NicholasZyl\Chess\Domain\Action\CanMoveCheck;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
@@ -65,7 +66,7 @@ final class KingCheck implements Rule
      */
     public function isApplicableTo(Action $action): bool
     {
-        return $action instanceof Move;
+        return $action instanceof Move || $action instanceof CanMoveCheck;
     }
 
     /**

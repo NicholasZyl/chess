@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace spec\NicholasZyl\Chess\Domain\Rules;
 
-use NicholasZyl\Chess\Domain\Action\Attack;
+use NicholasZyl\Chess\Domain\Action\CanMoveCheck;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
@@ -51,9 +51,9 @@ class TurnsSpec extends ObjectBehavior
         $this->isApplicableTo($this->whiteMove)->shouldBe(true);
     }
 
-    function it_is_not_applicable_to_attack()
+    function it_is_not_applicable_to_move_check()
     {
-        $this->isApplicableTo(new Attack(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 2), CoordinatePair::fromFileAndRank('a', 3)))->shouldBe(false);
+        $this->isApplicableTo(new CanMoveCheck(Pawn::forColor(Color::white()), CoordinatePair::fromFileAndRank('a', 2), CoordinatePair::fromFileAndRank('a', 3)))->shouldBe(false);
     }
 
     function it_is_not_applicable_to_other_actions()

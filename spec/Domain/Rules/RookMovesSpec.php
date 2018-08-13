@@ -56,9 +56,9 @@ class RookMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(true);
     }
 
-    function it_is_applicable_to_rook_attack()
+    function it_is_applicable_to_rook_move_check()
     {
-        $move = new Action\Attack(
+        $move = new Action\CanMoveCheck(
             $this->rook,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('a', 3)

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Action\Attack;
+use NicholasZyl\Chess\Domain\Action\CanMoveCheck;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
@@ -82,6 +83,17 @@ class KingMovesSpec extends ObjectBehavior
         );
 
         $this->isApplicableTo($move)->shouldBe(false);
+    }
+
+    function it_is_applicable_to_king_move_check()
+    {
+        $move = new CanMoveCheck(
+            $this->whiteKing,
+            CoordinatePair::fromFileAndRank('a', 1),
+            CoordinatePair::fromFileAndRank('b', 2)
+        );
+
+        $this->isApplicableTo($move)->shouldBe(true);
     }
 
     function it_is_applicable_to_king_attack()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace spec\NicholasZyl\Chess\Domain\Rules;
 
 use NicholasZyl\Chess\Domain\Action\Attack;
+use NicholasZyl\Chess\Domain\Action\CanMoveCheck;
 use NicholasZyl\Chess\Domain\Action\Exchange;
 use NicholasZyl\Chess\Domain\Action\Move;
 use NicholasZyl\Chess\Domain\Board;
@@ -71,6 +72,17 @@ class PawnMovesSpec extends ObjectBehavior
     function it_is_applicable_to_pawn_attack()
     {
         $move = new Attack(
+            $this->blackPawn,
+            CoordinatePair::fromFileAndRank('d', 5),
+            CoordinatePair::fromFileAndRank('e', 4)
+        );
+
+        $this->isApplicableTo($move)->shouldBe(true);
+    }
+
+    function it_is_applicable_to_pawn_move_check()
+    {
+        $move = new CanMoveCheck(
             $this->blackPawn,
             CoordinatePair::fromFileAndRank('d', 5),
             CoordinatePair::fromFileAndRank('e', 4)

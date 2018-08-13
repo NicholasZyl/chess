@@ -56,9 +56,9 @@ class BishopMovesSpec extends ObjectBehavior
         $this->isApplicableTo($move)->shouldBe(true);
     }
 
-    function it_is_applicable_to_bishop_attack()
+    function it_is_applicable_to_bishop_move_check()
     {
-        $move = new Action\Attack(
+        $move = new Action\CanMoveCheck(
             $this->bishop,
             CoordinatePair::fromFileAndRank('a', 1),
             CoordinatePair::fromFileAndRank('c', 3)

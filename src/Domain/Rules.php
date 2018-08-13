@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace NicholasZyl\Chess\Domain;
 
-use NicholasZyl\Chess\Domain\Action\Move;
+use NicholasZyl\Chess\Domain\Action\CanMoveCheck;
 use NicholasZyl\Chess\Domain\Board\Coordinates;
 use NicholasZyl\Chess\Domain\Exception\Board\SquareIsUnoccupied;
 use NicholasZyl\Chess\Domain\Exception\IllegalAction;
@@ -112,7 +112,7 @@ class Rules
             $legalDestinations = [];
             foreach ($destinations as $destination) {
                 try {
-                    $this->applyRulesTo(new Move($piece, $position, $destination), $board);
+                    $this->applyRulesTo(new CanMoveCheck($piece, $position, $destination), $board);
                     $legalDestinations[] = $destination;
                 } catch (IllegalAction $illegalAction) {
                     // Skip
