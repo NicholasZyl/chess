@@ -229,4 +229,24 @@ CHESS_END
         $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
         expect($this->tester->getDisplay())->shouldContain(sprintf('Winner: %s', $color));
     }
+
+    /**
+     * @Then the game should not be ended
+     */
+    public function theGameShouldNotBeEnded()
+    {
+        $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
+        expect($this->tester->getDisplay())->shouldContain('In check: ');
+        expect($this->tester->getDisplay())->shouldContain('Winner: ');
+    }
+
+    /**
+     * @Then it is stalemate
+     */
+    public function itIsStalemate()
+    {
+        $this->tester->run(['command' => 'display', '--id' => $this->gameId->id(),]);
+        expect($this->tester->getDisplay())->shouldContain('In check: ');
+        expect($this->tester->getDisplay())->shouldContain('Winner: draw');
+    }
 }

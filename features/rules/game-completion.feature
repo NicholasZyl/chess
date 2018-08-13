@@ -4,6 +4,12 @@ Feature: The completion of game
   I need to check my opponent's king
 
   @application @ui @web @console
+  Scenario: The game is not over till rules say so
+    Given the game is set up
+    When I move piece from b2 to b4
+    Then the game should not be ended
+
+  @application @ui @web @console
   Scenario: The king is checked after move when king is attacked
     Given there is a chessboard with placed pieces
       | piece       | location |
@@ -44,14 +50,13 @@ Feature: The completion of game
     Then White is checkmated
     And Black won the game
 
+  @application @ui @web @console
   Scenario: If player has no legal move and his king is not in checkmate then the game ends with stalemate
     Given there is a chessboard with placed pieces
       | piece        | location |
-      | White king   | e1       |
-      | Black bishop | g4       |
-      | Black rook   | a8       |
-      | Black rook   | d7       |
-    And it is Black turn
-    When opponent move piece from a8 to f8
+      | Black king   | e8       |
+      | White bishop | b4       |
+      | White rook   | a1       |
+      | White rook   | d4       |
+    When I move piece from a1 to f1
     Then it is stalemate
-    And the game ends with drawn

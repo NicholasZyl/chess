@@ -227,6 +227,28 @@ class AppContext implements Context
         expect($game->winner())->shouldBe($color);
     }
 
+    /**
+     * @Then the game should not be ended
+     */
+    public function theGameShouldNotBeEnded()
+    {
+        $game = $this->gameService->find($this->gameId);
+
+        expect($game->isEnded())->shouldBe(false);
+
+        expect($game->winner())->shouldBe('');
+    }
+
+    /**
+     * @Then it is stalemate
+     */
+    public function itIsStalemate()
+    {
+        $game = $this->gameService->find($this->gameId);
+
+        expect($game->isEnded())->shouldBe(true);
+        expect($game->winner())->shouldBe('draw');
+    }
 
     /**
      * @Then game should be set with initial positions of the pieces on the chessboard

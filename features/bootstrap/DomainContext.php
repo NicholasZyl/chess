@@ -233,6 +233,7 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     public function itIsStalemate()
     {
         expect($this->occurredEvents)->toContainEvent(new Event\Stalemate());
+        expect($this->occurredEvents)->toContainEvent(new Event\GameEnded());
     }
 
     /**
@@ -245,11 +246,11 @@ class DomainContext implements Context, \PhpSpec\Matcher\MatchersProvider
     }
 
     /**
-     * @Then the game ends with drawn
+     * @Then the game should not be ended
      */
-    public function theGameEndsWithDrawn()
+    public function theGameShouldNotBeEnded()
     {
-        expect($this->occurredEvents)->toContainEvent(new Event\GameEnded());
+        expect($this->occurredEvents)->toNotContainEvent(new Event\GameEnded());
     }
 
     /**

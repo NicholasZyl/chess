@@ -356,6 +356,30 @@ class WebContext implements Context
     }
 
     /**
+     * @Then the game should not be ended
+     * @throws FailureException
+     */
+    public function theGameShouldNotBeEnded()
+    {
+        $game = $this->getGameState();
+        expect($game)->shouldHaveKeyWithValue('is_ended', false);
+        expect($game)->shouldHaveKeyWithValue('checked', '');
+        expect($game)->shouldHaveKeyWithValue('winner', '');
+    }
+
+    /**
+     * @Then it is stalemate
+     * @throws FailureException
+     */
+    public function itIsStalemate()
+    {
+        $game = $this->getGameState();
+        expect($game)->shouldHaveKeyWithValue('is_ended', true);
+        expect($game)->shouldHaveKeyWithValue('checked', '');
+        expect($game)->shouldHaveKeyWithValue('winner', 'draw');
+    }
+
+    /**
      * Get the current state of the game.
      *
      * @throws FailureException
