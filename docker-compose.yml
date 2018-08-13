@@ -1,12 +1,41 @@
 version: "3"
 
 services:
-  app:
+  console:
     build: ./
+    command:
+      - play
+    entrypoint:
+      - bin/console
+    environment:
+      APP_ENV: production
     networks:
       - default
     stdin_open: true
     tty: true
+    volumes:
+      - games:/usr/src/chess/var/games
+
+  web:
+    depends_on:
+      - api
+    image: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/web/api.conf:/etc/nginx/conf.d/default.conf
+      - ./public:/usr/src/chess/public
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    environment:
+      APP_ENV: prod
+    networks:
+      - default
+    volumes:
+      - games:/usr/src/chess/var/games
 
   dev:
     build: ./
@@ -21,3 +50,6 @@ services:
 
 networks:
   default:
+
+volumes:
+  games:
